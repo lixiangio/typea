@@ -123,7 +123,7 @@
 
       let verify = Verify(data, {
          id: {
-            type: "ObjectId",
+            "type": "ObjectId",
 				"mobilePhone": "MobilePhone"
       	}
       })
