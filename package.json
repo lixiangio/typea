@@ -1,15 +1,27 @@
 {
-  "name": "verify",
+  "name": "data-verify",
   "version": "1.0.1",
   "description": "数据验证器",
   "main": "index.js",
   "scripts": {
     "test": "nodemon test/index.js"
   },
-  "author": "",
+  "author": "https://github.com/xiangle/verify.git",
   "license": "ISC",
   "dependencies": {
     "nodemon": "^1.11.0",
     "validator": "^8.0.0"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xiangle/verify.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xiangle/verify/issues"
+  },
+  "homepage": "https://github.com/xiangle/verify#readme"
 }
