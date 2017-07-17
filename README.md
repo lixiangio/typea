@@ -109,3 +109,22 @@
       })
 
 	// Returns {a:false,b:true}
+
+
+## 自定义类型
+
+#### 验证数据
+
+      let data = {
+         "id": "5968d3b4956fe04299ea5c18",
+			"mobilePhone": "18555555555"
+      }
+
+#### 验证器表达式
+
+      let verify = Verify(data, {
+         id: {
+            type: "ObjectId",
+				"mobilePhone": "MobilePhone"
+      	}
+      })
