@@ -25,7 +25,6 @@
          "companyName": ["a.js", "b.js", "c.js"],
          "multiple": ["a", "b", "c", "d"],
          "money": 555,
-         "multiple": "莉莉",
          "email": "abc@gmail.com"
       }
 
