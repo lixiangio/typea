@@ -32,7 +32,8 @@ let verify = Verify(data, {
    "receiveAddress": String,
    "coupon": {
       "type": String,
-      "allowNull": true
+      "allowNull": true,
+      "group": 'filter',
    },
    "integral": {
       "type": Number,
@@ -48,4 +49,5 @@ if (verify.error) {
    console.log(verify.error)
 } else {
    console.log(verify.data)
+   console.log(verify.group)
 }

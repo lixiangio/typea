@@ -241,17 +241,21 @@ function recursionVerify(key, data, options, clone, group) {
                return `验证器配置错误，type参数只能定义数据类型，不允许定义为数据结构`
             }
 
+            // 分组数据（不管data是否为空，只要定义了分组就创建对应的分组对象）
+            if (options.group) {
+               if (!group[options.group]) {
+                  group[options.group] = {}
+               }
+            }
+
             // 导出
-            if (data !== undefined && data !== null) {
+            if (data) {
 
                // 验证数据
                clone[key] = data
 
                // 分组数据
                if (options.group) {
-                  if (!group[options.group]) {
-                     group[options.group] = {}
-                  }
                   group[options.group][key] = data
                }
 
