@@ -1,0 +1,15 @@
+{
+  "name": "verify",
+  "version": "1.0.0",
+  "description": "数据验证器",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon test/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^1.11.0",
+    "validator": "^8.0.0"
+  }
+}
