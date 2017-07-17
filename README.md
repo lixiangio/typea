@@ -40,11 +40,13 @@
          "money": Number,
          "multiple": [{
             "type": String,
-            "allowNull": true
+            "allowNull": true,
+            "group": "filter",
          }],
          "email": {
             "type": String,
-            "allowNull": true
+            "allowNull": true,
+            "group": "filter",
          }
       })
 
