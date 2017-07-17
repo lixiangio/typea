@@ -249,7 +249,7 @@ function recursionVerify(key, data, options, clone, group) {
             }
 
             // 导出
-            if (data) {
+            if (data !== undefined && data !== null) {
 
                // 验证数据
                clone[key] = data
