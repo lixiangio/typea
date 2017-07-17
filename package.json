@@ -1,5 +1,5 @@
 {
-  "name": "data-verify",
+  "name": "check-data",
   "version": "1.0.1",
   "description": "数据验证器",
   "main": "index.js",
