@@ -71,7 +71,7 @@
          $: {
             type: Boolean,
             allowNull: true,
-		   }
+      	}
       })
 
 
@@ -84,3 +84,28 @@
 #### 验证器表达式
 
       let verify = Verify(data, [String])
+
+
+## Number转Boolean
+
+#### 验证数据
+
+      let data = {
+         "a": 0,
+			"b": 3,
+      }
+
+#### 验证器表达式
+
+      let verify = Verify(data, {
+         a: {
+            type: Number,
+            "conversion": Boolean
+      	},
+			b: {
+            type: Number,
+            "conversion": Boolean
+      	}
+      })
+
+	// Returns {a:false,b:true}
