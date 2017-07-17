@@ -2,17 +2,26 @@
 
 ## 使用方法
 
-      Verify(data, options)
+    let verify = Verify(data, options)
 
 *  `data` *Objcte* - 验证数据
 
 *  `options` *Objcte* - 验证数据表达式
 
+## 导出验证结果
+
+*  `verify.error` *String* - 错误信息
+
+*  `verify.data` *Objcte* - 验证数据
+
+*  `verify.group` *Objcte* - 数据分组
+
+
 ## 使用示例
 
 #### 验证数据
 
-      {
+      let data = {
          "name": "测试",
          "time": "2017-07-07T09:53:30.000Z",
          "companyName": ["a.js", "b.js", "c.js"],
@@ -44,7 +53,7 @@
 
 #### 验证数据
 
-      {
+      let data = {
          "t0": false,
          "t1": false,
          "t2": true,
@@ -58,7 +67,20 @@
 
 #### 验证器表达式
 
-		$: {
-			type: Boolean,
-			allowNull: true,
-		}
+      let verify = Verify(data, {
+         $: {
+            type: Boolean,
+            allowNull: true,
+		   }
+      })
+
+
+## 数组验证
+
+#### 验证数据
+
+      let data = ["a.js", "b.js", "c.js"]
+
+#### 验证器表达式
+
+      let verify = Verify(data, [String])

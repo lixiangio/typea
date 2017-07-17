@@ -20,8 +20,9 @@ global.Verify = function (data, options) {
 
    // 数据导出容器
    let exportData = {
+      error: null,//错误信息
       data: {},//验证容器
-      group: {}//分组容器
+      group: {},//分组容器
    }
 
    // 递归验证
@@ -298,7 +299,7 @@ function recursionVerify(key, data, options, clone, group) {
 
    // 选项为非对象（赋值型数据）
    else {
-      
+
       // 选项为函数（JS内置数据类型）
       if (typeof options === 'function') {
 
