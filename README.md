@@ -1,3 +1,8 @@
+## Installation
+
+      npm install check-data --save
+
+
 ## 使用方法
 
     let verify = Verify(data, options)
