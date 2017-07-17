@@ -1,5 +1,3 @@
-# 数据验证器
-
 ## 使用方法
 
     let verify = Verify(data, options)
