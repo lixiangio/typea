@@ -51,11 +51,6 @@ function recursionVerify(key, data, options, clone, group) {
       // 选项为数组结构
       if (Array.isArray(options)) {
 
-         // 参数未定义时跳过验证
-         // if (data === undefined) {
-         //    return
-         // }
-
          if (!Array.isArray(data)) {
             return `${key}参数必须为数组`
          }
@@ -241,9 +236,10 @@ function recursionVerify(key, data, options, clone, group) {
 
             }
 
-            // type为对象（只能定义数据类型）
+            // type为对象
             else if (typeof options.type === 'object') {
-               return `验证器配置错误，type参数只能定义数据类型，不允许定义为数据结构`
+               let result = recursionVerify(key, data, options.type, clone, group)
+               if (result) return result
             }
 
             // 分组数据（不管data是否为空，只要定义了分组就创建对应的分组对象）
