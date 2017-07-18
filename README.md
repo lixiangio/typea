@@ -75,7 +75,7 @@
          $: {
             type: Boolean,
             allowNull: true,
-      	}
+         }
       })
 
 
