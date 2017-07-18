@@ -31,7 +31,7 @@ global.Verify = function (data, options) {
    }
 
    // 递归验证
-   let result = recursionVerify(null, data, options, exportData.data, exportData.group)
+   let result = recursionVerify(null, data, options, exportData.data, exportData.group, data)
 
    if (result) {
       exportData.error = result
@@ -47,8 +47,9 @@ global.Verify = function (data, options) {
  * @param {*} options 验证规则选项
  * @param {*} clone 克隆容器
  * @param {*} group 分组容器
+ * @param {*} origin 原始数据
  */
-function recursionVerify(key, data, options, clone, group) {
+function recursionVerify(key, data, options, clone, group, origin) {
 
    // 选项为对象（引用型数据）
    if (typeof options === 'object') {
@@ -69,7 +70,7 @@ function recursionVerify(key, data, options, clone, group) {
          for (let subKey in data) {
             let itemData = data[subKey]
             let itemOptions = options[0]
-            let result = recursionVerify(subKey, itemData, itemOptions, clone, group)
+            let result = recursionVerify(subKey, itemData, itemOptions, clone, group, origin)
             if (result) return `${key}数组Key:${result}`
          }
 
@@ -247,8 +248,17 @@ function recursionVerify(key, data, options, clone, group) {
 
             // type为对象
             else if (typeof options.type === 'object') {
-               let result = recursionVerify(key, data, options.type, clone, group)
+               let result = recursionVerify(key, data, options.type, clone, group, origin)
                if (result) return result
+            }
+
+            // 关联参数绑定
+            if (options["&"]) {
+               for (let name of options["&"]) {
+                  if (origin[name] === undefined) {
+                     return `${key}与${name}参数必须同时存在`
+                  }
+               }
             }
 
             // 分组数据（不管data是否为空，只要定义了分组就创建对应的分组对象）
@@ -291,7 +301,7 @@ function recursionVerify(key, data, options, clone, group) {
                for (let subKey in data) {
                   let itemData = data[subKey]
                   let itemOptions = options.$
-                  let result = recursionVerify(subKey, itemData, itemOptions, clone, group)
+                  let result = recursionVerify(subKey, itemData, itemOptions, clone, group, origin)
                   if (result) return result
                }
             }
@@ -301,7 +311,7 @@ function recursionVerify(key, data, options, clone, group) {
                for (let subKey in options) {
                   let itemData = data[subKey]
                   let itemOptions = options[subKey]
-                  let result = recursionVerify(subKey, itemData, itemOptions, clone, group)
+                  let result = recursionVerify(subKey, itemData, itemOptions, clone, group, origin)
                   if (result) return result
                }
             }

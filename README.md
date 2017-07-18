@@ -121,7 +121,7 @@
 
       let data = {
          "id": "5968d3b4956fe04299ea5c18",
-			"mobilePhone": "18555555555"
+         "mobilePhone": "18555555555"
       }
 
 #### 验证器表达式
@@ -129,6 +129,33 @@
       let verify = Verify(data, {
          id: {
             "type": "ObjectId",
-				"mobilePhone": "MobilePhone"
+            "mobilePhone": "MobilePhone"
       	}
+      })
+
+
+## 关联验证
+
+#### 验证数据
+
+      let data = {
+         "username": "莉莉",
+         "addressee": "嘟嘟",
+      }
+
+#### 验证器表达式
+
+      let verify = Verify(data, {
+         "username": {
+            "type": String,
+            "&": ["addressee", "address"]
+         },
+         "addressee": {
+            "type": String,
+            "allowNull": true
+         },
+         "address": {
+            "type": String,
+            "allowNull": true
+         }
       })
