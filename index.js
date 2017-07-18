@@ -99,7 +99,7 @@ function recursionVerify(key, data, options, clone, group) {
                }
                let result = options.contain.indexOf(data)
                if (result === -1) {
-                  return `${key}参数超出可选范围，不包含${typeof data}值${data}`
+                  return `${key}参数超出可选范围，不包含${typeof data}：${data}`
                }
             }
 
