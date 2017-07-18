@@ -16,6 +16,11 @@ let customize = {
    }
 }
 
+/**
+ * 递归验证器
+ * @param {*} data 验证数据
+ * @param {*} options 验证数据表达式
+ */
 global.Verify = function (data, options) {
 
    // 数据导出容器
