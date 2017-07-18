@@ -98,7 +98,7 @@ function recursionVerify(key, data, options, clone, group) {
 
             // 包含
             else if (options.contain) {
-               // Number类型特殊照顾，提供字符串转数值
+               // 对Number类型特殊照顾，将字符串转数值
                if (options.type === Number) {
                   data = Number(data)
                }
