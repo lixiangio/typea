@@ -93,9 +93,13 @@ function recursionVerify(key, data, options, clone, group) {
 
             // 包含
             else if (options.contain) {
+               // Number类型特殊照顾，提供字符串转数值
+               if (options.type === Number) {
+                  data = Number(data)
+               }
                let result = options.contain.indexOf(data)
                if (result === -1) {
-                  return `${key}参数超出可选范围，不包含${typeof data}类型${data}`
+                  return `${key}参数超出可选范围，不包含${typeof data}值${data}`
                }
             }
 
