@@ -96,23 +96,23 @@
 
       let data = {
          "a": 0,
-			"b": 3,
+         "b": 3,
       }
 
 #### 验证器表达式
 
       let verify = Verify(data, {
          a: {
-            type: Number,
+            "type": Number,
             "conversion": Boolean
-      	},
-			b: {
-            type: Number,
+         },
+         b: {
+            "type": Number,
             "conversion": Boolean
-      	}
+         }
       })
 
-	// Returns {a:false,b:true}
+      // Returns {a:false, b:true}
 
 
 ## 自定义类型
