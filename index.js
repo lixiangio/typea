@@ -51,6 +51,11 @@ function recursionVerify(key, data, options, clone, group) {
       // 选项为数组结构
       if (Array.isArray(options)) {
 
+         // 参数未定义时跳过验证
+         if (data === undefined) {
+            return
+         }
+
          if (!Array.isArray(data)) {
             return `${key}参数必须为数组`
          }
