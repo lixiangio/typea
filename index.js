@@ -218,7 +218,7 @@ function recursionVerify(key, data, options, clone, group, origin) {
                else if (options.type === Date) {
 
                   if (!validator.toDate(data + '')) {
-                     return `${key}参数格式错误，必须为日期类型`
+                     return `${key}参数必须为日期类型`
                   }
 
                }
@@ -376,7 +376,7 @@ function recursionVerify(key, data, options, clone, group, origin) {
          else if (options === Date) {
 
             if (!validator.toDate(data + '')) {
-               return `${key}参数格式错误，必须为日期类型`
+               return `${key}参数必须为日期类型`
             }
 
          }
