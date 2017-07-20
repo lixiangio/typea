@@ -4,8 +4,10 @@ let data = {
    "tenderName": "测试",
    "tenderNum": "123456789987",
    "tenderEndTime": "2017-07-07T09:53:30.000Z",
-   "customizeGuaranteeFormat": ["xxx.js", {}, "xxx.js"],
-   "companyName": ["xxx公司", "xxx公司", "xxx公司", "jsd"],
+   "customizeGuaranteeFormat": ["xxx.js", "xxx.js"],
+   "companyName": {
+      // "typeId": "llll"
+   },
    "beneficiariesName": "莉莉",
    "guaranteeMoney": "88343.256",
    "guaranteeFormat": 1,
@@ -18,7 +20,15 @@ let verify = Verify(data, {
    "tenderName": String,
    "tenderNum": String,
    "tenderEndTime": Date,
-   "companyName": [String],
+   "companyName": {
+      "type": {
+         "typeId": {
+            "type": String,
+            // "allowNull": true
+         }
+      },
+      "allowNull": true
+   },
    "beneficiariesName": String,
    "guaranteeMoney": Number,
    "customizeGuaranteeFormat": {
