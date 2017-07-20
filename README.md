@@ -127,10 +127,8 @@
 #### 验证器表达式
 
       let verify = Verify(data, {
-         id: {
-            "type": "ObjectId",
-            "mobilePhone": "MobilePhone"
-      	}
+         "id": "ObjectId",
+         "mobilePhone": "MobilePhone"
       })
 
 
