@@ -17,8 +17,6 @@
 
 *  `verify.data` *Objcte* - 验证数据
 
-*  `verify.group` *Objcte* - 数据分组
-
 
 ## 使用示例
 
@@ -43,12 +41,12 @@
          "multiple": [{
             "type": String,
             "allowNull": true,
-            "group": "filter",
+            "export": "filter",
          }],
          "email": {
             "type": String,
             "allowNull": true,
-            "group": "filter",
+            "export": "filter",
          }
       })
 

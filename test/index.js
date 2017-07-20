@@ -61,6 +61,5 @@ if (verify.error) {
    console.log(verify.error)
 } else {
    console.log(verify.data)
-   
    console.log(verify.filter)
 }
