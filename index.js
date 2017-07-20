@@ -246,10 +246,10 @@ function recursionVerify(key, data, options, clone, group, origin) {
 
             }
 
-            // type为对象
+            // type为对象，用于实现允许对象结构为空表达式
             else if (typeof options.type === 'object') {
                let result = recursionVerify(key, data, options.type, clone, group, origin)
-               if (result) return result
+               if (result) return `${key}下${result}`
             }
 
             // 关联参数绑定
