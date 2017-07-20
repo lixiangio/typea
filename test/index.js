@@ -45,8 +45,7 @@ let verify = Verify(data, {
    "receiveAddress": String,
    "coupon": {
       "type": String,
-      "group": 'filter',
-      "export": false
+      "export": 'filter'
    },
    "integral": {
       "type": Number,

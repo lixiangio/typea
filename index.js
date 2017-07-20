@@ -267,9 +267,9 @@ function recursionVerify(key, data, options, clone, output, origin) {
             }
 
             // 分组数据（不管data是否为空，只要定义了分组就创建对应的分组对象）
-            if (options.group) {
-               if (!output[options.group]) {
-                  output[options.group] = {}
+            if (options.export) {
+               if (!output[options.export]) {
+                  output[options.export] = {}
                }
             }
 
@@ -278,10 +278,10 @@ function recursionVerify(key, data, options, clone, output, origin) {
 
                // 导出验证数据
                clone[key] = data
-
+               
                // 导出分组数据
-               if (options.group) {
-                  output[options.group][key] = data
+               if (options.export) {
+                  output[options.export][key] = data
                }
 
             }
