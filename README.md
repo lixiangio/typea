@@ -31,7 +31,7 @@
          "email": "abc@gmail.com"
       }
 
-#### 验证器表达式
+#### 表达式
 
       let verify = Verify(data, {
          "name": String,
@@ -67,7 +67,7 @@
          "t8": true
       }
 
-#### 验证器表达式
+#### 表达式
 
       let verify = Verify(data, {
          $: {
@@ -83,7 +83,7 @@
 
       let data = ["a.js", "b.js", "c.js"]
 
-#### 验证器表达式
+#### 表达式
 
       let verify = Verify(data, [String])
 
@@ -97,7 +97,7 @@
          "b": 3,
       }
 
-#### 验证器表达式
+#### 表达式
 
       let verify = Verify(data, {
          a: {
@@ -122,7 +122,7 @@
          "mobilePhone": "18555555555"
       }
 
-#### 验证器表达式
+#### 表达式
 
       let verify = Verify(data, {
          "id": "ObjectId",
@@ -139,7 +139,7 @@
          "addressee": "嘟嘟",
       }
 
-#### 验证器表达式
+#### 表达式
 
       let verify = Verify(data, {
          "username": {
