@@ -6,7 +6,7 @@ let data = {
    "tenderEndTime": "2017-07-07T09:53:30.000Z",
    "customizeGuaranteeFormat": ["xxx.js", "xxx.js"],
    "companyName": {
-      // "typeId": "llll"
+      "typeId": "llll"
    },
    "beneficiariesName": "莉莉",
    "guaranteeMoney": "88343.256",
@@ -24,7 +24,7 @@ let verify = Verify(data, {
       "type": {
          "typeId": {
             "type": String,
-            // "allowNull": true
+            "allowNull": true
          }
       },
       "allowNull": true

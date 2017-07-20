@@ -275,12 +275,15 @@ function recursionVerify(key, data, options, clone, group, origin) {
             }
 
             // 导出
-            if (data !== undefined && data !== null) {
+            if (data || data === 0) {
 
-               // 验证数据
-               clone[key] = data
+               // 是否导出
+               if (options.export === undefined || options.export) {
+                  // 导出验证数据
+                  clone[key] = data
+               }
 
-               // 分组数据
+               // 导出分组数据
                if (options.group) {
                   group[options.group][key] = data
                }
