@@ -24,20 +24,19 @@ let customize = {
 global.Verify = function (data, options) {
 
    // 数据导出容器
-   let exportData = {
+   let Output = {
       error: null,//错误信息
       data: {},//验证容器
-      group: {},//分组容器
    }
 
    // 递归验证
-   let result = recursionVerify(null, data, options, exportData.data, exportData.group, data)
+   let result = recursionVerify(null, data, options, Output.data, Output, data)
 
    if (result) {
-      exportData.error = result
+      Output.error = result
    }
 
-   return exportData
+   return Output
 }
 
 /**
@@ -46,10 +45,10 @@ global.Verify = function (data, options) {
  * @param {*} data 验证数据
  * @param {*} options 验证规则选项
  * @param {*} clone 克隆容器
- * @param {*} group 分组容器
+ * @param {*} output 数据导出容器
  * @param {*} origin 原始数据
  */
-function recursionVerify(key, data, options, clone, group, origin) {
+function recursionVerify(key, data, options, clone, output, origin) {
 
    // 选项为对象（引用型数据）
    if (typeof options === 'object') {
@@ -70,7 +69,7 @@ function recursionVerify(key, data, options, clone, group, origin) {
          for (let subKey in data) {
             let itemData = data[subKey]
             let itemOptions = options[0]
-            let result = recursionVerify(subKey, itemData, itemOptions, clone, group, origin)
+            let result = recursionVerify(subKey, itemData, itemOptions, clone, output, origin)
             if (result) return `${key}数组Key:${result}`
          }
 
@@ -248,7 +247,7 @@ function recursionVerify(key, data, options, clone, group, origin) {
 
             // type为对象，用于实现允许对象结构为空表达式
             else if (typeof options.type === 'object') {
-               let result = recursionVerify(key, data, options.type, clone, group, origin)
+               let result = recursionVerify(key, data, options.type, clone, output, origin)
                if (result) {
                   if (Array.isArray(data)) {
                      return `${result}`
@@ -269,23 +268,20 @@ function recursionVerify(key, data, options, clone, group, origin) {
 
             // 分组数据（不管data是否为空，只要定义了分组就创建对应的分组对象）
             if (options.group) {
-               if (!group[options.group]) {
-                  group[options.group] = {}
+               if (!output[options.group]) {
+                  output[options.group] = {}
                }
             }
 
             // 导出
             if (data || data === 0) {
 
-               // 是否导出
-               if (options.export === undefined || options.export) {
-                  // 导出验证数据
-                  clone[key] = data
-               }
+               // 导出验证数据
+               clone[key] = data
 
                // 导出分组数据
                if (options.group) {
-                  group[options.group][key] = data
+                  output[options.group][key] = data
                }
 
             }
@@ -310,7 +306,7 @@ function recursionVerify(key, data, options, clone, group, origin) {
                for (let subKey in data) {
                   let itemData = data[subKey]
                   let itemOptions = options.$
-                  let result = recursionVerify(subKey, itemData, itemOptions, clone, group, origin)
+                  let result = recursionVerify(subKey, itemData, itemOptions, clone, output, origin)
                   if (result) return result
                }
             }
@@ -320,7 +316,7 @@ function recursionVerify(key, data, options, clone, group, origin) {
                for (let subKey in options) {
                   let itemData = data[subKey]
                   let itemOptions = options[subKey]
-                  let result = recursionVerify(subKey, itemData, itemOptions, clone, group, origin)
+                  let result = recursionVerify(subKey, itemData, itemOptions, clone, output, origin)
                   if (result) return result
                }
             }
