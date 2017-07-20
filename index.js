@@ -18,29 +18,6 @@ let customize = {
 
 /**
  * 递归验证器
- * @param {*} data 验证数据
- * @param {*} options 验证数据表达式
- */
-global.Verify = function (data, options) {
-
-   // 数据导出容器
-   let Output = {
-      error: null,//错误信息
-      data: {},//验证容器
-   }
-
-   // 递归验证
-   let result = recursionVerify(null, data, options, Output.data, Output, data)
-
-   if (result) {
-      Output.error = result
-   }
-
-   return Output
-}
-
-/**
- * 递归验证器
  * @param {*} key 数据索引
  * @param {*} data 验证数据
  * @param {*} options 验证规则选项
@@ -278,7 +255,7 @@ function recursionVerify(key, data, options, clone, output, origin) {
 
                // 导出验证数据
                clone[key] = data
-               
+
                // 导出分组数据
                if (options.export) {
                   output[options.export][key] = data
@@ -411,6 +388,35 @@ function recursionVerify(key, data, options, clone, output, origin) {
       //导出验证数据
       clone[key] = data
    }
+}
+
+/**
+ * 递归验证器
+ * @param {*} data 验证数据
+ * @param {*} options 验证数据表达式
+ */
+function Verify(data, options) {
+
+   // 数据导出容器
+   let Output = {
+      error: null,//错误信息
+      data: {},//验证容器
+   }
+
+   // 递归验证
+   let result = recursionVerify(null, data, options, Output.data, Output, data)
+
+   if (result) {
+      Output.error = result
+   }
+
+   return Output
+}
+
+// 中间件
+Verify.middleware = []
+Verify.use = function (fn) {
+   this.middleware.push(fn)
 }
 
 module.exports = Verify
