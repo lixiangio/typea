@@ -13,7 +13,8 @@ let data = {
    "guaranteeFormat": 1,
    "addressee": "嘟嘟",
    "receiveAddress": "快点快点的",
-   "phone": "18555555555"
+   "phone": "18555555555",
+   "coupon": "uuuu"
 }
 
 let verify = Verify(data, {
@@ -44,8 +45,8 @@ let verify = Verify(data, {
    "receiveAddress": String,
    "coupon": {
       "type": String,
-      "allowNull": true,
       "group": 'filter',
+      "export": false
    },
    "integral": {
       "type": Number,
@@ -61,5 +62,5 @@ if (verify.error) {
    console.log(verify.error)
 } else {
    console.log(verify.data)
-   console.log(verify.group)
+   // console.log(verify.group)
 }
