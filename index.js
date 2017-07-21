@@ -399,8 +399,8 @@ function Verify(data, options, handler = {}) {
    }
 
    // 自定义方法
-   if (handler.method) {
-      for (let path in handler.method) {
+   if (handler.methods) {
+      for (let path in handler.methods) {
          let data = output.data
          let pathArray = path.split('.')
          for (let key of pathArray) {
@@ -412,7 +412,7 @@ function Verify(data, options, handler = {}) {
             }
          }
          if (data !== undefined) {
-            handler.method[path].call(output, data)
+            handler.methods[path].call(output, data)
          }
       }
    }
