@@ -402,13 +402,18 @@ function Verify(data, options, handler = {}) {
    if (handler.method) {
       for (let path in handler.method) {
          let data = output.data
-         let dataPath = path.split('.')
-         for (let name of dataPath) {
-            if (data[name]) {
-               data = data[name]
+         let pathArray = path.split('.')
+         for (let key of pathArray) {
+            if (data[key]) {
+               data = data[key]
+            } else {
+               data = undefined
+               break
             }
          }
-         handler.method[path].call(output, data)
+         if (data !== undefined) {
+            handler.method[path].call(output, data)
+         }
       }
    }
 
@@ -452,6 +457,7 @@ function Verify(data, options, handler = {}) {
    if (handler.export) {
       let data = output.data
       for (let name in handler.export) {
+         // 对象不存在时自动创建
          if (!output[name]) {
             output[name] = {}
          }

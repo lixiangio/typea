@@ -41,7 +41,8 @@ let verify = Verify(data,
          "type": Number
       },
       "addressee": {
-         "type": String
+         "type": String,
+         "allowNull": true
       },
       "phone": String,
       "receiveAddress": String,
@@ -68,7 +69,7 @@ let verify = Verify(data,
          }
       },
       "depend": {
-         "guaranteeFormat": ["addressee", "phone"]
+         "guaranteeFormat": ["phone"]
       },
       // "path": {
       //    "addressee": "data.xx.$.sss"
