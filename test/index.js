@@ -68,13 +68,13 @@ let verify = Verify(data,
          }
       },
       "depend": {
-         "guaranteeFormat": ["addressee", "phone", "tt"]
+         "guaranteeFormat": ["addressee", "phone"]
       },
       // "path": {
       //    "addressee": "data.xx.$.sss"
       // },
       "export": {
-         "filter": ["coupon"]
+         "filter": ["coupon", "companyName", "phone"]
       }
    }
 )

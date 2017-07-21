@@ -21,11 +21,11 @@ let customize = {
  * @param {*} key 数据索引
  * @param {*} data 验证数据
  * @param {*} options 验证规则选项
- * @param {*} clone 克隆容器
+ * @param {*} parent 当前父级对象
  * @param {*} input 原始输入数据
  * @param {*} output 处理输出数据
  */
-function recursionVerify(key, data, options, clone, input, output) {
+function recursionVerify(key, data, options, parent, input, output) {
 
    // 选项为对象（引用型数据）
    if (typeof options === 'object') {
@@ -37,16 +37,16 @@ function recursionVerify(key, data, options, clone, input, output) {
             return `${key}参数必须为数组`
          }
 
-         // 非根级时创建数组结构
+         // 非根对象时创建数组结构
          if (key) {
-            clone[key] = []
-            clone = clone[key]
+            parent[key] = []
+            parent = parent[key]
          }
 
          for (let subKey in data) {
             let itemData = data[subKey]
             let itemOptions = options[0]
-            let result = recursionVerify(subKey, itemData, itemOptions, clone, input, output)
+            let result = recursionVerify(subKey, itemData, itemOptions, parent, input, output)
             if (result) return `${key}数组Key:${result}`
          }
 
@@ -224,7 +224,7 @@ function recursionVerify(key, data, options, clone, input, output) {
 
             // type为对象，用于实现允许对象结构为空表达式
             else if (typeof options.type === 'object') {
-               let result = recursionVerify(key, data, options.type, clone, input, output)
+               let result = recursionVerify(key, data, options.type, parent, input, output)
                if (result) {
                   if (Array.isArray(data)) {
                      return `${result}`
@@ -234,32 +234,10 @@ function recursionVerify(key, data, options, clone, input, output) {
                }
             }
 
-            // 关联参数绑定
-            if (options["&"]) {
-               for (let name of options["&"]) {
-                  if (input[name] === undefined) {
-                     return `${key}与${name}参数必须同时存在`
-                  }
-               }
-            }
-
-            // 分组数据（不管data是否为空，只要定义了分组就创建对应的分组对象）
-            if (options.export) {
-               if (!output[options.export]) {
-                  output[options.export] = {}
-               }
-            }
-
             // 导出
             if (data || data === 0) {
 
-               // 导出验证数据
-               clone[key] = data
-
-               // 导出分组数据
-               if (options.export) {
-                  output[options.export][key] = data
-               }
+               parent[key] = data
 
             }
 
@@ -272,10 +250,10 @@ function recursionVerify(key, data, options, clone, input, output) {
                return `${key}参数必须为对象`
             }
 
-            // 非根级时创建对象结构
+            // 非根对象时创建对象结构
             if (key) {
-               clone[key] = {}
-               clone = clone[key]
+               parent[key] = {}
+               parent = parent[key]
             }
 
             // 泛验证器（具有相同数据类型的可复用验证器）
@@ -283,7 +261,7 @@ function recursionVerify(key, data, options, clone, input, output) {
                for (let subKey in data) {
                   let itemData = data[subKey]
                   let itemOptions = options.$
-                  let result = recursionVerify(subKey, itemData, itemOptions, clone, input, output)
+                  let result = recursionVerify(subKey, itemData, itemOptions, parent, input, output)
                   if (result) return result
                }
             }
@@ -293,7 +271,7 @@ function recursionVerify(key, data, options, clone, input, output) {
                for (let subKey in options) {
                   let itemData = data[subKey]
                   let itemOptions = options[subKey]
-                  let result = recursionVerify(subKey, itemData, itemOptions, clone, input, output)
+                  let result = recursionVerify(subKey, itemData, itemOptions, parent, input, output)
                   if (result) return result
                }
             }
@@ -386,7 +364,7 @@ function recursionVerify(key, data, options, clone, input, output) {
       }
 
       //导出验证数据
-      clone[key] = data
+      parent[key] = data
    }
 }
 
@@ -436,12 +414,12 @@ function Verify(data, options, handler = {}) {
 
    // 参数依赖
    if (handler.depend) {
+      let data = output.data
       for (let name in handler.depend) {
-         let data = output.data
-         let depend = handler.depend[name]
-         for (let key of depend) {
-            if (!data[key]) {
-               output.error = `${name}与${key}必须同时存在`
+         let dependArray = handler.depend[name]
+         for (let key of dependArray) {
+            if (data[key] === undefined) {
+               output.error = `${name}与${key}参数必须同时存在`
                return output
             }
          }
@@ -470,12 +448,19 @@ function Verify(data, options, handler = {}) {
       }
    }
 
-   // 导出指定参数
+   // 导出参数至指定对象
    if (handler.export) {
-      for (let name in handler.path) {
-         let data = output.data[name]
-         let path = handler.path[name].split('.')
-         let target = output.data
+      let data = output.data
+      for (let name in handler.export) {
+         if (!output[name]) {
+            output[name] = {}
+         }
+         let exportArray = handler.export[name]
+         for (let path of exportArray) {
+            if (data[path]) {
+               output[name][path] = data[path]
+            }
+         }
       }
    }
 
