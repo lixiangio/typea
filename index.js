@@ -22,10 +22,10 @@ let customize = {
  * @param {*} data 验证数据
  * @param {*} options 验证规则选项
  * @param {*} clone 克隆容器
- * @param {*} output 数据导出容器
- * @param {*} origin 原始数据
+ * @param {*} input 原始输入数据
+ * @param {*} output 处理输出数据
  */
-function recursionVerify(key, data, options, clone, output, origin) {
+function recursionVerify(key, data, options, clone, input, output) {
 
    // 选项为对象（引用型数据）
    if (typeof options === 'object') {
@@ -46,7 +46,7 @@ function recursionVerify(key, data, options, clone, output, origin) {
          for (let subKey in data) {
             let itemData = data[subKey]
             let itemOptions = options[0]
-            let result = recursionVerify(subKey, itemData, itemOptions, clone, output, origin)
+            let result = recursionVerify(subKey, itemData, itemOptions, clone, input, output)
             if (result) return `${key}数组Key:${result}`
          }
 
@@ -224,7 +224,7 @@ function recursionVerify(key, data, options, clone, output, origin) {
 
             // type为对象，用于实现允许对象结构为空表达式
             else if (typeof options.type === 'object') {
-               let result = recursionVerify(key, data, options.type, clone, output, origin)
+               let result = recursionVerify(key, data, options.type, clone, input, output)
                if (result) {
                   if (Array.isArray(data)) {
                      return `${result}`
@@ -237,7 +237,7 @@ function recursionVerify(key, data, options, clone, output, origin) {
             // 关联参数绑定
             if (options["&"]) {
                for (let name of options["&"]) {
-                  if (origin[name] === undefined) {
+                  if (input[name] === undefined) {
                      return `${key}与${name}参数必须同时存在`
                   }
                }
@@ -283,7 +283,7 @@ function recursionVerify(key, data, options, clone, output, origin) {
                for (let subKey in data) {
                   let itemData = data[subKey]
                   let itemOptions = options.$
-                  let result = recursionVerify(subKey, itemData, itemOptions, clone, output, origin)
+                  let result = recursionVerify(subKey, itemData, itemOptions, clone, input, output)
                   if (result) return result
                }
             }
@@ -293,7 +293,7 @@ function recursionVerify(key, data, options, clone, output, origin) {
                for (let subKey in options) {
                   let itemData = data[subKey]
                   let itemOptions = options[subKey]
-                  let result = recursionVerify(subKey, itemData, itemOptions, clone, output, origin)
+                  let result = recursionVerify(subKey, itemData, itemOptions, clone, input, output)
                   if (result) return result
                }
             }
@@ -391,26 +391,96 @@ function recursionVerify(key, data, options, clone, output, origin) {
 }
 
 /**
- * 递归验证器
+ * 验证器
  * @param {*} data 验证数据
  * @param {*} options 验证数据表达式
  */
-function Verify(data, options) {
+function Verify(data, options, handler = {}) {
 
    // 数据导出容器
-   let Output = {
+   let output = {
       error: null,//错误信息
-      data: {},//验证容器
+      data: {},//验证数据
+   }
+
+   // 预定义变量
+   if (handler.define) {
+      for (let name of handler.define) {
+         if (!output[name]) {
+            output[name] = {}
+         }
+      }
    }
 
    // 递归验证
-   let result = recursionVerify(null, data, options, Output.data, Output, data)
+   let result = recursionVerify(null, data, options, output.data, data, output)
 
    if (result) {
-      Output.error = result
+      output.error = result
+      return output
    }
 
-   return Output
+   // 自定义方法
+   if (handler.method) {
+      for (let path in handler.method) {
+         let data = output.data
+         let dataPath = path.split('.')
+         for (let name of dataPath) {
+            if (data[name]) {
+               data = data[name]
+            }
+         }
+         handler.method[path].call(output, data)
+      }
+   }
+
+   // 参数依赖
+   if (handler.depend) {
+      for (let name in handler.depend) {
+         let data = output.data
+         let depend = handler.depend[name]
+         for (let key of depend) {
+            if (!data[key]) {
+               output.error = `${name}与${key}必须同时存在`
+               return output
+            }
+         }
+      }
+   }
+
+   // 按指定路径迁移数据
+   if (handler.path) {
+      for (let name in handler.path) {
+         let data = output.data[name]
+         let path = handler.path[name].split('.')
+         let target = output.data
+         // for (let key of path) {
+         //    if (key === "$") {
+
+         //    } else {
+         //       if (target[key]) {
+         //          target = target[key]
+         //       } else {
+         //          target = undefined
+         //          break
+         //       }
+         //    }
+         // }
+         // target = data
+      }
+   }
+
+   // 导出指定参数
+   if (handler.export) {
+      for (let name in handler.path) {
+         let data = output.data[name]
+         let path = handler.path[name].split('.')
+         let target = output.data
+      }
+   }
+
+   return output
+
 }
 
 // 中间件

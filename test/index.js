@@ -17,45 +17,67 @@ let data = {
    "coupon": "uuuu"
 }
 
-let verify = Verify(data, {
-   "tenderName": String,
-   "tenderNum": String,
-   "tenderEndTime": Date,
-   "companyName": {
-      "type": {
-         "typeId": {
-            "type": String,
-            "allowNull": true
+let verify = Verify(data,
+   {
+      "tenderName": String,
+      "tenderNum": String,
+      "tenderEndTime": Date,
+      "companyName": {
+         "type": {
+            "typeId": {
+               "type": String,
+               "allowNull": true
+            }
+         },
+         "allowNull": true
+      },
+      "beneficiariesName": String,
+      "guaranteeMoney": Number,
+      "customizeGuaranteeFormat": {
+         "type": [String],
+         "allowNull": true
+      },
+      "guaranteeFormat": {
+         "type": Number
+      },
+      "addressee": {
+         "type": String
+      },
+      "phone": String,
+      "receiveAddress": String,
+      "coupon": {
+         "type": String
+      },
+      "integral": {
+         "type": Number,
+         "allowNull": true
+      },
+      "email": {
+         "type": String,
+         "allowNull": true
+      }
+   },
+   {
+      "define": ["filter", "uu"],
+      "method": {
+         "addressee": function (value) {
+            this.data.xxx = value
+         },
+         "coupon": function (value) {
+            this.data.kkk = value
          }
       },
-      "allowNull": true
-   },
-   "beneficiariesName": String,
-   "guaranteeMoney": Number,
-   "customizeGuaranteeFormat": {
-      "type": [String],
-      "allowNull": true
-   },
-   "guaranteeFormat": {
-      "type": Number,
-      "&": ["addressee", "phone", "receiveAddress"]
-   },
-   "addressee": String,
-   "phone": String,
-   "receiveAddress": String,
-   "coupon": {
-      "type": String,
-      "export": 'filter'
-   },
-   "integral": {
-      "type": Number,
-      "allowNull": true
-   },
-   "email": {
-      "type": String,
-      "allowNull": true
+      "depend": {
+         "guaranteeFormat": ["addressee", "phone", "tt"]
+      },
+      // "path": {
+      //    "addressee": "data.xx.$.sss"
+      // },
+      "export": {
+         "filter": ["coupon"]
+      }
    }
-})
+)
 
 if (verify.error) {
    console.log(verify.error)
