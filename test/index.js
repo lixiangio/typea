@@ -60,7 +60,7 @@ let verify = Verify(data,
    },
    {
       "define": ["filter", "uu"],
-      "method": {
+      "methods": {
          "addressee": function (value) {
             this.data.xxx = value
          },
