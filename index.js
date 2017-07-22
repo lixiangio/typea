@@ -404,7 +404,7 @@ function Verify(data, options, handler = {}) {
          }
          let groupArray = handler.group[name]
          for (let path of groupArray) {
-            if (data[path]) {
+            if (data[path] !== undefined) {
                output[name][path] = data[path]
             }
          }

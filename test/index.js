@@ -14,7 +14,8 @@ let data = {
    "addressee": "嘟嘟",
    "receiveAddress": "快点快点的",
    "phone": "18555555555",
-   "coupon": "uuuu"
+   "coupon": "uuuu",
+   "integral": 0
 }
 
 let verify = Verify(data,
@@ -74,7 +75,7 @@ let verify = Verify(data,
       //    "addressee": "data.xx.$.sss"
       // },
       "group": {
-         "filter": ["coupon", "companyName", "phone"]
+         "filter": ["coupon", "companyName", "phone", "integral"]
       }
    }
 )
