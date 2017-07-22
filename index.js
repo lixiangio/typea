@@ -398,21 +398,19 @@ function Verify(data, options, handler = {}) {
       return output
    }
 
-   // 自定义方法
-   if (handler.methods) {
-      for (let path in handler.methods) {
-         let data = output.data
-         let pathArray = path.split('.')
-         for (let key of pathArray) {
-            if (data[key]) {
-               data = data[key]
-            } else {
-               data = undefined
-               break
-            }
+   // 分组导出参数至指定对象
+   if (handler.group) {
+      let data = output.data
+      for (let name in handler.group) {
+         // 对象不存在时自动创建
+         if (!output[name]) {
+            output[name] = {}
          }
-         if (data !== undefined) {
-            handler.methods[path].call(output, data)
+         let groupArray = handler.group[name]
+         for (let path of groupArray) {
+            if (data[path]) {
+               output[name][path] = data[path]
+            }
          }
       }
    }
@@ -453,19 +451,21 @@ function Verify(data, options, handler = {}) {
       }
    }
 
-   // 分组导出参数至指定对象
-   if (handler.group) {
-      let data = output.data
-      for (let name in handler.group) {
-         // 对象不存在时自动创建
-         if (!output[name]) {
-            output[name] = {}
-         }
-         let groupArray = handler.group[name]
-         for (let path of groupArray) {
-            if (data[path]) {
-               output[name][path] = data[path]
+   // 自定义方法
+   if (handler.methods) {
+      for (let path in handler.methods) {
+         let data = output.data
+         let pathArray = path.split('.')
+         for (let key of pathArray) {
+            if (data[key]) {
+               data = data[key]
+            } else {
+               data = undefined
+               break
             }
+         }
+         if (data !== undefined) {
+            handler.methods[path].call(output, data)
          }
       }
    }
