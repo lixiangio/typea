@@ -368,6 +368,21 @@ function recursionVerify(key, data, options, parent, input, output) {
    }
 }
 
+
+// 通过Path获取数据
+function pathGetData(data, path) {
+   let pathArray = path.split('.')
+   for (let key of pathArray) {
+      if (data[key] === undefined) {
+         return undefined
+      } else {
+         data = data[key]
+      }
+   }
+   return data
+}
+
+
 /**
  * 验证器
  * @param {*} data 验证数据
@@ -450,16 +465,7 @@ function Verify(data, options, handler = {}) {
    // 自定义方法
    if (handler.methods) {
       for (let path in handler.methods) {
-         let data = output.data
-         let pathArray = path.split('.')
-         for (let key of pathArray) {
-            if (data[key]) {
-               data = data[key]
-            } else {
-               data = undefined
-               break
-            }
-         }
+         let data = pathGetData(output.data, path)
          if (data !== undefined) {
             handler.methods[path].call(output, data)
          }

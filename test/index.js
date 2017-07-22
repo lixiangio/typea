@@ -15,7 +15,10 @@ let data = {
    "receiveAddress": "快点快点的",
    "phone": "18555555555",
    "coupon": "uuuu",
-   "integral": 0
+   "integral": {
+      "lala": 168,
+      "kaka": 595959
+   }
 }
 
 let verify = Verify(data,
@@ -51,8 +54,14 @@ let verify = Verify(data,
          "type": String
       },
       "integral": {
-         "type": Number,
-         "allowNull": true
+         "lala": {
+            "type": Number,
+            "allowNull": true
+         },
+         "kaka": {
+            "type": Number,
+            "allowNull": true
+         }
       },
       "email": {
          "type": String,
@@ -64,7 +73,8 @@ let verify = Verify(data,
          "addressee": function (value) {
             this.data.xxx = value
          },
-         "coupon": function (value) {
+         "integral.kaka": function (value) {
+            console.log(value)
             this.data.kkk = value
          }
       },
