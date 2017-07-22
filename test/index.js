@@ -59,7 +59,6 @@ let verify = Verify(data,
       }
    },
    {
-      "define": ["filter", "uu"],
       "methods": {
          "addressee": function (value) {
             this.data.xxx = value

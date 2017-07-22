@@ -378,16 +378,12 @@ function Verify(data, options, handler = {}) {
    // 数据导出容器
    let output = {
       error: null,//错误信息
-      data: {},//验证数据
-   }
-
-   // 预定义变量
-   if (handler.define) {
-      for (let name of handler.define) {
-         if (!output[name]) {
-            output[name] = {}
-         }
-      }
+      data: {},//验证结果
+      query: {},//查询条件（预定义）
+      filter: {},//过滤条件（预定义）
+      insert: {},//插入数据（预定义）
+      update: {},//更新数据（预定义）
+      options: {},//选项（预定义）
    }
 
    // 递归验证
