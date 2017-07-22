@@ -453,16 +453,16 @@ function Verify(data, options, handler = {}) {
       }
    }
 
-   // 导出参数至指定对象
-   if (handler.export) {
+   // 分组导出参数至指定对象
+   if (handler.group) {
       let data = output.data
-      for (let name in handler.export) {
+      for (let name in handler.group) {
          // 对象不存在时自动创建
          if (!output[name]) {
             output[name] = {}
          }
-         let exportArray = handler.export[name]
-         for (let path of exportArray) {
+         let groupArray = handler.group[name]
+         for (let path of groupArray) {
             if (data[path]) {
                output[name][path] = data[path]
             }

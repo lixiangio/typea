@@ -74,7 +74,7 @@ let verify = Verify(data,
       // "path": {
       //    "addressee": "data.xx.$.sss"
       // },
-      "export": {
+      "group": {
          "filter": ["coupon", "companyName", "phone"]
       }
    }
