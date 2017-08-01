@@ -357,22 +357,25 @@ function recursionVerify(key, data, options, parent, input, output) {
 
          }
 
-         // 自定义方法
+         // 自定义构造方法
          else {
 
+            // 空值过滤
             let result = options.call(input, output)
             if (typeof result === 'object') {
-               let count = 0
+               let start = true
                for (let key in result) {
-                  count++
-                  if (!result[key]) {1
+                  if (result[key]) {
+                     start = false
+                  } else {
                      delete result[key]
                   }
                }
-               if (!count) {
+               if (start) {
                   return
                }
             }
+
             data = result
 
          }
