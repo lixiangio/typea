@@ -235,16 +235,11 @@ function recursionVerify(key, data, options, parent, input, output) {
                }
             }
 
-            // 导出
-            if (data !== undefined) {
-
-               // 重命名
-               if (options.rename) {
-                  parent[options.rename] = data
-               } else {
-                  parent[key] = data
-               }
-
+            // 重命名
+            if (options.rename) {
+               parent[options.rename] = data
+            } else {
+               parent[key] = data
             }
 
          }
