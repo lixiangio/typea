@@ -99,9 +99,6 @@ function recursionVerify(key, data, options, parent, input, output) {
                   if (typeof data !== 'string') {
                      return `${key}参数必须为字符串`
                   }
-                  if (data === '') {
-                     return `${key}参数不能为空`
-                  }
 
                   // 长度验证
                   if (options.minLength) {
@@ -237,7 +234,7 @@ function recursionVerify(key, data, options, parent, input, output) {
             }
 
             // 导出
-            if (data || data === 0) {
+            if (data !== undefined) {
 
                // 重命名
                if (options.rename) {
