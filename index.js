@@ -362,10 +362,15 @@ function recursionVerify(key, data, options, parent, input, output) {
 
             let result = options.call(input, output)
             if (typeof result === 'object') {
+               let count = 0
                for (let key in result) {
-                  if (!result[key]) {
+                  count++
+                  if (!result[key]) {1
                      delete result[key]
                   }
+               }
+               if (!count) {
+                  return
                }
             }
             data = result
