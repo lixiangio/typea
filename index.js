@@ -69,7 +69,9 @@ function recursionVerify(key, data, options, parent, input, output) {
                }
 
                // 允许为空
-               else if (!options.allowNull) {
+               else if (options.allowNull) {
+                  return
+               } else {
                   return `${key}参数不能为空`
                }
 
