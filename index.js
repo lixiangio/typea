@@ -499,10 +499,10 @@ function Verify(data, options, handler = {}) {
 
 }
 
-// 中间件
-Verify.middleware = []
-Verify.use = function (fn) {
-   this.middleware.push(fn)
-}
+// 自定义扩展中间件
+// Verify.middleware = []
+// Verify.use = function (fn) {
+//    this.middleware.push(fn)
+// }
 
 module.exports = Verify
