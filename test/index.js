@@ -10,7 +10,7 @@ let query = {
    },
    "beneficiariesName": "莉莉",
    "guaranteeMoney": "88343.256",
-   "guaranteeFormat": 1,
+   "guaranteeFormat": 0,
    "addressee": "嘟嘟",
    "receiveAddress": "快点快点的",
    "phone": "18565799072",
@@ -44,7 +44,8 @@ let { error, data, filter } = Verify(query,
          "allowNull": true
       },
       "guaranteeFormat": {
-         "type": Number
+         "type": Number,
+         "conversion": Boolean
       },
       "addressee": {
          "type": String,

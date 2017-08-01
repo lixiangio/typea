@@ -61,7 +61,7 @@ function recursionVerify(key, data, options, parent, input, output) {
          if (options.type) {
 
             // 空值处理
-            if (data === undefined) {
+            if (data === undefined || data === '') {
 
                // 默认
                if (options.default) {
