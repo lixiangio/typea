@@ -1,6 +1,6 @@
 let Verify = require('../index')
 
-let data = {
+let query = {
    "tenderName": "测试",
    "tenderNum": "123456789987",
    "tenderEndTime": "2017-07-07T09:53:30.000Z",
@@ -13,15 +13,16 @@ let data = {
    "guaranteeFormat": 1,
    "addressee": "嘟嘟",
    "receiveAddress": "快点快点的",
-   "phone": "18555555555",
+   "phone": "18565799072",
    "coupon": "uuuu",
    "integral": {
       "lala": 168,
       "kaka": 595959
-   }
+   },
+   "email": "xxx@xx.xx"
 }
 
-let verify = Verify(data,
+let { error, data, filter } = Verify(query,
    {
       "tenderName": String,
       "tenderNum": String,
@@ -49,7 +50,7 @@ let verify = Verify(data,
          "type": String,
          "allowNull": true
       },
-      "phone": String,
+      "phone": "MobilePhone",
       "receiveAddress": String,
       "coupon": {
          "type": String
@@ -68,10 +69,10 @@ let verify = Verify(data,
          "type": String,
          "allowNull": true
       },
-      "dede": function () {
+      "ooooo": function () {
          return {
-            "a": 1,
-            "b": 2,
+            "a": 565,
+            "b": undefined,
          }
       }
    },
@@ -85,20 +86,20 @@ let verify = Verify(data,
          }
       },
       "depend": {
-         "guaranteeFormat": ["phone"]
+         "guaranteeFormat": ["addressee"]
       },
       // "path": {
       //    "addressee": "data.xx.$.sss"
       // },
       "group": {
-         "filter": ["coupon", "companyName", "phone", "integral"]
+         "filter": ["coupon", "companyName", "phone", "integral", "ooooo"]
       }
    }
 )
 
-if (verify.error) {
-   console.log(verify.error)
+if (error) {
+   console.log(error)
 } else {
-   console.log(verify.data)
-   console.log(verify.filter)
+   console.log(data)
+   console.log(filter)
 }

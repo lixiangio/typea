@@ -1,3 +1,5 @@
+"use strict";
+
 let validator = require('validator')
 
 // 自定义类型
@@ -289,8 +291,6 @@ function recursionVerify(key, data, options, parent, input, output) {
    // 选项为非对象（赋值型数据）
    else {
 
-      console.log(typeof options)
-
       // 选项为函数（JS内置数据类型）
       if (typeof options === 'function') {
 
@@ -312,7 +312,7 @@ function recursionVerify(key, data, options, parent, input, output) {
          }
 
          // 数值型
-         if (options === Number) {
+         else if (options === Number) {
 
             data = Number(data)
             if (isNaN(data)) {
@@ -357,6 +357,21 @@ function recursionVerify(key, data, options, parent, input, output) {
 
          }
 
+         // 自定义方法
+         else {
+
+            let result = options.call(input, output)
+            if (typeof result === 'object') {
+               for (let key in result) {
+                  if (!result[key]) {
+                     delete result[key]
+                  }
+               }
+            }
+            data = result
+
+         }
+
       }
 
       // 选项为字符串（自定义数据类型）
@@ -370,9 +385,10 @@ function recursionVerify(key, data, options, parent, input, output) {
 
       }
 
-      //导出验证数据
+      //将验证数据保存至父节点
       parent[key] = data
    }
+
 }
 
 
