@@ -289,6 +289,8 @@ function recursionVerify(key, data, options, parent, input, output) {
    // 选项为非对象（赋值型数据）
    else {
 
+      console.log(typeof options)
+
       // 选项为函数（JS内置数据类型）
       if (typeof options === 'function') {
 

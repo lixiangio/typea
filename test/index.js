@@ -67,6 +67,12 @@ let verify = Verify(data,
       "email": {
          "type": String,
          "allowNull": true
+      },
+      "dede": function () {
+         return {
+            "a": 1,
+            "b": 2,
+         }
       }
    },
    {
@@ -75,7 +81,6 @@ let verify = Verify(data,
             this.data.xxx = value
          },
          "integral.kaka": function (value) {
-            console.log(value)
             this.data.kkk = value
          }
       },
