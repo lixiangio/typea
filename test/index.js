@@ -1,7 +1,7 @@
 let Verify = require('../index')
 
 let query = {
-   "tenderName": "测试",
+   // "tenderName": "测试",
    "tenderNum": "123456789987",
    "tenderEndTime": "2017-07-07T09:53:30.000Z",
    "customizeGuaranteeFormat": ["xxx.js", "xxx.js"],
@@ -24,8 +24,14 @@ let query = {
 
 let { error, data, filter } = Verify(query,
    {
-      "tenderName": String,
-      "tenderNum": String,
+      "tenderName": {
+         "type": String,
+         "allowNull": true
+      },
+      "tenderNum": {
+         "type": String,
+         "allowNull": true
+      },
       "tenderEndTime": Date,
       "companyName": {
          "type": {
@@ -45,6 +51,7 @@ let { error, data, filter } = Verify(query,
       },
       "guaranteeFormat": {
          "type": Number,
+         "allowNull": true,
          "conversion": Boolean
       },
       "addressee": {
@@ -89,9 +96,10 @@ let { error, data, filter } = Verify(query,
             this.data.kkk = value
          }
       },
-      "depend": {
-         "guaranteeFormat": ["addressee"]
-      },
+      "coexist": [
+         ["guaranteeFormat", "addressee"],
+         ["tenderName", "tenderNum"]
+      ],
       // "path": {
       //    "addressee": "data.xx.$.sss"
       // },

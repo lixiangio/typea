@@ -456,15 +456,16 @@ function Verify(data, options, handler = {}) {
       }
    }
 
-   // 参数依赖
-   if (handler.depend) {
+   // 关联参数，只能共同存在或消失
+   if (handler.coexist) {
       let data = output.data
-      for (let name in handler.depend) {
-         let dependArray = handler.depend[name]
-         for (let key of dependArray) {
-            if (data[key] === undefined) {
-               output.error = `${name}与${key}参数必须同时存在`
-               return output
+      for (let item of handler.coexist) {
+         for (let name of item) {
+            if (data[name] === undefined) {
+               for (let name of item) {
+                  delete data[name]
+               }
+               break
             }
          }
       }
