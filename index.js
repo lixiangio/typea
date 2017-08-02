@@ -138,10 +138,10 @@ function recursionVerify(key, data, options, parent, input, output) {
                   }
 
                   // 包含
-                  else if (options.contain) {
+                  if (options.contain) {
                      let result = options.contain.indexOf(data)
                      if (result === -1) {
-                        return `${key}参数值不包含${typeof data}：${data}`
+                        return `${key}参数可选值必须为${typeof data}类型${options.contain}`
                      }
                   }
 
