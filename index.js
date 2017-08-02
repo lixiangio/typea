@@ -63,18 +63,6 @@ function recursionVerify(key, data, options, parent, input, output) {
 
             }
 
-            // 包含
-            else if (options.contain) {
-               // 对Number类型特殊照顾，将字符串转数值
-               if (options.type === Number) {
-                  data = Number(data)
-               }
-               let result = options.contain.indexOf(data)
-               if (result === -1) {
-                  return `${key}参数值不包含${typeof data}：${data}`
-               }
-            }
-
             // type为JS内置数据类型
             else if (typeof options.type === 'function') {
 
@@ -94,6 +82,7 @@ function recursionVerify(key, data, options, parent, input, output) {
                         return `${key}参数长度不能小于${options.minLength}个字符`
                      }
                   }
+
                   if (options.maxLength) {
                      if (data.length > options.maxLength) {
                         return `${key}参数长度不能大于${options.maxLength}个字符`
@@ -145,6 +134,14 @@ function recursionVerify(key, data, options, parent, input, output) {
                   if (options.max) {
                      if (data > options.max) {
                         return `${key}参数不能大于${options.max}`
+                     }
+                  }
+
+                  // 包含
+                  else if (options.contain) {
+                     let result = options.contain.indexOf(data)
+                     if (result === -1) {
+                        return `${key}参数值不包含${typeof data}：${data}`
                      }
                   }
 
