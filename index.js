@@ -2,21 +2,7 @@
 
 let validator = require('validator')
 
-// 自定义类型
-let customize = {
-   // mongoDB ID
-   ObjectId(data, key) {
-      if (!validator.isMongoId(data + '')) {
-         return `${key}参数必须为ObjectId`
-      }
-   },
-   // 手机号
-   MobilePhone(data, key) {
-      if (!validator.isMobilePhone(data + '', 'zh-CN')) {
-         return `${key}参数必须为手机号`
-      }
-   }
-}
+let customize = require('./customize')
 
 /**
  * 递归验证器
@@ -392,7 +378,6 @@ function recursionVerify(key, data, options, parent, input, output) {
 
 }
 
-
 // 通过Path获取数据
 function pathGetData(data, path) {
    let pathArray = path.split('.')
@@ -405,7 +390,6 @@ function pathGetData(data, path) {
    }
    return data
 }
-
 
 /**
  * 验证器

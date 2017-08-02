@@ -1,5 +1,9 @@
+"use strict";
+
+let validator = require('validator')
+
 // 自定义类型
-let customize = {
+module.exports = {
    // mongoDB ID
    ObjectId(data, key) {
       if (!validator.isMongoId(data + '')) {
@@ -13,5 +17,3 @@ let customize = {
       }
    }
 }
-
-module.exports = customize
