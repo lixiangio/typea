@@ -68,7 +68,10 @@ let { error, data, filter } = Verify(query,
       },
       "email": {
          "type": String,
-         "allowNull": true
+         "allowNull": true,
+         method(value) {
+            return [value, "7777"]
+         }
       },
       "ooooo": function () {
          return {
