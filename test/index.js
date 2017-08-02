@@ -79,7 +79,7 @@ let { error, data, filter } = Verify(query,
       },
       xxx() {
          return {
-            "a": 666,
+            "a": "123",
             "b": undefined,
          }
       }
