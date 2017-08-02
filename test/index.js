@@ -17,7 +17,7 @@ let query = {
    "coupon": "uuuu",
    "integral": {
       "lala": 168,
-      "kaka": 2
+      "kaka": "3"
    },
    "email": "xxx@xx.xx"
 }
@@ -66,7 +66,7 @@ let { error, data, filter } = Verify(query,
          },
          "kaka": {
             "type": Number,
-            "contain": [1, 2, 3],
+            "in": [1, 2, 3],
             "allowNull": true
          }
       },

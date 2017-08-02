@@ -89,23 +89,31 @@ function recursionVerify(key, data, options, parent, input, output) {
                      }
                   }
 
-                  // 包含字符串
-                  if (options.contain) {
-                     if (options.contain === Number) {
-                        if (data.search(/\d+/) === -1) {
-                           return `${key}参数必须包含数字`
-                        }
+                  // 包含
+                  if (options.in) {
+                     let result = options.in.indexOf(data)
+                     if (result === -1) {
+                        return `${key}参数可选值必须为:${options.in}`
                      }
                   }
 
-                  // 不包含
-                  if (options.noContain) {
-                     if (options.noContain === Number) {
-                        if (data.search(/\d+/) > -1) {
-                           return `${key}参数不能包含数字`
-                        }
-                     }
-                  }
+                  // 包含字符串
+                  // if (options.contain) {
+                  //    if (options.contain === Number) {
+                  //       if (data.search(/\d+/) === -1) {
+                  //          return `${key}参数必须包含数字`
+                  //       }
+                  //    }
+                  // }
+
+                  // // 不包含
+                  // if (options.noContain) {
+                  //    if (options.noContain === Number) {
+                  //       if (data.search(/\d+/) > -1) {
+                  //          return `${key}参数不能包含数字`
+                  //       }
+                  //    }
+                  // }
 
                   // 正则表达式
                   if (options.reg) {
@@ -138,10 +146,10 @@ function recursionVerify(key, data, options, parent, input, output) {
                   }
 
                   // 包含
-                  if (options.contain) {
-                     let result = options.contain.indexOf(data)
+                  if (options.in) {
+                     let result = options.in.indexOf(data)
                      if (result === -1) {
-                        return `${key}参数可选值必须为${typeof data}类型${options.contain}`
+                        return `${key}参数可选值必须为:${options.in}`
                      }
                   }
 
