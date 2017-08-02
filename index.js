@@ -354,8 +354,9 @@ function recursionVerify(key, data, options, parent, input, output) {
          // 自定义构造方法
          else {
 
-            // 空值过滤
             let result = options.call(input, output)
+
+            // 对象空值过滤
             if (typeof result === 'object') {
                let start = true
                for (let key in result) {
@@ -365,9 +366,7 @@ function recursionVerify(key, data, options, parent, input, output) {
                      delete result[key]
                   }
                }
-               if (start) {
-                  return
-               }
+               if (start) return
             }
 
             data = result
