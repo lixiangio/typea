@@ -303,7 +303,7 @@ function recursionVerify(key, data, options, parent, input, output) {
          // 自定义构建方法（根据Function.length长度判定是否为自定义构造器）
          if (options.length === 0) {
 
-            let result = options.call(input, output)
+            let result = options.call(output.data, output)
 
             // 对象空值过滤
             if (typeof result === 'object') {
