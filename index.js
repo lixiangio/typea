@@ -15,10 +15,10 @@ let customize = require('./customize')
  */
 function recursionVerify(key, data, options, parent, input, output) {
 
-   // 选项为对象（引用型数据）
+   // 选项为对象
    if (typeof options === 'object') {
 
-      // 选项为数组结构
+      // 选项为数组（数据结构）
       if (Array.isArray(options)) {
 
          if (!Array.isArray(data)) {
@@ -43,7 +43,7 @@ function recursionVerify(key, data, options, parent, input, output) {
       // 选项为对象
       else {
 
-         // 选项为验证器（type作为保留关键字，禁止作为参数名使用，且只允许定义数据类型，不能定义数据结构）
+         // 选项为验证表达式（type作为保留关键字，只允许定义数据类型，不能用作参数名）
          if (options.type) {
 
             // 空值处理
@@ -221,6 +221,28 @@ function recursionVerify(key, data, options, parent, input, output) {
                }
             }
 
+            // 自定义构建方法
+            if (options.construct) {
+
+               let result = options.construct.call(input, output)
+
+               // 对象空值过滤
+               if (typeof result === 'object') {
+                  let start = true
+                  for (let key in result) {
+                     if (result[key]) {
+                        start = false
+                     } else {
+                        delete result[key]
+                     }
+                  }
+                  if (start) return
+               }
+
+               data = result
+
+            }
+
             // 重命名
             if (options.rename) {
                parent[options.rename] = data
@@ -230,7 +252,7 @@ function recursionVerify(key, data, options, parent, input, output) {
 
          }
 
-         // 选项为对象结构
+         // 选项为对象（数据结构）
          else {
 
             if (typeof data !== 'object') {
@@ -253,7 +275,7 @@ function recursionVerify(key, data, options, parent, input, output) {
                }
             }
 
-            // 指定验证器
+            // 子集递归验证
             else {
                for (let subKey in options) {
                   let itemData = data[subKey]
@@ -268,10 +290,10 @@ function recursionVerify(key, data, options, parent, input, output) {
 
    }
 
-   // 选项为非对象（赋值型数据）
+   // 选项为非对象
    else {
 
-      // 选项为函数（JS内置数据类型）
+      // 选项为函数
       if (typeof options === 'function') {
 
          // 字符串类型
@@ -337,7 +359,7 @@ function recursionVerify(key, data, options, parent, input, output) {
 
          }
 
-         // 自定义构造方法
+         // 自定义构建方法
          else {
 
             let result = options.call(input, output)
