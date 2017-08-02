@@ -55,10 +55,10 @@ function recursionVerify(key, data, options, parent, input, output) {
                }
 
                // 允许为空
-               else if (options.allowNull) {
-                  return
-               } else {
+               else if (options.allowNull === false) {
                   return `${key}参数不能为空`
+               } else {
+                  return
                }
 
             }
@@ -245,10 +245,10 @@ function recursionVerify(key, data, options, parent, input, output) {
 
             // 重命名
             if (options.rename) {
-               parent[options.rename] = data
-            } else {
-               parent[key] = data
+               key = options.rename
             }
+
+            parent[key] = data
 
          }
 
@@ -292,6 +292,10 @@ function recursionVerify(key, data, options, parent, input, output) {
 
    // 选项为非对象
    else {
+
+      if (data === undefined || data === '') {
+         return
+      }
 
       // 选项为函数
       if (typeof options === 'function') {

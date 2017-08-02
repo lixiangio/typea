@@ -1,7 +1,7 @@
 let Verify = require('../index')
 
 let query = {
-   // "tenderName": "测试",
+   "tenderName": "测试",
    "tenderNum": "123456789987",
    "tenderEndTime": "2017-07-07T09:53:30.000Z",
    "customizeGuaranteeFormat": ["xxx.js", "xxx.js"],
@@ -26,22 +26,18 @@ let { error, data, filter } = Verify(query,
    {
       "tenderName": {
          "type": String,
-         "allowNull": true
+         "allowNull": false
       },
       "tenderNum": {
          "type": String,
-         "allowNull": true
       },
       "tenderEndTime": Date,
       "companyName": {
          "type": {
             "typeId": {
                "type": String,
-               "allowNull": true
             }
-         },
-         "allowNull": true,
-         "rename": "uuuuu",
+         }
       },
       "beneficiariesName": String,
       "guaranteeMoney": Number,
