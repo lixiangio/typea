@@ -76,7 +76,7 @@ let { error, data, filter } = Verify(query,
             return [value, "7777"]
          }
       },
-      "ooooo": function () {
+      xxx() {
          return {
             "a": 666,
             "b": undefined,
@@ -100,7 +100,7 @@ let { error, data, filter } = Verify(query,
       //    "addressee": "data.xx.$.sss"
       // },
       "group": {
-         "filter": ["coupon", "companyName", "phone", "integral", "ooooo"]
+         "filter": ["coupon", "companyName", "phone", "integral", "xxx"]
       }
    }
 )

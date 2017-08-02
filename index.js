@@ -290,81 +290,13 @@ function recursionVerify(key, data, options, parent, input, output) {
 
    }
 
-   // 选项为非对象
-   else {
+   // 选项为函数
+   else if (typeof options === 'function') {
 
       if (data === undefined || data === '') {
-         return
-      }
-
-      // 选项为函数
-      if (typeof options === 'function') {
-
-         // 字符串类型
-         if (options === String) {
-
-            if (!data) {
-               return `${key}参数不存在`
-            }
-
-            if (typeof data !== 'string') {
-               return `${key}参数必须为字符串`
-            }
-
-            if (data === '') {
-               return `${key}参数不能为空`
-            }
-
-         }
-
-         // 数值型
-         else if (options === Number) {
-
-            data = Number(data)
-            if (isNaN(data)) {
-               return `${key}参数必须为数值或可转换为数值的字符串`
-            }
-
-         }
-
-         // 对象
-         else if (options === Object) {
-
-            if (typeof data !== 'object') {
-               return `${key}参数必须为对象`
-            }
-
-         }
-
-         // 数组
-         else if (options === Array) {
-
-            if (!Array.isArray(data)) {
-               return `${key}参数必须为数组`
-            }
-
-         }
-
-         // 日期
-         else if (options === Date) {
-
-            if (!validator.toDate(data + '')) {
-               return `${key}参数必须为日期类型`
-            }
-
-         }
-
-         // 布尔
-         else if (options === Boolean) {
-
-            if (typeof data !== 'boolean') {
-               return `${key}参数必须为布尔值`
-            }
-
-         }
 
          // 自定义构建方法
-         else {
+         if (options.length === 0) {
 
             let result = options.call(input, output)
 
@@ -385,17 +317,84 @@ function recursionVerify(key, data, options, parent, input, output) {
 
          }
 
+         return
       }
 
-      // 选项为字符串（自定义数据类型）
-      else if (typeof options === 'string') {
+      // 字符串类型
+      if (options === String) {
 
-         if (customize[options]) {
-            return customize[options](data, key)
-         } else {
-            return `${options}自定义类型不存在`
+         if (!data) {
+            return `${key}参数不存在`
          }
 
+         if (typeof data !== 'string') {
+            return `${key}参数必须为字符串`
+         }
+
+         if (data === '') {
+            return `${key}参数不能为空`
+         }
+
+      }
+
+      // 数值型
+      else if (options === Number) {
+
+         data = Number(data)
+         if (isNaN(data)) {
+            return `${key}参数必须为数值或可转换为数值的字符串`
+         }
+
+      }
+
+      // 对象
+      else if (options === Object) {
+
+         if (typeof data !== 'object') {
+            return `${key}参数必须为对象`
+         }
+
+      }
+
+      // 数组
+      else if (options === Array) {
+
+         if (!Array.isArray(data)) {
+            return `${key}参数必须为数组`
+         }
+
+      }
+
+      // 日期
+      else if (options === Date) {
+
+         if (!validator.toDate(data + '')) {
+            return `${key}参数必须为日期类型`
+         }
+
+      }
+
+      // 布尔
+      else if (options === Boolean) {
+
+         if (typeof data !== 'boolean') {
+            return `${key}参数必须为布尔值`
+         }
+
+      }
+
+      //将验证数据保存至父节点
+      parent[key] = data
+
+   }
+
+   // 选项为字符串（自定义数据类型）
+   else if (typeof options === 'string') {
+
+      if (customize[options]) {
+         return customize[options](data, key)
+      } else {
+         return `${options}自定义类型不存在`
       }
 
       //将验证数据保存至父节点
