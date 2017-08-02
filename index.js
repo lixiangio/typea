@@ -295,7 +295,7 @@ function recursionVerify(key, data, options, parent, input, output) {
 
       if (data === undefined || data === '') {
 
-         // 自定义构建方法
+         // 自定义构建方法（根据Function.length长度判定是否为自定义构造器）
          if (options.length === 0) {
 
             let result = options.call(input, output)
@@ -315,13 +315,14 @@ function recursionVerify(key, data, options, parent, input, output) {
 
             data = result
 
+         } else {
+            return
          }
 
-         return
       }
 
       // 字符串类型
-      if (options === String) {
+      else if (options === String) {
 
          if (!data) {
             return `${key}参数不存在`
