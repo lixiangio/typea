@@ -309,7 +309,7 @@ function recursionVerify(key, data, options, parent, input, output) {
             if (typeof result === 'object') {
                let start = true
                for (let key in result) {
-                  if (result[key] === undefined) {
+                  if (result[key] === undefined || result[key] === "") {
                      delete result[key]
                   } else {
                      start = false
