@@ -74,6 +74,8 @@ let { error, data, filter } = Verify(query,
          "type": String,
          "allowNull": true,
          method(value) {
+            console.log(this)
+            console.log('----------------')
             return [value, "7777"]
          }
       },

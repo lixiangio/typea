@@ -229,7 +229,7 @@ function recursionVerify(key, data, options, parent, input, output) {
             // 自定义构建方法
             if (options.method) {
 
-               let result = options.method.call(input, data)
+               let result = options.method.call(output, data)
 
                // 对象空值过滤
                if (typeof result === 'object') {
