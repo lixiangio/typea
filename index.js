@@ -8,6 +8,52 @@ let Handler = require('./handler')
 
 let filterNull = require('./filterNull')
 
+
+/**
+ * 验证器
+ * @param {*} data 数据源
+ * @param {*} options 验证表达式
+ * @param {*} handler 验证结果处理
+ */
+function Verify(data, options, handler = {}) {
+
+   // 数据导出容器
+   let output = {
+      error: null,//错误信息
+      data: {},//验证结果
+   }
+
+   // 递归验证
+   let error = recursionVerify(data, options, output.data, null, data, output)
+
+   if (error) {
+      output.error = error
+      return output
+   }
+
+   // 空值过滤
+   output = filterNull(output)
+
+   // 验证结果处理函数
+   for (let name in handler) {
+      let fun = Handler[name]
+      let options = handler[name]
+      // 使用处理函数处理
+      if (fun) {
+         fun(output, options)
+      }
+      // 使用自定义构造函数处理
+      else if (typeof options === 'function') {
+         let outData = options.call(output.data)
+         output[name] = filterNull(outData)
+      }
+   }
+
+   return output
+
+}
+
+
 /**
  * 递归验证器
  * @param {*} data 验证数据
@@ -304,16 +350,8 @@ function recursionVerify(data, options, parent, key, input, output) {
       // 字符串类型
       else if (options === String) {
 
-         if (!data) {
-            return `${key}参数不存在`
-         }
-
          if (typeof data !== 'string') {
             return `${key}参数必须为字符串`
-         }
-
-         if (data === '') {
-            return `${key}参数不能为空`
          }
 
       }
@@ -384,67 +422,24 @@ function recursionVerify(data, options, parent, key, input, output) {
 
 }
 
-/**
- * 通过Path获取数据
- * @param {*} data 数据源
- * @param {String} path 数据路径
- */
-function pathGetData(data, path) {
-   let pathArray = path.split('.')
-   for (let key of pathArray) {
-      if (data[key] === undefined) {
-         return undefined
-      } else {
-         data = data[key]
-      }
-   }
-   return data
-}
 
-/**
- * 验证器
- * @param {*} data 数据源
- * @param {*} options 验证表达式
- * @param {*} handler 验证结果处理
- */
-function Verify(data, options, handler = {}) {
+// /**
+//  * 通过Path获取数据
+//  * @param {*} data 数据源
+//  * @param {String} path 数据路径
+//  */
+// function pathGetData(data, path) {
+//    let pathArray = path.split('.')
+//    for (let key of pathArray) {
+//       if (data[key] === undefined) {
+//          return undefined
+//       } else {
+//          data = data[key]
+//       }
+//    }
+//    return data
+// }
 
-   // 数据导出容器
-   let output = {
-      error: null,//错误信息
-      data: {},//验证结果
-      filter: {},//过滤条件（废弃）
-   }
-
-   // 递归验证
-   let error = recursionVerify(data, options, output.data, null, data, output)
-
-   if (error) {
-      output.error = error
-      return output
-   }
-
-   // 空值过滤
-   output = filterNull(output)
-
-   // 验证结果处理函数
-   for (let name in handler) {
-      let fun = Handler[name]
-      let options = handler[name]
-      // 使用处理函数处理
-      if (fun) {
-         fun(output, options)
-      }
-      // 使用自定义构造函数处理
-      else if (typeof options === 'function') {
-         let outData = options.call(output.data)
-         output[name] = filterNull(outData)
-      }
-   }
-
-   return output
-
-}
 
 // 扩展自定义验证中间件
 // Verify.middleware = []
