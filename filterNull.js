@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * 空值过滤（使用根冗余代码，减少递归判断）
+ * 空值过滤器（使用入口冗余代码，减少递归判断）
  * @param {*} data 数据源
  */
 function filterNull(data) {
