@@ -57,14 +57,14 @@ function recursion(data, parent, key) {
    }
 }
 
-let data = {
-   a: 1,
-   b: {
-      b1: 666,
-      b2: undefined
-   },
-   c: [1, 2, , 3]
-}
+// let data = {
+//    a: 1,
+//    b: {
+//       b1: 666,
+//       b2: undefined
+//    },
+//    c: [1, 2, , 3]
+// }
 
 // console.log(filterNull(['xxx@xx.xx', , , , , '7777']))
 
