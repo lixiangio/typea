@@ -2,36 +2,35 @@
 
 let Verify = require('../index')
 
-let query = {
-   "tenderName": "测试",
-   "tenderNum": "123456789987",
-   "tenderEndTime": "2017-07-07T09:53:30.000Z",
-   "files": ["abc.js", "334", "null", "666", , , , , , "kkk.js"],
-   "auth": {
-      "weixin": "llll",
+let { error, data, filter } = Verify(
+   {
+      "tenderName": "测试",
+      "tenderNum": "123456789987",
+      "tenderEndTime": "2017-07-07T09:53:30.000Z",
+      "files": ["abc.js", "334", "null", "666", , , , , , "kkk.js"],
+      "auth": {
+         "weixin": "llll",
+      },
+      "beneficiariesName": "莉莉",
+      "guaranteeMoney": 2,
+      "guaranteeFormat": 0,
+      // "addressee": "嘟嘟",
+      "receiveAddress": "快点快点的",
+      "phone": "18565799072",
+      "coupon": "uuuu",
+      "integral": {
+         "lala": 168,
+         "kaka": "3"
+      },
+      "search": "深圳",
+      "email": "xxx@xx.xx",
+      "kes": {
+         a: "1",
+         b: 2,
+         c: 999,
+         d: 4
+      }
    },
-   "beneficiariesName": "莉莉",
-   "guaranteeMoney": 2,
-   "guaranteeFormat": 0,
-   // "addressee": "嘟嘟",
-   "receiveAddress": "快点快点的",
-   "phone": "18565799072",
-   "coupon": "uuuu",
-   "integral": {
-      "lala": 168,
-      "kaka": "3"
-   },
-   "search": "34343",
-   "email": "xxx@xx.xx",
-   "kes": {
-      a: "1",
-      b: 2,
-      c: 999,
-      d: 4
-   }
-}
-
-let { error, data, filter } = Verify(query,
    {
       "tenderName": {
          "type": String,
@@ -83,7 +82,7 @@ let { error, data, filter } = Verify(query,
          }
       },
       "kes": {
-         $: {
+         "$": {
             type: Number,
          }
       },
@@ -118,16 +117,17 @@ let { error, data, filter } = Verify(query,
             "$or": function () {
                if (search.match(/^\d+$/)) {
                   return [
-                     { tenderName: new RegExp(search) },
-                     { projectName: new RegExp(search) },
-                     { tenderProjectName: new RegExp(search) }
-                  ]
-               } else {
-                  return [
                      { tenderNum: new RegExp(search) },
                      { projectNum: new RegExp(search) },
                      { tenderProjectNum: new RegExp(search) }
                   ]
+               } else {
+                  return [
+                     { tenderName: new RegExp(search) },
+                     { projectName: new RegExp(search) },
+                     { tenderProjectName: new RegExp(search) }
+                  ]
+
                }
             },
          }
@@ -137,7 +137,8 @@ let { error, data, filter } = Verify(query,
 
 if (error) {
    console.log(error)
-} else {
-   console.log(data)
-   console.log(filter)
+   return
 }
+
+console.log(data)
+console.log(filter)
