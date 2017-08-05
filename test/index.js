@@ -6,12 +6,12 @@ let query = {
    "tenderName": "测试",
    "tenderNum": "123456789987",
    "tenderEndTime": "2017-07-07T09:53:30.000Z",
-   "files": ["abc.js", "334", , "666", , "kkk.js"],
+   "files": ["abc.js", "334", "null", "666", , , , , , "kkk.js"],
    "auth": {
       "weixin": "llll",
    },
    "beneficiariesName": "莉莉",
-   "guaranteeMoney": "88343.256",
+   "guaranteeMoney": 2,
    "guaranteeFormat": 0,
    // "addressee": "嘟嘟",
    "receiveAddress": "快点快点的",
@@ -21,7 +21,14 @@ let query = {
       "lala": 168,
       "kaka": "3"
    },
-   "email": "xxx@xx.xx"
+   "search": "34343",
+   "email": "xxx@xx.xx",
+   "kes": {
+      a: "1",
+      b: 2,
+      c: 999,
+      d: 4
+   }
 }
 
 let { error, data, filter } = Verify(query,
@@ -36,16 +43,22 @@ let { error, data, filter } = Verify(query,
          "weixin": String,
       },
       "beneficiariesName": String,
-      "guaranteeMoney": Number,
+      "guaranteeMoney": {
+         "type": Number,
+         "in": [1, 2]
+      },
       "files": [{
          "type": String,
-         "allowNull": false,
+         // "allowNull": false,
       }],
       "guaranteeFormat": {
          "type": Number,
          "conversion": Boolean
       },
       "addressee": {
+         "type": String,
+      },
+      "search": {
          "type": String,
       },
       "phone": "MobilePhone",
@@ -66,9 +79,23 @@ let { error, data, filter } = Verify(query,
          "type": String,
          "default": "releaseTime",
          method(value) {
-            return [value, "7777"]
+            return [value, , , , , "7777"]
          }
       },
+      "kes": {
+         $: {
+            type: Number,
+         }
+      },
+      "$or": function () {
+         return {
+            a: undefined,
+            b: null,
+            c: 0,
+            d: '',
+            e: "xx"
+         }
+      }
    },
    {
       "coexist": [
@@ -80,21 +107,29 @@ let { error, data, filter } = Verify(query,
          return {
             "email": email,
             "integral": integral,
-            // "$or": function () {
-            //    if (search.match(/^\d+$/)) {
-            //       return [
-            //          { tenderName: new RegExp(search) },
-            //          { projectName: new RegExp(search) },
-            //          { tenderProjectName: new RegExp(search) }
-            //       ]
-            //    } else {
-            //       return [
-            //          { tenderNum: new RegExp(search) },
-            //          { projectNum: new RegExp(search) },
-            //          { tenderProjectNum: new RegExp(search) }
-            //       ]
-            //    }
-            // },
+            "test": {
+               a: 1,
+               b: undefined,
+               c: "",
+               d: null,
+               e: NaN,
+               e: 0,
+            },
+            "$or": function () {
+               if (search.match(/^\d+$/)) {
+                  return [
+                     { tenderName: new RegExp(search) },
+                     { projectName: new RegExp(search) },
+                     { tenderProjectName: new RegExp(search) }
+                  ]
+               } else {
+                  return [
+                     { tenderNum: new RegExp(search) },
+                     { projectNum: new RegExp(search) },
+                     { tenderProjectNum: new RegExp(search) }
+                  ]
+               }
+            },
          }
       }
    }

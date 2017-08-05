@@ -38,12 +38,13 @@ function recursionVerify(key, data, options, parent, input, output) {
          let itemKey = 0
          let itemOptions = options[0]
          for (let itemData of data) {
-            if (itemData) {
-               let result = recursionVerify(itemKey++, itemData, itemOptions, parent, input, output)
-               if (result) return `${key}数组Key:${result}`
+            let error = recursionVerify(itemKey++, itemData, itemOptions, parent, input, output)
+            if (error) {
+               return `${key}数组Key:${error}`
             }
          }
 
+         // 空数组提示
          if (itemOptions.allowNull === false && itemKey === 0) {
             return `${key}数组不能为空`
          }
@@ -81,9 +82,6 @@ function recursionVerify(key, data, options, parent, input, output) {
                // 字符串类型
                if (options.type === String) {
 
-                  if (!data) {
-                     return `${key}参数不存在`
-                  }
                   if (typeof data !== 'string') {
                      return `${key}参数必须为字符串`
                   }
@@ -228,12 +226,12 @@ function recursionVerify(key, data, options, parent, input, output) {
 
             // type为对象，用于为对象结构添加表达式
             else if (typeof options.type === 'object') {
-               let result = recursionVerify(key, data, options.type, parent, input, output)
-               if (result) {
+               let error = recursionVerify(key, data, options.type, parent, input, output)
+               if (error) {
                   if (Array.isArray(data)) {
-                     return `${result}`
+                     return `${error}`
                   } else {
-                     return `${key}下${result}`
+                     return `${key}下${error}`
                   }
                }
             }
@@ -241,22 +239,7 @@ function recursionVerify(key, data, options, parent, input, output) {
             // 自定义构建方法
             if (options.method) {
 
-               let result = options.method.call(output, data)
-
-               // 对象空值过滤
-               if (typeof result === 'object') {
-                  let start = true
-                  for (let key in result) {
-                     if (result[key]) {
-                        start = false
-                     } else {
-                        delete result[key]
-                     }
-                  }
-                  if (start) return
-               }
-
-               data = result
+               data = options.method.call(output, data)
 
             }
 
@@ -282,8 +265,8 @@ function recursionVerify(key, data, options, parent, input, output) {
                for (let subKey in data) {
                   let itemData = data[subKey]
                   let itemOptions = options.$
-                  let result = recursionVerify(subKey, itemData, itemOptions, parent, input, output)
-                  if (result) return result
+                  let error = recursionVerify(subKey, itemData, itemOptions, parent, input, output)
+                  if (error) return error
                }
             }
 
@@ -292,8 +275,8 @@ function recursionVerify(key, data, options, parent, input, output) {
                for (let subKey in options) {
                   let itemData = data[subKey]
                   let itemOptions = options[subKey]
-                  let result = recursionVerify(subKey, itemData, itemOptions, parent, input, output)
-                  if (result) return result
+                  let error = recursionVerify(subKey, itemData, itemOptions, parent, input, output)
+                  if (error) return error
                }
             }
 
@@ -310,23 +293,7 @@ function recursionVerify(key, data, options, parent, input, output) {
          // 自定义构建方法（根据Function.length长度判定是否为自定义构造器）
          if (options.length === 0) {
 
-            let result = options.call(output.data, output)
-
-            // 对象空值过滤（即将废除）
-            if (typeof result === 'object') {
-               let isNull = true
-               for (let key in result) {
-                  if (result[key] === undefined || result[key] === "") {
-                     delete result[key]
-                  } else {
-                     isNull = false
-                  }
-               }
-               // 空对象时跳过
-               if (isNull) return
-            }
-
-            data = result
+            data = options.call(output.data, output)
 
          } else {
             return
@@ -450,12 +417,15 @@ function Verify(data, options, handler = {}) {
    }
 
    // 递归验证
-   let result = recursionVerify(null, data, options, output.data, data, output)
+   let error = recursionVerify(null, data, options, output.data, data, output)
 
-   if (result) {
-      output.error = result
+   if (error) {
+      output.error = error
       return output
    }
+
+   // 空值过滤
+   output = filterNull(output)
 
    // 验证结果处理函数
    for (let name in handler) {
@@ -468,8 +438,7 @@ function Verify(data, options, handler = {}) {
       // 使用自定义构造函数处理
       else if (typeof options === 'function') {
          let outData = options.call(output.data)
-
-         output[name] = outData
+         output[name] = filterNull(outData)
       }
    }
 
