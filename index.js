@@ -10,14 +10,14 @@ let filterNull = require('./filterNull')
 
 /**
  * 递归验证器
- * @param {*} key 数据索引
  * @param {*} data 验证数据
  * @param {*} options 验证规则选项
  * @param {*} parent 当前父级对象
+ * @param {*} key 数据索引
  * @param {*} input 原始输入数据
  * @param {*} output 验证输出数据
  */
-function recursionVerify(key, data, options, parent, input, output) {
+function recursionVerify(data, options, parent, key, input, output) {
 
    // 选项为对象
    if (typeof options === 'object') {
@@ -38,7 +38,7 @@ function recursionVerify(key, data, options, parent, input, output) {
          let itemKey = 0
          let itemOptions = options[0]
          for (let itemData of data) {
-            let error = recursionVerify(itemKey++, itemData, itemOptions, parent, input, output)
+            let error = recursionVerify(itemData, itemOptions, parent, itemKey++, input, output)
             if (error) {
                return `${key}数组Key:${error}`
             }
@@ -226,7 +226,7 @@ function recursionVerify(key, data, options, parent, input, output) {
 
             // type为对象，用于为对象结构添加表达式
             else if (typeof options.type === 'object') {
-               let error = recursionVerify(key, data, options.type, parent, input, output)
+               let error = recursionVerify(data, options.type, parent, key, input, output)
                if (error) {
                   if (Array.isArray(data)) {
                      return `${error}`
@@ -265,7 +265,7 @@ function recursionVerify(key, data, options, parent, input, output) {
                for (let subKey in data) {
                   let itemData = data[subKey]
                   let itemOptions = options.$
-                  let error = recursionVerify(subKey, itemData, itemOptions, parent, input, output)
+                  let error = recursionVerify(itemData, itemOptions, parent, subKey, input, output)
                   if (error) return error
                }
             }
@@ -275,7 +275,7 @@ function recursionVerify(key, data, options, parent, input, output) {
                for (let subKey in options) {
                   let itemData = data[subKey]
                   let itemOptions = options[subKey]
-                  let error = recursionVerify(subKey, itemData, itemOptions, parent, input, output)
+                  let error = recursionVerify(itemData, itemOptions, parent, subKey, input, output)
                   if (error) return error
                }
             }
@@ -417,7 +417,7 @@ function Verify(data, options, handler = {}) {
    }
 
    // 递归验证
-   let error = recursionVerify(null, data, options, output.data, data, output)
+   let error = recursionVerify(data, options, output.data, null, data, output)
 
    if (error) {
       output.error = error
