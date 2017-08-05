@@ -1,17 +1,19 @@
+"use strict";
+
 let Verify = require('../index')
 
 let query = {
    "tenderName": "测试",
    "tenderNum": "123456789987",
    "tenderEndTime": "2017-07-07T09:53:30.000Z",
-   "customizeGuaranteeFormat": ["xxx.js", "xxx.js"],
-   "companyName": {
-      "typeId": "llll",
+   "files": ["abc.js", "334", , "666", , "kkk.js"],
+   "auth": {
+      "weixin": "llll",
    },
    "beneficiariesName": "莉莉",
    "guaranteeMoney": "88343.256",
    "guaranteeFormat": 0,
-   "addressee": "嘟嘟",
+   // "addressee": "嘟嘟",
    "receiveAddress": "快点快点的",
    "phone": "18565799072",
    "coupon": "uuuu",
@@ -28,31 +30,23 @@ let { error, data, filter } = Verify(query,
          "type": String,
          "allowNull": false
       },
-      "tenderNum": {
-         "type": String,
-      },
+      "tenderNum": String,
       "tenderEndTime": Date,
-      "companyName": {
-         "type": {
-            "typeId": {
-               "type": String,
-            }
-         }
+      "auth": {
+         "weixin": String,
       },
       "beneficiariesName": String,
       "guaranteeMoney": Number,
-      "customizeGuaranteeFormat": {
-         "type": [String],
-         "allowNull": true
-      },
+      "files": [{
+         "type": String,
+         "allowNull": false,
+      }],
       "guaranteeFormat": {
          "type": Number,
-         "allowNull": true,
          "conversion": Boolean
       },
       "addressee": {
          "type": String,
-         "allowNull": true
       },
       "phone": "MobilePhone",
       "receiveAddress": String,
@@ -62,48 +56,46 @@ let { error, data, filter } = Verify(query,
       "integral": {
          "lala": {
             "type": Number,
-            "allowNull": true
          },
          "kaka": {
             "type": Number,
             "in": [1, 2, 3],
-            "allowNull": true
          }
       },
       "email": {
          "type": String,
-         "allowNull": true,
+         "default": "releaseTime",
          method(value) {
-            console.log(this)
-            console.log('----------------')
             return [value, "7777"]
          }
       },
-      xxx() {
-         return {
-            "a": "123",
-            "b": undefined,
-         }
-      }
    },
    {
-      "methods": {
-         "addressee": function (value) {
-            this.data.xxx = value
-         },
-         "integral.kaka": function (value) {
-            this.data.kkk = value
-         }
-      },
       "coexist": [
          ["guaranteeFormat", "addressee"],
-         ["tenderName", "tenderNum"]
+         ["tenderName", "tenderNum"],
       ],
-      // "path": {
-      //    "addressee": "data.xx.$.sss"
-      // },
-      "group": {
-         "filter": ["coupon", "companyName", "phone", "integral", "xxx"]
+      filter() {
+         let { search, email, integral } = this
+         return {
+            "email": email,
+            "integral": integral,
+            // "$or": function () {
+            //    if (search.match(/^\d+$/)) {
+            //       return [
+            //          { tenderName: new RegExp(search) },
+            //          { projectName: new RegExp(search) },
+            //          { tenderProjectName: new RegExp(search) }
+            //       ]
+            //    } else {
+            //       return [
+            //          { tenderNum: new RegExp(search) },
+            //          { projectNum: new RegExp(search) },
+            //          { tenderProjectNum: new RegExp(search) }
+            //       ]
+            //    }
+            // },
+         }
       }
    }
 )

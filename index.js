@@ -4,6 +4,10 @@ let validator = require('validator')
 
 let customize = require('./customize')
 
+let Handler = require('./handler')
+
+let filterNull = require('./filterNull')
+
 /**
  * 递归验证器
  * @param {*} key 数据索引
@@ -11,7 +15,7 @@ let customize = require('./customize')
  * @param {*} options 验证规则选项
  * @param {*} parent 当前父级对象
  * @param {*} input 原始输入数据
- * @param {*} output 处理输出数据
+ * @param {*} output 验证输出数据
  */
 function recursionVerify(key, data, options, parent, input, output) {
 
@@ -31,11 +35,17 @@ function recursionVerify(key, data, options, parent, input, output) {
             parent = parent[key]
          }
 
-         for (let subKey in data) {
-            let itemData = data[subKey]
-            let itemOptions = options[0]
-            let result = recursionVerify(subKey, itemData, itemOptions, parent, input, output)
-            if (result) return `${key}数组Key:${result}`
+         let itemKey = 0
+         let itemOptions = options[0]
+         for (let itemData of data) {
+            if (itemData) {
+               let result = recursionVerify(itemKey++, itemData, itemOptions, parent, input, output)
+               if (result) return `${key}数组Key:${result}`
+            }
+         }
+
+         if (itemOptions.allowNull === false && itemKey === 0) {
+            return `${key}数组不能为空`
          }
 
       }
@@ -43,7 +53,7 @@ function recursionVerify(key, data, options, parent, input, output) {
       // 选项为对象
       else {
 
-         // 选项为验证表达式（type作为保留关键字，只允许定义数据类型，不能用作参数名）
+         // 选项为验证表达式（type作为保留关键字，只允许定义数据类型，不能作为参数名使用）
          if (options.type) {
 
             // 空值处理
@@ -57,7 +67,9 @@ function recursionVerify(key, data, options, parent, input, output) {
                // 允许为空
                else if (options.allowNull === false) {
                   return `${key}参数不能为空`
-               } else {
+               }
+
+               else {
                   return
                }
 
@@ -214,7 +226,7 @@ function recursionVerify(key, data, options, parent, input, output) {
 
             }
 
-            // type为对象，用于实现允许对象结构为空表达式
+            // type为对象，用于为对象结构添加表达式
             else if (typeof options.type === 'object') {
                let result = recursionVerify(key, data, options.type, parent, input, output)
                if (result) {
@@ -246,11 +258,6 @@ function recursionVerify(key, data, options, parent, input, output) {
 
                data = result
 
-            }
-
-            // 重命名
-            if (options.rename) {
-               key = options.rename
             }
 
             parent[key] = data
@@ -305,17 +312,18 @@ function recursionVerify(key, data, options, parent, input, output) {
 
             let result = options.call(output.data, output)
 
-            // 对象空值过滤
+            // 对象空值过滤（即将废除）
             if (typeof result === 'object') {
-               let start = true
+               let isNull = true
                for (let key in result) {
                   if (result[key] === undefined || result[key] === "") {
                      delete result[key]
                   } else {
-                     start = false
+                     isNull = false
                   }
                }
-               if (start) return
+               // 空对象时跳过
+               if (isNull) return
             }
 
             data = result
@@ -409,7 +417,11 @@ function recursionVerify(key, data, options, parent, input, output) {
 
 }
 
-// 通过Path获取数据
+/**
+ * 通过Path获取数据
+ * @param {*} data 数据源
+ * @param {String} path 数据路径
+ */
 function pathGetData(data, path) {
    let pathArray = path.split('.')
    for (let key of pathArray) {
@@ -424,8 +436,9 @@ function pathGetData(data, path) {
 
 /**
  * 验证器
- * @param {*} data 验证数据
- * @param {*} options 验证数据表达式
+ * @param {*} data 数据源
+ * @param {*} options 验证表达式
+ * @param {*} handler 验证结果处理
  */
 function Verify(data, options, handler = {}) {
 
@@ -433,11 +446,7 @@ function Verify(data, options, handler = {}) {
    let output = {
       error: null,//错误信息
       data: {},//验证结果
-      query: {},//查询条件（预定义）
-      filter: {},//过滤条件（预定义）
-      insert: {},//插入数据（预定义）
-      update: {},//更新数据（预定义）
-      options: {},//选项（预定义）
+      filter: {},//过滤条件（废弃）
    }
 
    // 递归验证
@@ -448,67 +457,19 @@ function Verify(data, options, handler = {}) {
       return output
    }
 
-   // 分组导出参数至指定对象
-   if (handler.group) {
-      let data = output.data
-      for (let name in handler.group) {
-         // 对象不存在时自动创建
-         if (!output[name]) {
-            output[name] = {}
-         }
-         let groupArray = handler.group[name]
-         for (let path of groupArray) {
-            if (data[path] !== undefined) {
-               output[name][path] = data[path]
-            }
-         }
+   // 验证结果处理函数
+   for (let name in handler) {
+      let fun = Handler[name]
+      let options = handler[name]
+      // 使用处理函数处理
+      if (fun) {
+         fun(output, options)
       }
-   }
+      // 使用自定义构造函数处理
+      else if (typeof options === 'function') {
+         let outData = options.call(output.data)
 
-   // 关联参数，只能共同存在或消失
-   if (handler.coexist) {
-      let data = output.data
-      for (let item of handler.coexist) {
-         for (let name of item) {
-            if (data[name] === undefined) {
-               for (let name of item) {
-                  delete data[name]
-               }
-               break
-            }
-         }
-      }
-   }
-
-   // 按指定路径迁移数据
-   if (handler.path) {
-      for (let name in handler.path) {
-         let data = output.data[name]
-         let path = handler.path[name].split('.')
-         let target = output.data
-         // for (let key of path) {
-         //    if (key === "$") {
-
-         //    } else {
-         //       if (target[key]) {
-         //          target = target[key]
-         //       } else {
-         //          target = undefined
-         //          break
-         //       }
-         //    }
-         // }
-         // target = data
-      }
-   }
-
-   // 自定义方法
-   if (handler.methods) {
-      for (let path in handler.methods) {
-         let data = pathGetData(output.data, path)
-         if (data !== undefined) {
-            handler.methods[path].call(output, data)
-         }
+         output[name] = outData
       }
    }
 
@@ -516,7 +477,7 @@ function Verify(data, options, handler = {}) {
 
 }
 
-// 自定义扩展中间件
+// 扩展自定义验证中间件
 // Verify.middleware = []
 // Verify.use = function (fn) {
 //    this.middleware.push(fn)
