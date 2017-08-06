@@ -24,7 +24,7 @@ let { error, data, filter } = Verify(
       },
       "search": "深圳",
       "email": "xxx@xx.xx",
-      "kes": {
+      "key": {
          a: "1",
          b: 2,
          c: 999,
@@ -81,7 +81,7 @@ let { error, data, filter } = Verify(
             return [value, , , , , "7777"]
          }
       },
-      "kes": {
+      "key": {
          "$": {
             type: Number,
          }

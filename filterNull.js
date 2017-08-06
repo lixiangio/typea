@@ -1,5 +1,6 @@
 "use strict";
 
+
 /**
  * 空值过滤器（使用入口冗余代码，减少递归判断）
  * @param {*} data 数据源
@@ -8,7 +9,7 @@ function filterNull(data) {
    if (data === undefined || data === "") {
       return
    }
-   else if (typeof data === 'object') {
+   else if (typeof data === 'object' && data !== null) {
       if (Array.isArray(data)) {
          let copyArray = []
          for (let itemData of data) {
@@ -37,7 +38,7 @@ function recursion(data, parent, key) {
    if (data === undefined || data === "") {
       delete parent[key]
    }
-   else if (typeof data === 'object') {
+   else if (typeof data === 'object' && data !== null) {
       if (Array.isArray(data)) {
          let copyArray = []
          for (let itemData of data) {
@@ -48,8 +49,10 @@ function recursion(data, parent, key) {
          parent[key] = copyArray
       } else {
          for (let key in data) {
-            let itemData = data[key]
-            recursion(itemData, data, key)
+            recursion(data[key], data, key)
+         }
+         if (!Object.keys(data).length) {
+            delete parent[key]
          }
       }
    } else if (typeof data === 'function') {
