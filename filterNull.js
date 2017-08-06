@@ -54,6 +54,7 @@ function recursion(data, parent, key) {
       }
    } else if (typeof data === 'function') {
       parent[key] = data()
+      recursion(parent[key], parent, key)
    }
 }
 

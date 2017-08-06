@@ -86,15 +86,6 @@ let { error, data, filter } = Verify(
             type: Number,
          }
       },
-      "$or": function () {
-         return {
-            a: undefined,
-            b: null,
-            c: 0,
-            d: '',
-            e: "xx"
-         }
-      }
    },
    {
       "coexist": [
@@ -103,7 +94,7 @@ let { error, data, filter } = Verify(
       ],
       filter() {
          let { search, email, integral } = this
-         return {
+         let output = {
             "email": email,
             "integral": integral,
             "test": {
@@ -114,7 +105,7 @@ let { error, data, filter } = Verify(
                e: NaN,
                e: 0,
             },
-            "$or": function () {
+            $or() {
                if (search.match(/^\d+$/)) {
                   return [
                      { tenderNum: new RegExp(search) },
@@ -130,7 +121,14 @@ let { error, data, filter } = Verify(
 
                }
             },
+            totalAmount() {
+               return {
+                  $gt: 666,
+                  $lt: 888,
+               }
+            },
          }
+         return output
       }
    }
 )
