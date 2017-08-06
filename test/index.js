@@ -47,7 +47,7 @@ let { error, data, filter } = Verify(
          "in": [1, 2]
       },
       "files": [{
-         "type": String,
+         "type": "ObjectId",
          // "allowNull": false,
       }],
       "guaranteeFormat": {

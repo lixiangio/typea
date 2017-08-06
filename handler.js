@@ -18,22 +18,6 @@ let Handler = {
          }
       }
    },
-   // 分组导出参数至指定对象
-   group(output, options) {
-      let data = output.data
-      for (let name in options) {
-         // 对象不存在时自动创建
-         if (!output[name]) {
-            output[name] = {}
-         }
-         let groupArray = options[name]
-         for (let path of groupArray) {
-            if (data[path] !== undefined) {
-               output[name][path] = data[path]
-            }
-         }
-      }
-   }
 }
 
 module.exports = Handler
