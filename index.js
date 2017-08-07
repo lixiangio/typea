@@ -32,7 +32,7 @@ function Verify(data, options, handler = {}) {
    }
 
    // 空值过滤
-   output = filterNull(output)
+   output.data = filterNull(output.data)
 
    // 验证结果处理函数
    for (let name in handler) {

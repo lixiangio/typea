@@ -118,12 +118,11 @@ let { error, data, filter } = Verify(
                      { projectName: new RegExp(search) },
                      { tenderProjectName: new RegExp(search) }
                   ]
-
                }
             },
             totalAmount() {
                return {
-                  $gt: 666,
+                  $gt: /12/,
                   $lt: 888,
                }
             },

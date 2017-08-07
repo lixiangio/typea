@@ -1,15 +1,13 @@
 "use strict";
 
+
 /**
  * 空值过滤器（使用入口冗余代码，减少递归判断）
  * @param {*} data 数据源
  */
 function filterNull(data) {
-   if (data === undefined || data === "") {
-      return
-   }
-   else if (typeof data === 'object' && data !== null) {
-      if (Array.isArray(data)) {
+   if (data instanceof Object) {
+      if (data instanceof Array) {
          let copyArray = []
          for (let itemData of data) {
             if (itemData !== undefined && itemData !== "") {
@@ -23,6 +21,8 @@ function filterNull(data) {
             recursion(itemData, data, key)
          }
       }
+   } else if (data === "") {
+      data === undefined
    }
    return data
 }
@@ -34,11 +34,8 @@ function filterNull(data) {
  * @param {*} key 
  */
 function recursion(data, parent, key) {
-   if (data === undefined || data === "") {
-      delete parent[key]
-   }
-   else if (typeof data === 'object' && data !== null) {
-      if (Array.isArray(data)) {
+   if (data instanceof Object) {
+      if (data instanceof Array) {
          let copyArray = []
          for (let itemData of data) {
             if (itemData !== undefined && itemData !== "") {
@@ -46,7 +43,15 @@ function recursion(data, parent, key) {
             }
          }
          parent[key] = copyArray
-      } else {
+      }
+      else if (data instanceof Function) {
+         parent[key] = data()
+         recursion(parent[key], parent, key)
+      }
+      else if (data instanceof RegExp) {
+         parent[key] = data
+      }
+      else {
          for (let key in data) {
             recursion(data[key], data, key)
          }
@@ -54,9 +59,12 @@ function recursion(data, parent, key) {
             delete parent[key]
          }
       }
-   } else if (typeof data === 'function') {
-      parent[key] = data()
-      recursion(parent[key], parent, key)
+   }
+   else if (data === undefined || data === "") {
+      delete parent[key]
+   }
+   else {
+      parent[key] = data
    }
 }
 
