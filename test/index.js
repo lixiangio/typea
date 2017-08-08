@@ -2,35 +2,36 @@
 
 let Verify = require('../index')
 
-let { error, data, filter } = Verify(
-   {
-      "tenderName": "测试",
-      "tenderNum": "123456789987",
-      "tenderEndTime": "2017-07-07T09:53:30.000Z",
-      "files": ["abc.js", "334", "null", "666", , , , , , "kkk.js"],
-      "auth": {
-         "weixin": "llll",
-      },
-      "beneficiariesName": "莉莉",
-      "guaranteeMoney": 2,
-      "guaranteeFormat": 0,
-      // "addressee": "嘟嘟",
-      "receiveAddress": "快点快点的",
-      "phone": "18565799072",
-      "coupon": "uuuu",
-      "integral": {
-         "lala": 168,
-         "kaka": "3"
-      },
-      "search": "深圳",
-      "email": "xxx@xx.xx",
-      "key": {
-         a: "1",
-         b: 2,
-         c: 999,
-         d: 4
-      }
+let query = {
+   "tenderName": "测试",
+   "tenderNum": "123456789987",
+   "tenderEndTime": "2017-07-07T09:53:30.000Z",
+   "files": ["abc.js", "334", "null", "666", , , , , , "kkk.js"],
+   "auth": {
+      "weixin": "llll",
    },
+   "beneficiariesName": "莉莉",
+   "guaranteeMoney": 2,
+   "guaranteeFormat": 0,
+   // "addressee": "嘟嘟",
+   "receiveAddress": "快点快点的",
+   "phone": "18565799072",
+   "coupon": "uuuu",
+   "integral": {
+      "lala": 168,
+      "kaka": "3"
+   },
+   "search": "深圳",
+   "email": "xxx@xx.xx",
+   "key": {
+      a: "1",
+      b: 2,
+      c: 999,
+      d: 4
+   }
+}
+
+let { error, data, filter } = Verify(query,
    {
       "tenderName": {
          "type": String,
@@ -60,7 +61,9 @@ let { error, data, filter } = Verify(
       "search": {
          "type": String,
       },
-      "phone": "MobilePhone",
+      "phone": {
+         "type": "MobilePhone"
+      },
       "receiveAddress": String,
       "coupon": {
          "type": String
