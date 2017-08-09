@@ -1,6 +1,6 @@
 "use strict";
 
-console.log(new Date() instanceof Date)
+console.log(Object.prototype.toString.call(/1/))
 
 /**
  * 空值过滤器（使用入口冗余代码，减少递归判断）
