@@ -66,7 +66,10 @@ let { error, data, filter } = Verify(query,
       },
       "receiveAddress": String,
       "coupon": {
-         "type": String
+         "type": String,
+         method(value) {
+            return { "$gt": new Date() }
+         }
       },
       "integral": {
          "lala": {

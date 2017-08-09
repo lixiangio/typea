@@ -1,5 +1,6 @@
 "use strict";
 
+console.log(new Date() instanceof Date)
 
 /**
  * 空值过滤器（使用入口冗余代码，减少递归判断）
@@ -48,7 +49,7 @@ function recursion(data, parent, key) {
          parent[key] = data()
          recursion(parent[key], parent, key)
       }
-      else if (data instanceof RegExp) {
+      else if (data instanceof RegExp || data instanceof Date) {
          parent[key] = data
       }
       else {
