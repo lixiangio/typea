@@ -1,7 +1,5 @@
 "use strict";
 
-console.log(Object.prototype.toString.call(/1/))
-
 /**
  * 空值过滤器（使用入口冗余代码，减少递归判断）
  * @param {*} data 数据源
@@ -35,34 +33,29 @@ function filterNull(data) {
  * @param {*} key 
  */
 function recursion(data, parent, key) {
-   if (data instanceof Object) {
-      if (data instanceof Array) {
-         let copyArray = []
-         for (let itemData of data) {
-            if (itemData !== undefined && itemData !== "") {
-               copyArray.push(itemData)
-            }
-         }
-         parent[key] = copyArray
+   if (data === undefined || data === "") {
+      delete parent[key]
+   }
+   else if (Object.prototype.toString.call(data) === '[object Object]') {
+      for (let key in data) {
+         recursion(data[key], data, key)
       }
-      else if (data instanceof Function) {
-         parent[key] = data()
-         recursion(parent[key], parent, key)
-      }
-      else if (data instanceof RegExp || data instanceof Date) {
-         parent[key] = data
-      }
-      else {
-         for (let key in data) {
-            recursion(data[key], data, key)
-         }
-         if (!Object.keys(data).length) {
-            delete parent[key]
-         }
+      if (!Object.keys(data).length) {
+         delete parent[key]
       }
    }
-   else if (data === undefined || data === "") {
-      delete parent[key]
+   else if (data instanceof Array) {
+      let copyArray = []
+      for (let itemData of data) {
+         if (itemData !== undefined && itemData !== "") {
+            copyArray.push(itemData)
+         }
+      }
+      parent[key] = copyArray
+   }
+   else if (data instanceof Function) {
+      parent[key] = data()
+      recursion(parent[key], parent, key)
    }
    else {
       parent[key] = data
@@ -78,6 +71,11 @@ function recursion(data, parent, key) {
 //    c: [1, 2, , 3]
 // }
 
-// console.log(filterNull(['xxx@xx.xx', , , , , '7777']))
+// console.log(filterNull({
+//    arr: ['xxx@xx.xx', , 0, , , '7777'],
+//    xxx() {
+//       return 888
+//    }
+// }))
 
 module.exports = filterNull
