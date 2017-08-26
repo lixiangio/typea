@@ -112,19 +112,19 @@ let { error, data, filter } = Verify(query,
                e: 0,
             },
             $or() {
-               if (search.match(/^\d+$/)) {
-                  return [
-                     { tenderNum: new RegExp(search) },
-                     { projectNum: new RegExp(search) },
-                     { tenderProjectNum: new RegExp(search) }
-                  ]
-               } else {
-                  return [
-                     { tenderName: new RegExp(search) },
-                     { projectName: new RegExp(search) },
-                     { tenderProjectName: new RegExp(search) }
-                  ]
-               }
+               // if (search.match(/^\d+$/)) {
+               //    return [
+               //       { tenderNum: new RegExp(search) },
+               //       { projectNum: new RegExp(search) },
+               //       { tenderProjectNum: new RegExp(search) }
+               //    ]
+               // } else {
+               //    return [
+               //       { tenderName: new RegExp(search) },
+               //       { projectName: new RegExp(search) },
+               //       { tenderProjectName: new RegExp(search) }
+               //    ]
+               // }
             },
             totalAmount() {
                return {
