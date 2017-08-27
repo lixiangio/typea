@@ -38,7 +38,9 @@ let { error, data, filter } = Verify(query,
          "allowNull": false
       },
       "tenderNum": String,
-      "tenderEndTime": Date,
+      "tenderEndTime": {
+         type: Date
+      },
       "auth": {
          "weixin": String,
       },
@@ -94,10 +96,10 @@ let { error, data, filter } = Verify(query,
       },
    },
    {
-      "coexist": [
-         ["guaranteeFormat", "addressee"],
-         ["tenderName", "tenderNum"],
-      ],
+      // "coexist": [
+      //    ["guaranteeFormat", "addressee"],
+      //    ["tenderName", "tenderNum"],
+      // ],
       filter() {
          let { search, email, integral } = this
          let output = {
@@ -144,4 +146,4 @@ if (error) {
 }
 
 console.log(data)
-console.log(filter)
+// console.log(filter)

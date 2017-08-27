@@ -2,8 +2,6 @@
 
 let validator = require('validator')
 
-let type = require('./type')
-
 let Options = require('./options')
 
 let Handler = require('./handler')
@@ -126,12 +124,13 @@ function recursionVerify(data, options, parent, key, input, output) {
 
             // type为函数或字符串（字符串表示自定义数据类型）
             else if (Options[options.type]) {
+               let funObj = Options[options.type]
                for (let name in options) {
-                  let fun = Options[options.type][name]
+                  let fun = funObj[name]
                   if (fun) {
                      let result = fun(data, options[name])
                      if (result.err) {
-                        return key + err
+                        return key + result.err
                      } else {
                         parent[key] = result.data
                      }
@@ -192,23 +191,28 @@ function recursionVerify(data, options, parent, key, input, output) {
             }
 
          }
+
       }
 
    }
 
    // 选项为函数或字符串
-   else if (type[options]) {
-      let result = type[options](data)
+   else if (Options[options]) {
+
+      let result = Options[options].type(data)
       if (result.err) {
          return key + result.err
       } else {
          parent[key] = result.data
       }
+
    }
 
    // 选项为自定义构造器
    else if (typeof options === 'function') {
+
       parent[key] = options.call(output.data, output)
+
    }
 
 }
