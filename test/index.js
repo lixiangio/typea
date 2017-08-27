@@ -26,7 +26,7 @@ let query = {
    "key": {
       a: "1",
       b: 2,
-      c: 999,
+      c: 666,
       d: 4
    }
 }
@@ -35,10 +35,15 @@ let { error, data, filter } = Verify(query,
    {
       "tenderName": {
          "type": String,
+         "name": "标书名称",
          "allowNull": false
       },
       "tenderNum": String,
-      "tenderEndTime": Date,
+      "tenderEndTime": {
+         "type": Date,
+         "name": "截标时间",
+         "allowNull": false,
+      },
       "auth": {
          "weixin": String,
       },
@@ -144,4 +149,4 @@ if (error) {
 }
 
 console.log(data)
-console.log(filter)
+// console.log(filter)

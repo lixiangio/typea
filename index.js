@@ -2,7 +2,7 @@
 
 let validator = require('validator')
 
-let customize = require('./customize')
+let Options = require('./options')
 
 let Handler = require('./handler')
 
@@ -53,7 +53,6 @@ function Verify(data, options, handler = {}) {
 
 }
 
-
 /**
  * 递归验证器
  * @param {*} data 验证数据
@@ -103,6 +102,8 @@ function recursionVerify(data, options, parent, key, input, output) {
          // 选项为验证表达式（type作为保留关键字，只允许定义数据类型，不能作为参数名使用）
          if (options.type) {
 
+            let field = options.name || key
+
             // 空值处理
             if (data === undefined || data === '') {
 
@@ -113,7 +114,7 @@ function recursionVerify(data, options, parent, key, input, output) {
 
                // 允许为空
                else if (options.allowNull === false) {
-                  return `${key}参数不能为空`
+                  return `${field}不能为空`
                }
 
                else {
@@ -122,174 +123,35 @@ function recursionVerify(data, options, parent, key, input, output) {
 
             }
 
-            // type为JS内置数据类型
-            else if (typeof options.type === 'function') {
+            // type为函数或字符串（字符串表示自定义数据类型）
+            if (Options[options.type]) {
 
-               // 字符串类型
-               if (options.type === String) {
-
-                  if (typeof data !== 'string') {
-                     return `${key}参数必须为字符串`
-                  }
-
-                  // 长度验证
-                  if (options.minLength) {
-                     if (data.length < options.minLength) {
-                        return `${key}参数长度不能小于${options.minLength}个字符`
+               let funObj = Options[options.type]
+               for (let name in options) {
+                  let fun = funObj[name]
+                  if (fun) {
+                     let result = fun(data, options[name], output)
+                     if (result.err) {
+                        return field + result.err
+                     } else {
+                        parent[key] = result.data
                      }
                   }
-
-                  if (options.maxLength) {
-                     if (data.length > options.maxLength) {
-                        return `${key}参数长度不能大于${options.maxLength}个字符`
-                     }
-                  }
-
-                  // 包含
-                  if (options.in) {
-                     let result = options.in.indexOf(data)
-                     if (result === -1) {
-                        return `${key}参数可选值必须为:${options.in}`
-                     }
-                  }
-
-                  // 包含字符串
-                  // if (options.contain) {
-                  //    if (options.contain === Number) {
-                  //       if (data.search(/\d+/) === -1) {
-                  //          return `${key}参数必须包含数字`
-                  //       }
-                  //    }
-                  // }
-
-                  // // 不包含
-                  // if (options.noContain) {
-                  //    if (options.noContain === Number) {
-                  //       if (data.search(/\d+/) > -1) {
-                  //          return `${key}参数不能包含数字`
-                  //       }
-                  //    }
-                  // }
-
-                  // 正则表达式
-                  if (options.reg) {
-                     if (data.search(options.reg) === -1) {
-                        return `${key}参数格式错误`
-                     }
-                  }
-
-               }
-
-               // 数值型
-               else if (options.type === Number) {
-
-                  data = Number(data)
-                  if (isNaN(data)) {
-                     return `${key}参数必须为数值或可转换为数值的字符串`
-                  }
-
-                  // 数值范围验证
-                  if (options.min) {
-                     if (data < options.min) {
-                        return `${key}参数不能小于${options.min}`
-                     }
-                  }
-
-                  if (options.max) {
-                     if (data > options.max) {
-                        return `${key}参数不能大于${options.max}`
-                     }
-                  }
-
-                  // 包含
-                  if (options.in) {
-                     let result = options.in.indexOf(data)
-                     if (result === -1) {
-                        return `${key}参数可选值必须为:${options.in}`
-                     }
-                  }
-
-                  // 数值转布尔值
-                  if (options.conversion) {
-                     if (options.conversion === Boolean) {
-                        if (data) {
-                           data = true
-                        } else {
-                           data = false
-                        }
-                     }
-                  }
-
-               }
-
-               // 对象
-               else if (options.type === Object) {
-                  if (typeof data !== 'object') {
-                     return `${key}参数必须为对象`
-                  }
-               }
-
-               // 数组
-               else if (options.type === Array) {
-
-                  if (!Array.isArray(data)) {
-                     return `${key}参数必须为数组`
-                  }
-
-               }
-
-               // 日期
-               else if (options.type === Date) {
-
-                  if (!validator.toDate(data + '')) {
-                     return `${key}参数必须为日期类型`
-                  }
-
-               }
-
-               // 布尔
-               else if (options.type === Boolean) {
-
-                  if (typeof data !== 'boolean') {
-                     return `${key}参数必须为布尔值`
-                  }
-
                }
 
             }
 
-            // type为字符串，表示自定义数据类型
-            else if (typeof options.type === 'string') {
-
-               if (customize[options.type]) {
-                  let result = customize[options.type](data, key)
-                  if (result) return result
-               } else {
-                  return `${options.type}自定义类型不存在`
-               }
-
-            }
-
-            // type为对象，用于为对象结构添加表达式
+            // type为对象或数组，用于为对象结构添加表达式
             else if (typeof options.type === 'object') {
                let error = recursionVerify(data, options.type, parent, key, input, output)
                if (error) {
                   if (Array.isArray(data)) {
                      return `${error}`
                   } else {
-                     return `${key}下${error}`
+                     return `${field}下${error}`
                   }
                }
             }
-
-            // 自定义构建方法
-            if (options.method) {
-
-               data = options.method.call(output, data)
-
-            }
-
-            parent[key] = data
 
          }
 
@@ -297,7 +159,7 @@ function recursionVerify(data, options, parent, key, input, output) {
          else {
 
             if (typeof data !== 'object') {
-               return `${key}参数必须为对象`
+               return `${field}必须为对象`
             }
 
             // 非根对象时创建对象结构
@@ -327,97 +189,28 @@ function recursionVerify(data, options, parent, key, input, output) {
             }
 
          }
+
       }
 
    }
 
-   // 选项为函数
+   // 选项为函数或字符串
+   else if (Options[options]) {
+
+      let result = Options[options].type(data)
+      if (result.err) {
+         return key + result.err
+      } else {
+         parent[key] = result.data
+      }
+
+   }
+
+   // 选项为自定义构造器
    else if (typeof options === 'function') {
 
-      if (data === undefined || data === '') {
+      parent[key] = options.call(output.data, output)
 
-         // 自定义构建方法（根据Function.length长度判定是否为自定义构造器）
-         if (options.length === 0) {
-
-            data = options.call(output.data, output)
-
-         } else {
-            return
-         }
-
-      }
-
-      // 字符串类型
-      else if (options === String) {
-
-         if (typeof data !== 'string') {
-            return `${key}参数必须为字符串`
-         }
-
-      }
-
-      // 数值型
-      else if (options === Number) {
-
-         data = Number(data)
-         if (isNaN(data)) {
-            return `${key}参数必须为数值或可转换为数值的字符串`
-         }
-
-      }
-
-      // 对象
-      else if (options === Object) {
-
-         if (typeof data !== 'object') {
-            return `${key}参数必须为对象`
-         }
-
-      }
-
-      // 数组
-      else if (options === Array) {
-
-         if (!Array.isArray(data)) {
-            return `${key}参数必须为数组`
-         }
-
-      }
-
-      // 日期
-      else if (options === Date) {
-
-         if (!validator.toDate(data + '')) {
-            return `${key}参数必须为日期类型`
-         }
-
-      }
-
-      // 布尔
-      else if (options === Boolean) {
-
-         if (typeof data !== 'boolean') {
-            return `${key}参数必须为布尔值`
-         }
-
-      }
-
-      //将验证数据保存至父节点
-      parent[key] = data
-
-   }
-
-   // 选项为字符串（自定义数据类型）
-   else if (typeof options === 'string') {
-
-      if (customize[options]) {
-         return customize[options](data, key)
-      } else {
-         return `${options}自定义类型不存在`
-      }
-
-      //将验证数据保存至父节点
-      parent[key] = data
    }
 
 }
@@ -440,8 +233,16 @@ function recursionVerify(data, options, parent, key, input, output) {
 //    return data
 // }
 
+// 设置项
+Verify.config = function (options) {
+   if (options.language) {
 
-// 扩展自定义验证中间件
+   } else {
+
+   }
+}
+
+// 自定义扩展中间件
 // Verify.middleware = []
 // Verify.use = function (fn) {
 //    this.middleware.push(fn)
