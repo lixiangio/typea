@@ -6,6 +6,13 @@ let { method } = {
    method(data, fun, output) {
       return { data: fun.call(output, data) }
    },
+   // 共存参数
+   and(data, nameArray, input) {
+      for (let name of nameArray) {
+
+      }
+      return { data: fun.call(output, data) }
+   },
 }
 
 module.exports = {

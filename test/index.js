@@ -99,10 +99,6 @@ let { error, data, filter } = Verify(query,
       },
    },
    {
-      "coexist": [
-         ["guaranteeFormat", "addressee"],
-         ["tenderName", "tenderNum"],
-      ],
       filter() {
          let { search, email, integral } = this
          let output = {

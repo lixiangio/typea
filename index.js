@@ -4,8 +4,6 @@ let validator = require('validator')
 
 let Options = require('./options')
 
-let Handler = require('./handler')
-
 let filterNull = require('./filterNull')
 
 
@@ -34,16 +32,11 @@ function Verify(data, options, handler = {}) {
    // 空值过滤
    output.data = filterNull(output.data)
 
-   // 验证结果处理函数
+   // 数据构造器
    for (let name in handler) {
-      let fun = Handler[name]
       let options = handler[name]
-      // 使用处理函数处理
-      if (fun) {
-         fun(output, options)
-      }
       // 使用自定义构造函数处理
-      else if (typeof options === 'function') {
+      if (typeof options === 'function') {
          let outData = options.call(output.data)
          output[name] = filterNull(outData)
       }
