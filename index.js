@@ -53,7 +53,6 @@ function Verify(data, options, handler = {}) {
 
 }
 
-
 /**
  * 递归验证器
  * @param {*} data 验证数据
@@ -103,17 +102,19 @@ function recursionVerify(data, options, parent, key, input, output) {
          // 选项为验证表达式（type作为保留关键字，只允许定义数据类型，不能作为参数名使用）
          if (options.type) {
 
+            let field = options.name || key
+
             // 空值处理
             if (data === undefined || data === '') {
 
                // 默认
                if (options.default) {
-                  parent[key] = options.default
+                  data = options.default
                }
 
                // 允许为空
                else if (options.allowNull === false) {
-                  return `${key}参数不能为空`
+                  return `${field}不能为空`
                }
 
                else {
@@ -123,19 +124,21 @@ function recursionVerify(data, options, parent, key, input, output) {
             }
 
             // type为函数或字符串（字符串表示自定义数据类型）
-            else if (Options[options.type]) {
+            if (Options[options.type]) {
+
                let funObj = Options[options.type]
                for (let name in options) {
                   let fun = funObj[name]
                   if (fun) {
-                     let result = fun(data, options[name])
+                     let result = fun(data, options[name], output)
                      if (result.err) {
-                        return key + result.err
+                        return field + result.err
                      } else {
                         parent[key] = result.data
                      }
                   }
                }
+
             }
 
             // type为对象或数组，用于为对象结构添加表达式
@@ -145,14 +148,9 @@ function recursionVerify(data, options, parent, key, input, output) {
                   if (Array.isArray(data)) {
                      return `${error}`
                   } else {
-                     return `${key}下${error}`
+                     return `${field}下${error}`
                   }
                }
-            }
-
-            // 自定义构建方法
-            if (options.method) {
-               parent[key] = options.method.call(output, data)
             }
 
          }
@@ -161,7 +159,7 @@ function recursionVerify(data, options, parent, key, input, output) {
          else {
 
             if (typeof data !== 'object') {
-               return `${key}参数必须为对象`
+               return `${field}必须为对象`
             }
 
             // 非根对象时创建对象结构
@@ -235,8 +233,16 @@ function recursionVerify(data, options, parent, key, input, output) {
 //    return data
 // }
 
+// 设置项
+Verify.config = function (options) {
+   if (options.language) {
 
-// 扩展自定义验证中间件
+   } else {
+
+   }
+}
+
+// 自定义扩展中间件
 // Verify.middleware = []
 // Verify.use = function (fn) {
 //    this.middleware.push(fn)

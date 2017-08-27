@@ -3,7 +3,7 @@
 let Verify = require('../index')
 
 let query = {
-   "tenderName": "测试",
+   // "tenderName": "测试",
    "tenderNum": "123456789987",
    "tenderEndTime": "2017-07-07T09:53:30.000Z",
    "files": ["abc.js", "334", "null", "666", , , , , , "kkk.js"],
@@ -35,11 +35,14 @@ let { error, data, filter } = Verify(query,
    {
       "tenderName": {
          "type": String,
+         "name": "标书名称",
          "allowNull": false
       },
       "tenderNum": String,
       "tenderEndTime": {
-         type: Date
+         "type": Date,
+         "name": "截标时间",
+         "allowNull": false,
       },
       "auth": {
          "weixin": String,
