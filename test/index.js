@@ -26,7 +26,7 @@ let query = {
    "key": {
       a: "1",
       b: 2,
-      c: 999,
+      c: 666,
       d: 4
    }
 }
@@ -35,11 +35,14 @@ let { error, data, filter } = Verify(query,
    {
       "tenderName": {
          "type": String,
+         "name": "标书名称",
          "allowNull": false
       },
       "tenderNum": String,
       "tenderEndTime": {
-         type: Date
+         "type": Date,
+         "name": "截标时间",
+         "allowNull": false,
       },
       "auth": {
          "weixin": String,
@@ -96,10 +99,10 @@ let { error, data, filter } = Verify(query,
       },
    },
    {
-      // "coexist": [
-      //    ["guaranteeFormat", "addressee"],
-      //    ["tenderName", "tenderNum"],
-      // ],
+      "coexist": [
+         ["guaranteeFormat", "addressee"],
+         ["tenderName", "tenderNum"],
+      ],
       filter() {
          let { search, email, integral } = this
          let output = {
@@ -114,19 +117,19 @@ let { error, data, filter } = Verify(query,
                e: 0,
             },
             $or() {
-               // if (search.match(/^\d+$/)) {
-               //    return [
-               //       { tenderNum: new RegExp(search) },
-               //       { projectNum: new RegExp(search) },
-               //       { tenderProjectNum: new RegExp(search) }
-               //    ]
-               // } else {
-               //    return [
-               //       { tenderName: new RegExp(search) },
-               //       { projectName: new RegExp(search) },
-               //       { tenderProjectName: new RegExp(search) }
-               //    ]
-               // }
+               if (search.match(/^\d+$/)) {
+                  return [
+                     { tenderNum: new RegExp(search) },
+                     { projectNum: new RegExp(search) },
+                     { tenderProjectNum: new RegExp(search) }
+                  ]
+               } else {
+                  return [
+                     { tenderName: new RegExp(search) },
+                     { projectName: new RegExp(search) },
+                     { tenderProjectName: new RegExp(search) }
+                  ]
+               }
             },
             totalAmount() {
                return {

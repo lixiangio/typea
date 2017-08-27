@@ -11,11 +11,15 @@
 
 *  `options` *Objcte* - 验证数据表达式
 
+*  `constructor` *Objcte* - 数据构造器
+
 ## 导出验证结果
 
 *  `verify.error` *String* - 错误信息
 
 *  `verify.data` *Objcte* - 验证数据
+
+*  `verify.${name}` *Objcte* - 由constructor对象中构造器生成的对象，命名与构造器名称一致
 
 
 ## 使用示例
@@ -23,35 +27,146 @@
 #### 验证数据
 
       let data = {
-         "name": "测试",
-         "time": "2017-07-07T09:53:30.000Z",
-         "companyName": ["a.js", "b.js", "c.js"],
-         "multiple": ["a", "b", "c", "d"],
-         "money": 555,
-         "email": "abc@gmail.com"
+         "tenderName": "测试",
+         "tenderNum": "123456789987",
+         "tenderEndTime": "2017-07-07T09:53:30.000Z",
+         "files": ["abc.js", "334", "null", "666", , , , , , "kkk.js"],
+         "auth": {
+               "weixin": "llll",
+         },
+         "beneficiariesName": "莉莉",
+         "guaranteeMoney": 2,
+         "guaranteeFormat": 0,
+         // "addressee": "嘟嘟",
+         "receiveAddress": "快点快点的",
+         "phone": "18565799072",
+         "coupon": "uuuu",
+         "integral": {
+               "lala": 168,
+               "kaka": "3"
+         },
+         "search": "深圳",
+         "email": "xxx@xx.xx",
+         "key": {
+               a: "1",
+               b: 2,
+               c: 666,
+               d: 4
+         }
       }
 
-#### 表达式
+#### 验证数据表达式
 
-      let verify = Verify(data, {
-         "name": String,
-         "time": Date,
-         "companyName": [String],
-         "money": Number,
-         "multiple": [{
-            "type": String,
-            "allowNull": true,
-            "export": "filter",
-         }],
-         "email": {
-            "type": String,
-            "allowNull": true,
-            "export": "filter",
+      let { error, data, filter } = Verify(query,
+         {
+            "tenderName": {
+               "type": String,
+               "name": "标书名称",
+               "allowNull": false
+            },
+            "tenderNum": String,
+            "tenderEndTime": {
+               "type": Date,
+               "name": "截标时间",
+               "allowNull": false,
+            },
+            "auth": {
+               "weixin": String,
+            },
+            "beneficiariesName": String,
+            "guaranteeMoney": {
+               "type": Number,
+               "in": [1, 2]
+            },
+            "files": [{
+               "type": String,
+               // "allowNull": false,
+            }],
+            "guaranteeFormat": {
+               "type": Number,
+               "conversion": Boolean
+            },
+            "addressee": {
+               "type": String,
+            },
+            "search": {
+               "type": String,
+            },
+            "phone": {
+               "type": "MobilePhone"
+            },
+            "receiveAddress": String,
+            "coupon": {
+               "type": String,
+               method(value) {
+                  return { "$gt": new Date() }
+               }
+            },
+            "integral": {
+               "lala": {
+                  "type": Number,
+               },
+               "kaka": {
+                  "type": Number,
+                  "in": [1, 2, 3],
+               }
+            },
+            "email": {
+               "type": String,
+               "default": "releaseTime",
+               method(value) {
+                  return [value, , , , , "7777"]
+               }
+            },
+            "key": {
+               "$": {
+                  type: Number,
+               }
+            },
+         },
+         {
+            filter() {
+               let { search, email, integral } = this
+               let output = {
+                  "email": email,
+                  "integral": integral,
+                  "test": {
+                     a: 1,
+                     b: undefined,
+                     c: "",
+                     d: null,
+                     e: NaN,
+                     e: 0,
+                  },
+                  $or() {
+                     if (search.match(/^\d+$/)) {
+                        return [
+                           { tenderNum: new RegExp(search) },
+                           { projectNum: new RegExp(search) },
+                           { tenderProjectNum: new RegExp(search) }
+                        ]
+                     } else {
+                        return [
+                           { tenderName: new RegExp(search) },
+                           { projectName: new RegExp(search) },
+                           { tenderProjectName: new RegExp(search) }
+                        ]
+                     }
+                  },
+                  totalAmount() {
+                     return {
+                        $gt: /12/,
+                        $lt: 888,
+                     }
+                  },
+               }
+               return output
+            }
          }
-      })
+      )
 
 
-## 同构数据可复用验证表达式
+## 相同数据结构的可复用表达式
 
 #### 验证数据
 
@@ -88,31 +203,6 @@
       let verify = Verify(data, [String])
 
 
-## Number转Boolean
-
-#### 验证数据
-
-      let data = {
-         "a": 0,
-         "b": 3,
-      }
-
-#### 表达式
-
-      let verify = Verify(data, {
-         a: {
-            "type": Number,
-            "conversion": Boolean
-         },
-         b: {
-            "type": Number,
-            "conversion": Boolean
-         }
-      })
-
-      // Returns {a:false, b:true}
-
-
 ## 自定义类型
 
 #### 验证数据
@@ -130,7 +220,7 @@
       })
 
 
-## 关联验证
+## 关联验证，用于存在依赖关系的非空数据验证
 
 #### 验证数据
 
