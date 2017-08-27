@@ -3,7 +3,7 @@
 let Verify = require('../index')
 
 let query = {
-   // "tenderName": "测试",
+   "tenderName": "测试",
    "tenderNum": "123456789987",
    "tenderEndTime": "2017-07-07T09:53:30.000Z",
    "files": ["abc.js", "334", "null", "666", , , , , , "kkk.js"],
@@ -26,7 +26,7 @@ let query = {
    "key": {
       a: "1",
       b: 2,
-      c: 999,
+      c: 666,
       d: 4
    }
 }
@@ -99,10 +99,10 @@ let { error, data, filter } = Verify(query,
       },
    },
    {
-      // "coexist": [
-      //    ["guaranteeFormat", "addressee"],
-      //    ["tenderName", "tenderNum"],
-      // ],
+      "coexist": [
+         ["guaranteeFormat", "addressee"],
+         ["tenderName", "tenderNum"],
+      ],
       filter() {
          let { search, email, integral } = this
          let output = {
@@ -117,19 +117,19 @@ let { error, data, filter } = Verify(query,
                e: 0,
             },
             $or() {
-               // if (search.match(/^\d+$/)) {
-               //    return [
-               //       { tenderNum: new RegExp(search) },
-               //       { projectNum: new RegExp(search) },
-               //       { tenderProjectNum: new RegExp(search) }
-               //    ]
-               // } else {
-               //    return [
-               //       { tenderName: new RegExp(search) },
-               //       { projectName: new RegExp(search) },
-               //       { tenderProjectName: new RegExp(search) }
-               //    ]
-               // }
+               if (search.match(/^\d+$/)) {
+                  return [
+                     { tenderNum: new RegExp(search) },
+                     { projectNum: new RegExp(search) },
+                     { tenderProjectNum: new RegExp(search) }
+                  ]
+               } else {
+                  return [
+                     { tenderName: new RegExp(search) },
+                     { projectName: new RegExp(search) },
+                     { tenderProjectName: new RegExp(search) }
+                  ]
+               }
             },
             totalAmount() {
                return {
