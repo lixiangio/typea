@@ -1,6 +1,6 @@
 "use strict";
 
-let Verify = require('../index')
+let Validator = require('../index')
 
 let query = {
    "tenderName": "测试",
@@ -31,7 +31,7 @@ let query = {
    }
 }
 
-let { error, data, filter } = Verify(query,
+let { error, data, filter } = Validator(query,
    {
       "tenderName": {
          "type": String,

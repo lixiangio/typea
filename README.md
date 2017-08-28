@@ -5,7 +5,7 @@
 
 ## 使用方法
 
-    let verify = Verify(data, options)
+    let verify = Validator(data, options)
 
 *  `data` *Objcte* - 验证数据
 
@@ -57,7 +57,7 @@
 
 #### 验证数据表达式
 
-      let { error, data, filter } = Verify(query,
+      let { error, data, filter } = Validator(query,
          {
             "tenderName": {
                "type": String,
@@ -184,7 +184,7 @@
 
 #### 表达式
 
-      let verify = Verify(data, {
+      let { error, data } = Validator(data, {
          $: {
             type: Boolean,
             allowNull: true,
@@ -200,7 +200,7 @@
 
 #### 表达式
 
-      let verify = Verify(data, [String])
+      let { error, data } = Validator(data, [String])
 
 
 ## 自定义类型
@@ -214,7 +214,7 @@
 
 #### 表达式
 
-      let verify = Verify(data, {
+      let { error, data } = Validator(data, {
          "id": "ObjectId",
          "mobilePhone": "MobilePhone"
       })
@@ -231,7 +231,7 @@
 
 #### 表达式
 
-      let verify = Verify(data, {
+      let { error, data } = Validator(data, {
          "username": {
             "type": String,
             "&": ["addressee", "address"]
