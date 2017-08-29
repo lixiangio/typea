@@ -1,6 +1,6 @@
-"use strict";
+"use strict"
 
-let Verify = require('../index')
+let Validator = require('./index')
 
 let query = {
    "tenderName": "测试",
@@ -22,21 +22,23 @@ let query = {
       "kaka": "3"
    },
    "search": "深圳",
+   "searchField": "userName",
    "email": "xxx@xx.xx",
-   "key": {
+   "abc": {
       a: "1",
       b: 2,
-      c: 666,
-      d: 4
+      c: true,
+      d: 4,
    }
 }
 
-let { error, data, filter } = Verify(query,
+let { error, data, filter } = Validator(query,
    {
       "tenderName": {
          "type": String,
          "name": "标书名称",
-         "allowNull": false
+         "allowNull": false,
+         "and": ["tenderNum", "tenderEndTime"],
       },
       "tenderNum": String,
       "tenderEndTime": {
@@ -47,10 +49,14 @@ let { error, data, filter } = Verify(query,
       "auth": {
          "weixin": String,
       },
-      "beneficiariesName": String,
+      "beneficiariesName": {
+         "type": String,
+         "name": "xxx",
+         // "allowNull": false,
+      },
       "guaranteeMoney": {
          "type": Number,
-         "in": [1, 2]
+         "in": [1, 2],
       },
       "files": [{
          "type": String,
@@ -65,6 +71,7 @@ let { error, data, filter } = Verify(query,
       },
       "search": {
          "type": String,
+         // "or": ["searchField"],
       },
       "phone": {
          "type": "MobilePhone"
@@ -92,17 +99,13 @@ let { error, data, filter } = Verify(query,
             return [value, , , , , "7777"]
          }
       },
-      "key": {
+      "abc": {
          "$": {
             type: Number,
          }
       },
    },
    {
-      "coexist": [
-         ["guaranteeFormat", "addressee"],
-         ["tenderName", "tenderNum"],
-      ],
       filter() {
          let { search, email, integral } = this
          let output = {
@@ -149,4 +152,5 @@ if (error) {
 }
 
 console.log(data)
+
 // console.log(filter)

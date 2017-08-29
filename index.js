@@ -1,10 +1,8 @@
-"use strict";
+"use strict"
 
 let validator = require('validator')
 
 let Options = require('./options')
-
-let Handler = require('./handler')
 
 let filterNull = require('./filterNull')
 
@@ -15,7 +13,7 @@ let filterNull = require('./filterNull')
  * @param {*} options 验证表达式
  * @param {*} handler 验证结果处理
  */
-function Verify(data, options, handler = {}) {
+function Validator(data, options, handler = {}) {
 
    // 数据导出容器
    let output = {
@@ -24,26 +22,21 @@ function Verify(data, options, handler = {}) {
    }
 
    // 递归验证
-   let error = recursionVerify(data, options, output.data, null, data, output)
+   let error = recursion(data, options, output.data, null, data, output)
 
    if (error) {
       output.error = error
       return output
    }
 
-   // 空值过滤
+   // data对象空值过滤
    output.data = filterNull(output.data)
 
-   // 验证结果处理函数
+   // 数据构造器
    for (let name in handler) {
-      let fun = Handler[name]
       let options = handler[name]
-      // 使用处理函数处理
-      if (fun) {
-         fun(output, options)
-      }
       // 使用自定义构造函数处理
-      else if (typeof options === 'function') {
+      if (typeof options === 'function') {
          let outData = options.call(output.data)
          output[name] = filterNull(outData)
       }
@@ -62,7 +55,7 @@ function Verify(data, options, handler = {}) {
  * @param {*} input 原始输入数据
  * @param {*} output 验证输出数据
  */
-function recursionVerify(data, options, parent, key, input, output) {
+function recursion(data, options, parent, key, input, output) {
 
    // 选项为对象
    if (typeof options === 'object') {
@@ -83,9 +76,9 @@ function recursionVerify(data, options, parent, key, input, output) {
          let itemKey = 0
          let itemOptions = options[0]
          for (let itemData of data) {
-            let error = recursionVerify(itemData, itemOptions, parent, itemKey++, input, output)
+            let error = recursion(itemData, itemOptions, parent, itemKey++, input, output)
             if (error) {
-               return `${key}数组Key:${error}`
+               return `${key}数组中key:${error}`
             }
          }
 
@@ -130,7 +123,7 @@ function recursionVerify(data, options, parent, key, input, output) {
                for (let name in options) {
                   let fun = funObj[name]
                   if (fun) {
-                     let result = fun(data, options[name], output)
+                     let result = fun({ data, option: options[name], input, output })
                      if (result.err) {
                         return field + result.err
                      } else {
@@ -143,7 +136,7 @@ function recursionVerify(data, options, parent, key, input, output) {
 
             // type为对象或数组，用于为对象结构添加表达式
             else if (typeof options.type === 'object') {
-               let error = recursionVerify(data, options.type, parent, key, input, output)
+               let error = recursion(data, options.type, parent, key, input, output)
                if (error) {
                   if (Array.isArray(data)) {
                      return `${error}`
@@ -168,13 +161,12 @@ function recursionVerify(data, options, parent, key, input, output) {
                parent = parent[key]
             }
 
-            // 泛验证器（具有相同数据类型的可复用验证器）
+            // 通配符验证（具有相同数据类型的可复用验证器）
             if (options.$) {
                for (let subKey in data) {
                   let itemData = data[subKey]
-                  let itemOptions = options.$
-                  let error = recursionVerify(itemData, itemOptions, parent, subKey, input, output)
-                  if (error) return error
+                  let error = recursion(itemData, options.$, parent, subKey, input, output)
+                  if (error) return `${key}对象中key:${error}`
                }
             }
 
@@ -183,7 +175,7 @@ function recursionVerify(data, options, parent, key, input, output) {
                for (let subKey in options) {
                   let itemData = data[subKey]
                   let itemOptions = options[subKey]
-                  let error = recursionVerify(itemData, itemOptions, parent, subKey, input, output)
+                  let error = recursion(itemData, itemOptions, parent, subKey, input, output)
                   if (error) return error
                }
             }
@@ -197,7 +189,7 @@ function recursionVerify(data, options, parent, key, input, output) {
    // 选项为函数或字符串
    else if (Options[options]) {
 
-      let result = Options[options].type(data)
+      let result = Options[options].type({ data })
       if (result.err) {
          return key + result.err
       } else {
@@ -233,9 +225,9 @@ function recursionVerify(data, options, parent, key, input, output) {
 //    return data
 // }
 
-// 设置项
-Verify.config = function (options) {
-   if (options.language) {
+// 设置选项
+Validator.config = function ({ language }) {
+   if (language) {
 
    } else {
 
@@ -243,9 +235,9 @@ Verify.config = function (options) {
 }
 
 // 自定义扩展中间件
-// Verify.middleware = []
-// Verify.use = function (fn) {
+// Validator.middleware = []
+// Validator.use = function (fn) {
 //    this.middleware.push(fn)
 // }
 
-module.exports = Verify
+module.exports = Validator
