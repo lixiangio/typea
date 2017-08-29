@@ -2,24 +2,27 @@
 
       npm install check-data --save
 
+## 参数说明
 
-## 使用方法
+    let Validator = require('check-data')
+    
+    let { error, data, $, ... } = Validator(data, options, constructor)
 
-    let verify = Validator(data, options)
+## 输入参数
 
-*  `data` *Objcte* - 验证数据
+*  `data` *Objcte* - 导入验证数据
 
-*  `options` *Objcte* - 验证数据表达式
+*  `options` *Objcte* - 数据验证表达式
 
-*  `constructor` *Objcte* - 数据构造器
+*  `constructor` *Objcte* - 导出数据自定义构造方法（可选）
 
-## 导出验证结果
+## 输出结果
 
-*  `verify.error` *String* - 错误信息
+*  `error` *String* - 输出错误信息
 
-*  `verify.data` *Objcte* - 验证数据
+*  `data` *Objcte* - 经过验证、过滤后导出数据
 
-*  `verify.${name}` *Objcte* - 由constructor对象中构造器生成的对象，命名与构造器名称一致
+*  `${name}` *Objcte* - 由constructor对象中构造器生成的对象，命名与构造器名称一致
 
 
 ## 使用示例
@@ -30,16 +33,16 @@
          "tenderName": "测试",
          "tenderNum": "123456789987",
          "tenderEndTime": "2017-07-07T09:53:30.000Z",
-         "files": ["abc.js", "334", "null", "666", , , , , , "kkk.js"],
+         "files": ["abc.js", "334", "null", "666", , , "kkk.js"],
          "auth": {
-               "weixin": "llll",
+               "weixin": "abc",
          },
          "beneficiariesName": "莉莉",
          "guaranteeMoney": 2,
          "guaranteeFormat": 0,
-         // "addressee": "嘟嘟",
-         "receiveAddress": "快点快点的",
-         "phone": "18565799072",
+         "addressee": "嘟嘟",
+         "receiveAddress": "北京市",
+         "phone": "18666666666",
          "coupon": "uuuu",
          "integral": {
                "lala": 168,
@@ -80,7 +83,7 @@
             },
             "files": [{
                "type": String,
-               // "allowNull": false,
+               "allowNull": false,
             }],
             "guaranteeFormat": {
                "type": Number,
@@ -115,7 +118,7 @@
                "type": String,
                "default": "releaseTime",
                method(value) {
-                  return [value, , , , , "7777"]
+                  return [value, , , "xx"]
                }
             },
             "key": {
@@ -127,7 +130,7 @@
          {
             filter() {
                let { search, email, integral } = this
-               let output = {
+               return {
                   "email": email,
                   "integral": integral,
                   "test": {
@@ -138,29 +141,7 @@
                      e: NaN,
                      e: 0,
                   },
-                  $or() {
-                     if (search.match(/^\d+$/)) {
-                        return [
-                           { tenderNum: new RegExp(search) },
-                           { projectNum: new RegExp(search) },
-                           { tenderProjectNum: new RegExp(search) }
-                        ]
-                     } else {
-                        return [
-                           { tenderName: new RegExp(search) },
-                           { projectName: new RegExp(search) },
-                           { tenderProjectName: new RegExp(search) }
-                        ]
-                     }
-                  },
-                  totalAmount() {
-                     return {
-                        $gt: /12/,
-                        $lt: 888,
-                     }
-                  },
                }
-               return output
             }
          }
       )
@@ -168,9 +149,7 @@
 
 ## 相同数据结构的可复用表达式
 
-#### 验证数据
-
-      let data = {
+      let { error, data } = Validator({
          "t0": false,
          "t1": false,
          "t2": true,
@@ -180,11 +159,7 @@
          "t6": true,
          "t7": false,
          "t8": true
-      }
-
-#### 表达式
-
-      let { error, data } = Validator(data, {
+      }, {
          $: {
             type: Boolean,
             allowNull: true,
@@ -194,27 +169,15 @@
 
 ## 数组验证
 
-#### 验证数据
-
-      let data = ["a.js", "b.js", "c.js"]
-
-#### 表达式
-
-      let { error, data } = Validator(data, [String])
+      let { error, data } = Validator(["a.js", "b.js", "c.js"], [String])
 
 
-## 自定义类型
+## 非JS数据类型验证
 
-#### 验证数据
-
-      let data = {
+      let { error, data } = Validator({
          "id": "5968d3b4956fe04299ea5c18",
          "mobilePhone": "18555555555"
-      }
-
-#### 表达式
-
-      let { error, data } = Validator(data, {
+      }, {
          "id": "ObjectId",
          "mobilePhone": "MobilePhone"
       })
@@ -222,19 +185,33 @@
 
 ## 关联验证，用于存在依赖关系的非空数据验证
 
-#### 验证数据
-
-      let data = {
+      # 与
+      let { error, data } = Validator({
          "username": "莉莉",
          "addressee": "嘟嘟",
-      }
-
-#### 表达式
-
-      let { error, data } = Validator(data, {
+      }, {
          "username": {
             "type": String,
-            "&": ["addressee", "address"]
+            "and": ["addressee", "address"]
+         },
+         "addressee": {
+            "type": String,
+            "allowNull": true
+         },
+         "address": {
+            "type": String,
+            "allowNull": true
+         }
+      })
+
+      # 或
+      let { error, data } = Validator({
+         "username": "莉莉",
+         "addressee": "嘟嘟",
+      }, {
+         "username": {
+            "type": String,
+            "or": ["addressee", "address"]
          },
          "addressee": {
             "type": String,

@@ -24,10 +24,10 @@ let query = {
    "search": "深圳",
    "searchField": "userName",
    "email": "xxx@xx.xx",
-   "key": {
+   "abc": {
       a: "1",
       b: 2,
-      c: 666,
+      c: true,
       d: 4,
    }
 }
@@ -38,7 +38,7 @@ let { error, data, filter } = Validator(query,
          "type": String,
          "name": "标书名称",
          "allowNull": false,
-         // "and": ["tenderNum", "tenderEndTime"],
+         "and": ["tenderNum", "tenderEndTime"],
       },
       "tenderNum": String,
       "tenderEndTime": {
@@ -49,10 +49,14 @@ let { error, data, filter } = Validator(query,
       "auth": {
          "weixin": String,
       },
-      "beneficiariesName": String,
+      "beneficiariesName": {
+         "type": String,
+         "name": "xxx",
+         // "allowNull": false,
+      },
       "guaranteeMoney": {
          "type": Number,
-         "in": [1, 2]
+         "in": [1, 2],
       },
       "files": [{
          "type": String,
@@ -67,6 +71,7 @@ let { error, data, filter } = Validator(query,
       },
       "search": {
          "type": String,
+         // "or": ["searchField"],
       },
       "phone": {
          "type": "MobilePhone"
@@ -94,7 +99,7 @@ let { error, data, filter } = Validator(query,
             return [value, , , , , "7777"]
          }
       },
-      "key": {
+      "abc": {
          "$": {
             type: Number,
          }
