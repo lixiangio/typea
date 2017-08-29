@@ -2,13 +2,13 @@
 
       npm install check-data --save
 
-
 ## 参数说明
 
     let Validator = require('check-data')
+    
     let { error, data, $, ... } = Validator(data, options, constructor)
 
-## 导入参数
+## 输入参数
 
 *  `data` *Objcte* - 导入验证数据
 
@@ -16,7 +16,7 @@
 
 *  `constructor` *Objcte* - 导出数据自定义构造方法（可选）
 
-## 导出结果
+## 输出结果
 
 *  `error` *String* - 输出错误信息
 
@@ -33,7 +33,7 @@
          "tenderName": "测试",
          "tenderNum": "123456789987",
          "tenderEndTime": "2017-07-07T09:53:30.000Z",
-         "files": ["abc.js", "334", "null", "666", , , , , , "kkk.js"],
+         "files": ["abc.js", "334", "null", "666", , , "kkk.js"],
          "auth": {
                "weixin": "abc",
          },
@@ -83,7 +83,7 @@
             },
             "files": [{
                "type": String,
-               // "allowNull": false,
+               "allowNull": false,
             }],
             "guaranteeFormat": {
                "type": Number,
@@ -118,7 +118,7 @@
                "type": String,
                "default": "releaseTime",
                method(value) {
-                  return [value, , , , , "7777"]
+                  return [value, , , "xx"]
                }
             },
             "key": {
@@ -185,7 +185,7 @@
 
 ## 关联验证，用于存在依赖关系的非空数据验证
 
-      # 与验证
+      # 与
       let { error, data } = Validator({
          "username": "莉莉",
          "addressee": "嘟嘟",
@@ -204,7 +204,7 @@
          }
       })
 
-      # 或验证
+      # 或
       let { error, data } = Validator({
          "username": "莉莉",
          "addressee": "嘟嘟",
