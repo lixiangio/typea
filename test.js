@@ -1,6 +1,6 @@
-"use strict";
+"use strict"
 
-let Validator = require('../index')
+let Validator = require('./index')
 
 let query = {
    "tenderName": "测试",
@@ -22,12 +22,13 @@ let query = {
       "kaka": "3"
    },
    "search": "深圳",
+   "searchField": "userName",
    "email": "xxx@xx.xx",
    "key": {
       a: "1",
       b: 2,
       c: 666,
-      d: 4
+      d: 4,
    }
 }
 
@@ -36,7 +37,8 @@ let { error, data, filter } = Validator(query,
       "tenderName": {
          "type": String,
          "name": "标书名称",
-         "allowNull": false
+         "allowNull": false,
+         // "and": ["tenderNum", "tenderEndTime"],
       },
       "tenderNum": String,
       "tenderEndTime": {
@@ -145,4 +147,5 @@ if (error) {
 }
 
 console.log(data)
+
 // console.log(filter)
