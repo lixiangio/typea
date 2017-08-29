@@ -185,7 +185,11 @@
 
 ## 关联验证，用于存在依赖关系的非空数据验证
 
+<<<<<<< HEAD
       # 与
+=======
+      # 与验证
+>>>>>>> a51dadd543fd872cb4430bdce7f5b3e9c89f8fa7
       let { error, data } = Validator({
          "username": "莉莉",
          "addressee": "嘟嘟",
@@ -204,7 +208,11 @@
          }
       })
 
+<<<<<<< HEAD
       # 或
+=======
+      # 或验证
+>>>>>>> a51dadd543fd872cb4430bdce7f5b3e9c89f8fa7
       let { error, data } = Validator({
          "username": "莉莉",
          "addressee": "嘟嘟",
