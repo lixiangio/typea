@@ -2,6 +2,35 @@
 
 let validator = require('validator')
 
+// 公共方法
+let commonMethod = {
+   method({ data, option: fun, output }) {
+      return { data: fun.call(output, data) }
+   },
+   // 与
+   and({ data, option: nameArray, input }) {
+      for (let name of nameArray) {
+         if (input[name] === undefined || input[name] === '') {
+            return { err: `必须与${nameArray}参数同时存在` }
+         }
+      }
+      return { data }
+   },
+   // 或
+   or({ data, option: nameArray, input }) {
+      let status = true
+      for (let name of nameArray) {
+         if (input[name] !== undefined && input[name] === '') {
+            status = false
+         }
+      }
+      if (status) {
+         return { err: `必须与${nameArray}参数其中之一同时存在` }
+      }
+      return { data }
+   },
+}
+
 // 类别方法
 let typeMethod = {
    [String]: {
@@ -10,7 +39,7 @@ let typeMethod = {
          if (typeof data === 'string') {
             return { data: data.trim() }
          } else {
-            return { err: "必须为字符串" }
+            return { err: '必须为字符串' }
          }
       },
       // 长度验证
@@ -38,7 +67,7 @@ let typeMethod = {
       },
       reg({ data, option: reg }) {
          if (data.search(reg) === -1) {
-            return { err: `格式错误` }
+            return { err: '格式错误' }
          } else {
             return { data: data }
          }
@@ -47,7 +76,7 @@ let typeMethod = {
    [Number]: {
       type({ data }) {
          if (isNaN(data)) {
-            return { err: "必须为数值或可转换为数值的字符串" }
+            return { err: '必须为数值或可转换为数值的字符串' }
          } else {
             return { data: Number(data) }
          }
@@ -87,7 +116,7 @@ let typeMethod = {
    [Object]: {
       type({ data }) {
          if (typeof data !== 'object') {
-            return { err: "必须为对象" }
+            return { err: '必须为对象' }
          } else {
             return { data: data }
          }
@@ -96,7 +125,7 @@ let typeMethod = {
    [Array]: {
       type({ data }) {
          if (!Array.isArray(data)) {
-            return { err: "必须为数组" }
+            return { err: '必须为数组' }
          } else {
             return { data: data }
          }
@@ -105,7 +134,7 @@ let typeMethod = {
    [Date]: {
       type({ data }) {
          if (!validator.toDate(data + '')) {
-            return { err: "必须为日期类型" }
+            return { err: '必须为日期类型' }
          } else {
             return { data: data }
          }
@@ -114,7 +143,7 @@ let typeMethod = {
    [Boolean]: {
       type({ data }) {
          if (typeof data !== 'boolean') {
-            return { err: "必须为布尔值" }
+            return { err: '必须为布尔值' }
          } else {
             return { data: data }
          }
@@ -124,7 +153,7 @@ let typeMethod = {
    "ObjectId": {
       type({ data }) {
          if (!validator.isMongoId(data + '')) {
-            return { err: "必须为ObjectId" }
+            return { err: '必须为ObjectId' }
          } else {
             return { data: data }
          }
@@ -134,40 +163,11 @@ let typeMethod = {
    "MobilePhone": {
       type({ data }) {
          if (!validator.isMobilePhone(data + '', 'zh-CN')) {
-            return { err: "必须为手机号" }
+            return { err: '必须为手机号' }
          } else {
             return { data: data }
          }
       },
-   },
-}
-
-// 公告方法
-let commonMethod = {
-   method({ data, option: fun, output }) {
-      return { data: fun.call(output, data) }
-   },
-   // 与
-   and({ data, option: nameArray, input }) {
-      for (let name of nameArray) {
-         if (input[name] === undefined || input[name] === '') {
-            return { err: `与${nameArray}参数必须同时存在` }
-         }
-      }
-      return { data }
-   },
-   // 或
-   or({ data, option: nameArray, input }) {
-      let status = true
-      for (let name of nameArray) {
-         if (input[name] !== undefined && input[name] === '') {
-            status = false
-         }
-      }
-      if (status) {
-         return { err: `与${nameArray}参数中的一个必须同时存在` }
-      }
-      return { data }
    },
 }
 
