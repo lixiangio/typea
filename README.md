@@ -10,7 +10,7 @@
 
 ## 参数输入
 
-*  `data` *Objcte* - 导入验证数据
+*  `data` * - 导入验证数据，数据类型参考type选项
 
 *  `options` *Objcte* - 数据验证表达式
 
