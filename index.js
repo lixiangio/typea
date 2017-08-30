@@ -11,21 +11,14 @@ let filterNull = require('./filterNull')
  * 验证器
  * @param {*} data 数据源
  * @param {*} options 验证表达式
- * @param {*} handler 验证结果处理
+ * @param {*} handler 导出数据自定义处理方法
  */
 function Validator(data, options, handler = {}) {
 
-   // 数据导出容器
-   let output = {
-      error: null,//错误信息
-      data: {},//验证结果
-   }
-
    // 递归验证
-   let error = recursion(data, options, output.data, null, data, output)
+   let output = recursion(data, options, undefined, data)
 
-   if (error) {
-      output.error = error
+   if (output.error) {
       return output
    }
 
@@ -49,42 +42,52 @@ function Validator(data, options, handler = {}) {
 /**
  * 递归验证器
  * @param {*} data 验证数据
- * @param {*} options 验证规则选项
- * @param {*} parent 当前父级对象
+ * @param {*} options 验证表达式选项
  * @param {*} key 数据索引
  * @param {*} input 原始输入数据
- * @param {*} output 验证输出数据
  */
-function recursion(data, options, parent, key, input, output) {
+function recursion(data, options, key = '', input) {
 
    // 选项为对象
    if (typeof options === 'object') {
 
-      // 选项为数组（数据结构）
+      // 选项为数组
       if (Array.isArray(options)) {
 
          if (!Array.isArray(data)) {
-            return `${key}参数必须为数组`
+            return {
+               error: `${key}值必须为数组`
+            }
          }
 
-         // 非根对象时创建数组结构
-         if (key) {
-            parent[key] = []
-            parent = parent[key]
-         }
+         let dataArray = []
 
          let itemKey = 0
          let itemOptions = options[0]
          for (let itemData of data) {
-            let error = recursion(itemData, itemOptions, parent, itemKey++, input, output)
+            let { error, data: subData } = recursion(itemData, itemOptions, itemKey++, input)
+
+            // console.log(error, subData)
+            
             if (error) {
-               return `${key}数组中key:${error}`
+               return {
+                  error: `${key}数组中key:${error}`
+               }
+            } else {
+               // 空数组提示
+               if (itemOptions.allowNull === false) {
+                  if (subData === undefined || subData === '') {
+                     return {
+                        error: `${key}数组中key:${itemKey}值不能为空`
+                     }
+                  }
+               }
+               dataArray.push(subData)
             }
          }
 
-         // 空数组提示
-         if (itemOptions.allowNull === false && itemKey === 0) {
-            return `${key}数组不能为空`
+         return {
+            data: dataArray
          }
 
       }
@@ -107,7 +110,9 @@ function recursion(data, options, parent, key, input, output) {
 
                // 允许为空
                else if (options.allowNull === false) {
-                  return `${field}不能为空`
+                  return {
+                     error: `${field}不能为空`
+                  }
                }
 
                else {
@@ -119,65 +124,98 @@ function recursion(data, options, parent, key, input, output) {
             // type为构造函数或字符串（字符串用于表示自定义数据类型）
             if (Options[options.type]) {
 
+               let processData
                let funObj = Options[options.type]
                for (let name in options) {
                   let fun = funObj[name]
                   if (fun) {
-                     let result = fun({ data, option: options[name], input, output })
-                     if (result.err) {
-                        return field + result.err
-                     } else {
-                        parent[key] = result.data
+                     let { err, data: subData } = fun({ data, option: options[name], input })
+                     if (err) {
+                        return {
+                           error: `${field}值${err}`
+                        }
                      }
+                     processData = subData
                   }
+               }
+
+               return {
+                  data: processData
                }
 
             }
 
             // type为对象或数组，用于为父对象添加表达式
             else if (typeof options.type === 'object') {
-               let error = recursion(data, options.type, parent, key, input, output)
+               let { error, data: subData } = recursion(data, options.type, key, input)
                if (error) {
                   if (Array.isArray(data)) {
-                     return `${error}`
+                     return {
+                        error: `${error}`
+                     }
                   } else {
-                     return `${field}下${error}`
+                     return {
+                        error: `${field}下${error}`
+                     }
                   }
+               }
+               return {
+                  data: subData
                }
             }
 
          }
 
-         // 选项为对象（数据结构）
          else {
 
             if (typeof data !== 'object') {
-               return `${field}必须为对象`
+               return {
+                  error: `${key}值必须为对象`
+               }
             }
 
-            // 非根对象时创建对象结构
-            if (key) {
-               parent[key] = {}
-               parent = parent[key]
-            }
+            let dataObj = {}
 
             // 通配符验证表达式（针对具有相同数据结构和类型的可复用表达式）
             if (options.$) {
                for (let subKey in data) {
                   let itemData = data[subKey]
-                  let error = recursion(itemData, options.$, parent, subKey, input, output)
-                  if (error) return `${key}对象中key:${error}`
+                  let { error, data: subData } = recursion(itemData, options.$, subKey, input)
+                  if (error) {
+                     return {
+                        error: `${key}对象中key${error}`
+                     }
+                  } else {
+                     dataObj[subKey] = subData
+                  }
                }
             }
 
             // 子集递归验证
             else {
+
                for (let subKey in options) {
                   let itemData = data[subKey]
                   let itemOptions = options[subKey]
-                  let error = recursion(itemData, itemOptions, parent, subKey, input, output)
-                  if (error) return error
+                  let { error, data: subData } = recursion(itemData, itemOptions, subKey, input)
+                  if (error) {
+                     if (key) {
+                        return {
+                           error: `${key}对象中${error}`
+                        }
+                     } else {
+                        return {
+                           error: error
+                        }
+                     }
+                  } else {
+                     dataObj[subKey] = subData
+                  }
                }
+            }
+
+            return {
+               data: dataObj
             }
 
          }
@@ -189,13 +227,15 @@ function recursion(data, options, parent, key, input, output) {
    // 选项为构造函数或字符串（字符串用于表示自定义数据类型）
    else if (Options[options]) {
 
-      let result = Options[options].type({ data })
-      if (result.err) {
-         return key + result.err
-      } else {
-         parent[key] = result.data
+      let { err, data: subData } = Options[options].type({ data })
+      if (err) {
+         return {
+            error: `${key}值${err}`
+         }
       }
-
+      return {
+         data: subData
+      }
    }
 
 }
@@ -217,6 +257,7 @@ function recursion(data, options, parent, key, input, output) {
 //    }
 //    return data
 // }
+
 
 // 设置选项
 Validator.config = function ({ language }) {
