@@ -10,11 +10,11 @@
 
 ## 参数输入
 
-*  `data` * - 导入验证数据，数据类型参考type选项
+*  `data` * - 导入验证数据，类型参考type选项
 
-*  `options` *Objcte* - 数据验证表达式
+*  `options` * - 数据验证表达式，类型参考type选项
 
-*  `constructor` *Objcte* - 导出数据自定义构造方法（可选）
+*  `constructor` *Objcte* - 自定义数据导出构造方法（可选）
 
 ## 结果输出
 
