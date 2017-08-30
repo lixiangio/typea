@@ -14,12 +14,12 @@ let query = {
    "guaranteeMoney": 2,
    "guaranteeFormat": 0,
    // "addressee": "嘟嘟",
-   "receiveAddress": "快点快点的",
+   "receiveAddress": "快点",
    "phone": "18565799072",
    "coupon": "uuuu",
    "integral": {
       "lala": 168,
-      "kaka": "3"
+      "kaka": 6,
    },
    "search": "深圳",
    "searchField": "userName",
@@ -40,7 +40,7 @@ let { error, data, filter } = Validator(query,
          "allowNull": false,
          "and": ["tenderNum", "tenderEndTime"],
       },
-      "tenderNum": String,
+      "tenderNum": Number,
       "tenderEndTime": {
          "type": Date,
          "name": "截标时间",
@@ -52,7 +52,7 @@ let { error, data, filter } = Validator(query,
       "beneficiariesName": {
          "type": String,
          "name": "xxx",
-         // "allowNull": false,
+         "allowNull": false,
       },
       "guaranteeMoney": {
          "type": Number,
@@ -64,7 +64,7 @@ let { error, data, filter } = Validator(query,
       }],
       "guaranteeFormat": {
          "type": Number,
-         "conversion": Boolean
+         "to": Boolean,//conversion
       },
       "addressee": {
          "type": String,
@@ -80,7 +80,7 @@ let { error, data, filter } = Validator(query,
       "coupon": {
          "type": String,
          method(value) {
-            return { "$gt": new Date() }
+            return { "$gt": value }
          }
       },
       "integral": {
@@ -89,7 +89,8 @@ let { error, data, filter } = Validator(query,
          },
          "kaka": {
             "type": Number,
-            "in": [1, 2, 3],
+            "allowNull": false,
+            "in": [1, 3, 8, 6],
          }
       },
       "email": {
@@ -103,12 +104,12 @@ let { error, data, filter } = Validator(query,
          "$": {
             type: Number,
          }
-      },
+      }
    },
    {
       filter() {
          let { search, email, integral } = this
-         let output = {
+         return {
             "email": email,
             "integral": integral,
             "test": {
@@ -141,7 +142,6 @@ let { error, data, filter } = Validator(query,
                }
             },
          }
-         return output
       }
    }
 )

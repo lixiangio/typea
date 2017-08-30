@@ -97,7 +97,7 @@ function recursion(data, options, parent, key, input, output) {
 
             let field = options.name || key
 
-            // 空值处理
+            // 前置空值拦截
             if (data === undefined || data === '') {
 
                // 默认
@@ -116,7 +116,7 @@ function recursion(data, options, parent, key, input, output) {
 
             }
 
-            // type为函数或字符串（字符串表示自定义数据类型）
+            // type为构造函数或字符串（字符串用于表示自定义数据类型）
             if (Options[options.type]) {
 
                let funObj = Options[options.type]
@@ -134,7 +134,7 @@ function recursion(data, options, parent, key, input, output) {
 
             }
 
-            // type为对象或数组，用于为对象结构添加表达式
+            // type为对象或数组，用于为父对象添加表达式
             else if (typeof options.type === 'object') {
                let error = recursion(data, options.type, parent, key, input, output)
                if (error) {
@@ -161,7 +161,7 @@ function recursion(data, options, parent, key, input, output) {
                parent = parent[key]
             }
 
-            // 通配符验证（具有相同数据类型的可复用验证器）
+            // 通配符验证表达式（针对具有相同数据结构和类型的可复用表达式）
             if (options.$) {
                for (let subKey in data) {
                   let itemData = data[subKey]
@@ -186,7 +186,7 @@ function recursion(data, options, parent, key, input, output) {
 
    }
 
-   // 选项为函数或字符串
+   // 选项为构造函数或字符串（字符串用于表示自定义数据类型）
    else if (Options[options]) {
 
       let result = Options[options].type({ data })
@@ -195,13 +195,6 @@ function recursion(data, options, parent, key, input, output) {
       } else {
          parent[key] = result.data
       }
-
-   }
-
-   // 选项为自定义构造器
-   else if (typeof options === 'function') {
-
-      parent[key] = options.call(output.data, output)
 
    }
 

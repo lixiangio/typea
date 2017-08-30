@@ -16,6 +16,16 @@
       "test": "test"
    },
    "devDependencies": {},
+   "keywords": [
+      "JSON",
+      "schema",
+      "validator",
+      "validation",
+      "jsonschema",
+      "json-schema",
+      "json-schema-validator",
+      "json-schema-validation"
+    ],
    "repository": {
       "type": "git",
       "url": "git+https://github.com/xiangle/verify.git"
