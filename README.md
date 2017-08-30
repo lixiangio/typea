@@ -68,6 +68,10 @@
 
 * `to` * - 类型转换，仅支持Boolean值
 
+#### Date、Array、Object、Boolean
+
+> 仅支持类型验证
+
 
 ### 扩展类型（用字符串表示）
 
