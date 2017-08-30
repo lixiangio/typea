@@ -75,9 +75,13 @@
 
 ### 扩展类型（用字符串表示）
 
-#### 'ObjectId'：表示mongodb中的ObjectId
+#### 'ObjectId'
 
-#### 'MobilePhone'：表示手机号
+> 表示mongodb中的ObjectId
+
+#### 'MobilePhone'
+
+> 表示手机号
 
 
 ## 使用示例
