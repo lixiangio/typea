@@ -25,6 +25,57 @@
 *  `${name}` *Objcte* - 由constructor对象中构造器生成的对象，命名与构造器名称一致
 
 
+## 选项说明
+
+> 当只需要验证数据类型时可以直接用type赋值，不需要用对象表达式
+
+### 通用选项
+
+* `type` * - 用于定义数据类型，可选为String、Number、Object、 Array、Date、Boolean、"ObjectId"、"MobilePhone"，带引号字符串表示扩展类型（必选）
+
+* `name` *String* - 自定义参数名称，用于错误返回值中替换默认参数名
+
+* `default` * - 值为空时使用默认值
+
+* `allowNull` *Boolean* - 是否允许为空，默认为true
+
+* `and` *Array* - 依赖的参数名数组
+
+* `or` *Array* - 依赖的参数名数组
+
+* `method` *Function* - 参数自定义转换方法
+
+
+### 内置数据类型（用构造函数表示）
+
+#### String
+
+* `minLength` *Number* - 限制字符串最小长度
+
+* `maxLength` *Number* - 限制字符串最大长度
+
+* `reg` *RegExp* - 正则表达式验证
+
+* `in` *Array* - 匹配多个可选值中的一个
+
+#### Number
+
+* `min` *Number* - 限制最小值
+
+* `max` *Number* - 限制最大值
+
+* `in` *Array* - 匹配多个可选值中的一个
+
+* `to` * - 类型转换，仅支持Boolean值
+
+
+### 扩展类型（用字符串表示）
+
+#### 'ObjectId'：表示mongodb中的ObjectId
+
+#### 'MobilePhone'：表示手机号
+
+
 ## 使用示例
 
 #### 验证数据
@@ -147,7 +198,7 @@
       )
 
 
-## 相同数据结构的可复用表达式
+## 相同数据结构和类型的可复用表达式
 
       let { error, data } = Validator({
          "t0": false,
@@ -183,7 +234,7 @@
       })
 
 
-## 关联验证，用于存在依赖关系的非空数据验证
+## 关联验证，用于存在参数依赖关系的非空值验证
 
       # 与
       let { error, data } = Validator({

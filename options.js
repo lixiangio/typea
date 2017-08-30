@@ -57,17 +57,18 @@ let typeMethod = {
             return { data: data }
          }
       },
-      in({ data, option: arr }) {
-         let result = arr.indexOf(data)
-         if (result === -1) {
-            return { err: `可选值必须为:${arr}中的一个` }
+      reg({ data, option: reg }) {
+         if (data.search(reg) === -1) {
+            return { err: '格式错误' }
          } else {
             return { data: data }
          }
       },
-      reg({ data, option: reg }) {
-         if (data.search(reg) === -1) {
-            return { err: '格式错误' }
+      // 包含
+      in({ data, option: arr }) {
+         let result = arr.indexOf(data)
+         if (result === -1) {
+            return { err: `值必须为${arr}中的一个` }
          } else {
             return { data: data }
          }
@@ -83,27 +84,29 @@ let typeMethod = {
       },
       min({ data, option: min }) {
          if (data < options.min) {
-            return `不能小于${min}`
+            return { err: `不能小于${min}` }
          } else {
             return { data: data }
          }
       },
       max({ data, option: max }) {
          if (data > max) {
-            return `不能大于${max}`
+            return { err: `不能大于${max}` }
          } else {
             return { data: data }
          }
       },
+      // 包含
       in({ data, option: arr }) {
          let result = arr.indexOf(data)
          if (result === -1) {
-            return `可选值必须为:${arr}`
+            return { err: `值必须为${arr}中的一个` }
          } else {
             return { data: data }
          }
       },
-      conversion({ data, option: type }) {
+      // 转换类型
+      to({ data, option: type }) {
          if (type === Boolean) {
             if (data) {
                return { data: true }
