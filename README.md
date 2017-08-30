@@ -20,9 +20,9 @@
 
 *  `error` *String* - 输出错误信息
 
-*  `data` *Objcte* - 经过验证、过滤后导出数据
+*  `data` *Objcte* - 经过验证、处理后导出数据（空值自动过滤）
 
-*  `${name}` *Objcte* - 由constructor对象中构造器生成的对象，命名与构造器名称一致
+*  `${name}` *Objcte* - 由constructor对象中构造器生成的对象，命名与构造器名称一致（空值自动过滤）
 
 
 ## 选项说明
