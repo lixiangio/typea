@@ -6,14 +6,14 @@ let query = {
    "tenderName": "测试",
    "tenderNum": "123456789987",
    "tenderEndTime": "2017-07-07T09:53:30.000Z",
-   "files": ["abc.js", "334", "null", "666", , , , , , "kkk.js"],
+   "files": ["abc.js", "334", "null", "666", "12"],
    "auth": {
       "weixin": "llll",
    },
    "beneficiariesName": "莉莉",
    "guaranteeMoney": 2,
    "guaranteeFormat": 0,
-   // "addressee": "嘟嘟",
+   "addressee": "嘟嘟",
    "receiveAddress": "快点",
    "phone": "18565799072",
    "coupon": "uuuu",
@@ -61,135 +61,97 @@ let { error, data, filter } = Validator(query,
       },
       "files": [{
          "type": String,
-         // "allowNull": false,
+         "allowNull": false,
       }],
       "guaranteeFormat": {
          "type": Number,
          "to": Boolean,//conversion
       },
-      // "addressee": {
-      //    "type": String,
-      // },
-      // "search": {
-      //    "type": String,
-      //    // "or": ["searchField"],
-      // },
-      // "phone": {
-      //    "type": "MobilePhone"
-      // },
-      // "receiveAddress": String,
-      // "coupon": {
-      //    "type": String,
-      //    method(value) {
-      //       return { "$gt": value }
-      //    }
-      // },
-      // "integral": {
-      //    "lala": {
-      //       "type": Number,
-      //    },
-      //    "kaka": {
-      //       "type": Number,
-      //       "allowNull": false,
-      //       "in": [1, 3, 8, 6],
-      //    }
-      // },
-      // "email": {
-      //    "type": String,
-      //    "default": "releaseTime",
-      //    method(value) {
-      //       return [value, , , , , "7777"]
-      //    }
-      // },
-      // "abc": {
-      //    "$": {
-      //       type: Number,
-      //    }
-      // }
+      "addressee": {
+         "type": String,
+      },
+      "search": {
+         "type": String,
+         // "or": ["searchField"],
+      },
+      "phone": {
+         "type": "MobilePhone"
+      },
+      "receiveAddress": String,
+      "coupon": {
+         "type": String,
+         method(value) {
+            return { "$gt": value }
+         }
+      },
+      "integral": {
+         "lala": {
+            "type": Number,
+         },
+         "kaka": {
+            "type": Number,
+            "allowNull": false,
+            "in": [1, 3, 8, 6],
+         }
+      },
+      "email": {
+         "type": String,
+         "default": "releaseTime",
+         method(value) {
+            return [value, , , , , "7777"]
+         }
+      },
+      "abc": {
+         "$": {
+            type: Number,
+         }
+      }
    },
    {
-      // filter() {
-      //    let { search, email, integral } = this
-      //    return {
-      //       "email": email,
-      //       "integral": integral,
-      //       "test": {
-      //          a: 1,
-      //          b: undefined,
-      //          c: "",
-      //          d: null,
-      //          e: NaN,
-      //          e: 0,
-      //       },
-      //       $or() {
-      //          if (search.match(/^\d+$/)) {
-      //             return [
-      //                { tenderNum: new RegExp(search) },
-      //                { projectNum: new RegExp(search) },
-      //                { tenderProjectNum: new RegExp(search) }
-      //             ]
-      //          } else {
-      //             return [
-      //                { tenderName: new RegExp(search) },
-      //                { projectName: new RegExp(search) },
-      //                { tenderProjectName: new RegExp(search) }
-      //             ]
-      //          }
-      //       },
-      //       totalAmount() {
-      //          return {
-      //             $gt: /12/,
-      //             $lt: 888,
-      //          }
-      //       },
-      //    }
-      // }
+      filter() {
+         let { search, email, integral } = this
+         return {
+            "email": email,
+            "integral": integral,
+            "test": {
+               a: 1,
+               b: undefined,
+               c: "",
+               d: null,
+               e: NaN,
+               e: 0,
+            },
+            $or() {
+               if (search) {
+                  if (search.match(/^\d+$/)) {
+                     return [
+                        { tenderNum: new RegExp(search) },
+                        { projectNum: new RegExp(search) },
+                        { tenderProjectNum: new RegExp(search) }
+                     ]
+                  } else {
+                     return [
+                        { tenderName: new RegExp(search) },
+                        { projectName: new RegExp(search) },
+                        { tenderProjectName: new RegExp(search) }
+                     ]
+                  }
+               }
+            },
+            totalAmount() {
+               return {
+                  $gt: /12/,
+                  $lt: 888,
+               }
+            },
+         }
+      }
    }
 )
 
-// let { error, data, filter } = Validator(
-//    {
-//       user: {
-//          a: "1",
-//          b: "15",
-//       },
-//       file: [{
-//          a: 23,
-//          b: 34,
-//       }],
-//    },
-//    {
-//       user: {
-//          a: String,
-//          b: String,
-//       },
-//       file: [{
-//          a: Number,
-//          b: Number,
-//       }]
-//    }
-// )
-
-// let { error, data, filter } = Validator(
-//    {
-//       a: 1,
-//       b: {
-//          b1: ["77"]
-//       },
-//    },
-//    {
-//       a: Number,
-//       b: {
-//          b1: [String]
-//       },
-//    }
-// )
-
 if (error) {
    console.log(error)
-   return
+} else {
+   console.log(data)
+   console.log(filter)
 }
-
-console.log(data)
-
-// console.log(filter)

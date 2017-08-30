@@ -65,10 +65,9 @@ function recursion(data, options, key = '', input) {
          let itemKey = 0
          let itemOptions = options[0]
          for (let itemData of data) {
+
             let { error, data: subData } = recursion(itemData, itemOptions, itemKey++, input)
 
-            // console.log(error, subData)
-            
             if (error) {
                return {
                   error: `${key}数组中key:${error}`
@@ -116,7 +115,9 @@ function recursion(data, options, key = '', input) {
                }
 
                else {
-                  return
+                  return {
+                     data: undefined
+                  }
                }
 
             }
@@ -132,7 +133,7 @@ function recursion(data, options, key = '', input) {
                      let { err, data: subData } = fun({ data, option: options[name], input })
                      if (err) {
                         return {
-                           error: `${field}值${err}`
+                           error: `${field}${err}`
                         }
                      }
                      processData = subData
@@ -155,7 +156,7 @@ function recursion(data, options, key = '', input) {
                      }
                   } else {
                      return {
-                        error: `${field}下${error}`
+                        error: `参数${field}下${error}`
                      }
                   }
                }
@@ -183,7 +184,7 @@ function recursion(data, options, key = '', input) {
                   let { error, data: subData } = recursion(itemData, options.$, subKey, input)
                   if (error) {
                      return {
-                        error: `${key}对象中key${error}`
+                        error: `${key}对象中参数${error}`
                      }
                   } else {
                      dataObj[subKey] = subData
