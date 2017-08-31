@@ -3,7 +3,7 @@
 let Validator = require('./index')
 
 let query = {
-   "tenderName": "测试",
+   // "tenderName": "测试",
    "tenderNum": "123456789987",
    "tenderEndTime": "2017-07-07T09:53:30.000Z",
    "files": ["abc.js", "334", "null", "666", "12"],
@@ -29,7 +29,7 @@ let query = {
       b: 2,
       c: true,
       d: 4,
-   }
+   },
 }
 
 
@@ -39,6 +39,7 @@ let { error, data, filter } = Validator(query,
          "type": String,
          "name": "标书名称",
          "allowNull": false,
+         "default": "updatedAt",
          // "and": ["tenderNum", "tenderEndTime"],
       },
       "tenderNum": Number,
@@ -57,7 +58,8 @@ let { error, data, filter } = Validator(query,
       },
       "guaranteeMoney": {
          "type": Number,
-         "in": [1, 2],
+         "min": 15,
+         // "in": [1, 2],
       },
       "files": [{
          "type": String,

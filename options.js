@@ -47,21 +47,21 @@ let typeMethod = {
          if (data.length < minLength) {
             return { err: `长度不能小于${minLength}个字符` }
          } else {
-            return { data: data }
+            return { data }
          }
       },
       maxLength({ data, option: maxLength }) {
          if (data.length > maxLength) {
             return { err: `长度不能大于${maxLength}个字符` }
          } else {
-            return { data: data }
+            return { data }
          }
       },
       reg({ data, option: reg }) {
          if (data.search(reg) === -1) {
             return { err: '格式错误' }
          } else {
-            return { data: data }
+            return { data }
          }
       },
       // 包含
@@ -70,7 +70,7 @@ let typeMethod = {
          if (result === -1) {
             return { err: `值必须为${arr}中的一个` }
          } else {
-            return { data: data }
+            return { data }
          }
       },
    },
@@ -83,17 +83,17 @@ let typeMethod = {
          }
       },
       min({ data, option: min }) {
-         if (data < options.min) {
+         if (data < min) {
             return { err: `不能小于${min}` }
          } else {
-            return { data: data }
+            return { data }
          }
       },
       max({ data, option: max }) {
          if (data > max) {
             return { err: `不能大于${max}` }
          } else {
-            return { data: data }
+            return { data}
          }
       },
       // 包含
@@ -102,7 +102,7 @@ let typeMethod = {
          if (result === -1) {
             return { err: `值必须为${arr}中的一个` }
          } else {
-            return { data: data }
+            return { data }
          }
       },
       // 转换类型
@@ -121,7 +121,7 @@ let typeMethod = {
          if (typeof data !== 'object') {
             return { err: '必须为对象' }
          } else {
-            return { data: data }
+            return { data }
          }
       },
    },
@@ -130,7 +130,7 @@ let typeMethod = {
          if (!Array.isArray(data)) {
             return { err: '必须为数组' }
          } else {
-            return { data: data }
+            return { data }
          }
       },
    },
@@ -139,7 +139,7 @@ let typeMethod = {
          if (!validator.toDate(data + '')) {
             return { err: '必须为日期类型' }
          } else {
-            return { data: data }
+            return { data }
          }
       },
    },
@@ -148,7 +148,7 @@ let typeMethod = {
          if (typeof data !== 'boolean') {
             return { err: '必须为布尔值' }
          } else {
-            return { data: data }
+            return { data }
          }
       },
    },
@@ -158,7 +158,7 @@ let typeMethod = {
          if (!validator.isMongoId(data + '')) {
             return { err: '必须为ObjectId' }
          } else {
-            return { data: data }
+            return { data }
          }
       },
    },
@@ -168,7 +168,7 @@ let typeMethod = {
          if (!validator.isMobilePhone(data + '', 'zh-CN')) {
             return { err: '必须为手机号' }
          } else {
-            return { data: data }
+            return { data }
          }
       },
    },
