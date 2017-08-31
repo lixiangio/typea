@@ -58,7 +58,7 @@ let { error, data, filter } = Validator(query,
       },
       "guaranteeMoney": {
          "type": Number,
-         "min": 15,
+         // "min": 15,
          // "in": [1, 2],
       },
       "files": [{
