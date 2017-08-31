@@ -39,7 +39,7 @@ let { error, data, filter } = Validator(query,
          "type": String,
          "name": "标书名称",
          "allowNull": false,
-         "and": ["tenderNum", "tenderEndTime"],
+         // "and": ["tenderNum", "tenderEndTime"],
       },
       "tenderNum": Number,
       "tenderEndTime": {

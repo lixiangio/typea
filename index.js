@@ -228,6 +228,10 @@ function recursion(data, options, key = '', input) {
    // 选项为构造函数或字符串（字符串用于表示自定义数据类型）
    else if (Options[options]) {
 
+      if (data === undefined || data === '') {
+         return { data }
+      }
+
       let { err, data: subData } = Options[options].type({ data })
       if (err) {
          return {
@@ -237,6 +241,7 @@ function recursion(data, options, key = '', input) {
       return {
          data: subData
       }
+      
    }
 
 }
