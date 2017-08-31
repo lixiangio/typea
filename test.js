@@ -11,7 +11,7 @@ let query = {
       "weixin": "llll",
    },
    "beneficiariesName": "莉莉",
-   "guaranteeMoney": 2,
+   "guaranteeMoney": "2",
    "guaranteeFormat": 0,
    "addressee": "嘟嘟",
    "receiveAddress": "快点",

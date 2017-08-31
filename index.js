@@ -125,7 +125,6 @@ function recursion(data, options, key = '', input) {
             // type为构造函数或字符串（字符串用于表示自定义数据类型）
             if (Options[options.type]) {
 
-               let processData
                let funObj = Options[options.type]
                for (let name in options) {
                   let fun = funObj[name]
@@ -136,13 +135,11 @@ function recursion(data, options, key = '', input) {
                            error: `${field}${err}`
                         }
                      }
-                     processData = subData
+                     data = subData
                   }
                }
 
-               return {
-                  data: processData
-               }
+               return { data }
 
             }
 
@@ -241,7 +238,7 @@ function recursion(data, options, key = '', input) {
       return {
          data: subData
       }
-      
+
    }
 
 }
