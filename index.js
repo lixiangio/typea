@@ -260,19 +260,25 @@ function recursion(data, options, key = '', input) {
 // }
 
 
-// 设置选项
-Validator.config = function ({ language }) {
-   if (language) {
+// // 设置选项
+// Validator.config = function ({ language }) {
+//    if (language) {
 
-   } else {
+//    } else {
 
-   }
-}
+//    }
+// }
 
-// 自定义扩展中间件
+// // 自定义扩展
 // Validator.middleware = []
 // Validator.use = function (fn) {
 //    this.middleware.push(fn)
 // }
+
+// Validator.use(() => {
+//    console.log(111)
+// })
+
+// console.log(Validator.middleware)
 
 module.exports = Validator

@@ -65,7 +65,7 @@ let { error, data, filter } = Validator(query,
       }],
       "guaranteeFormat": {
          "type": Number,
-         "to": Boolean,//conversion
+         "to": Boolean,
       },
       "addressee": {
          "type": String,
@@ -141,7 +141,7 @@ let { error, data, filter } = Validator(query,
             totalAmount() {
                return {
                   $gt: /12/,
-                  $lt: 888,
+                  $lt: 666,
                }
             },
          }
