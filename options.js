@@ -15,7 +15,7 @@ let commonMethod = {
       if (option instanceof Array) {
          for (let name of option) {
             if (input[name] === undefined || input[name] === '') {
-               return { err: `必须与${option}参数同时存在` }
+               return { err: `必须与${name}参数同时存在` }
             }
          }
       }
@@ -34,7 +34,7 @@ let commonMethod = {
             }
          }
          if (status) {
-            return { err: `必须与${option}参数其中之一同时存在` }
+            return { err: `必须至少与[${option}]参数中的一个同时存在` }
          }
       }
       return { data }
