@@ -40,7 +40,11 @@ let { error, data, filter } = Validator(query,
          "name": "标书名称",
          "allowNull": false,
          "default": "updatedAt",
-         // "and": ["tenderNum", "tenderEndTime"],
+         "or": function (value) {
+            if (value === 'updatedAt') {
+               return ["tenderNum", "tenderEndTime"]
+            }
+         },
       },
       "tenderNum": Number,
       "tenderEndTime": {

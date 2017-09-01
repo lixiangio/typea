@@ -8,24 +8,34 @@ let commonMethod = {
       return { data: fun.call(output, data) }
    },
    // 与
-   and({ data, option: nameArray, input }) {
-      for (let name of nameArray) {
-         if (input[name] === undefined || input[name] === '') {
-            return { err: `必须与${nameArray}参数同时存在` }
+   and({ data, option, input }) {
+      if (option instanceof Function) {
+         option = option(data)
+      }
+      if (option instanceof Array) {
+         for (let name of option) {
+            if (input[name] === undefined || input[name] === '') {
+               return { err: `必须与${option}参数同时存在` }
+            }
          }
       }
       return { data }
    },
    // 或
-   or({ data, option: nameArray, input }) {
-      let status = true
-      for (let name of nameArray) {
-         if (input[name] !== undefined && input[name] === '') {
-            status = false
-         }
+   or({ data, option, input }) {
+      if (option instanceof Function) {
+         option = option(data)
       }
-      if (status) {
-         return { err: `必须与${nameArray}参数其中之一同时存在` }
+      if (option instanceof Array) {
+         let status = true
+         for (let name of option) {
+            if (input[name] !== undefined && input[name] !== '') {
+               status = false
+            }
+         }
+         if (status) {
+            return { err: `必须与${option}参数其中之一同时存在` }
+         }
       }
       return { data }
    },
@@ -93,7 +103,7 @@ let typeMethod = {
          if (data > max) {
             return { err: `不能大于${max}` }
          } else {
-            return { data}
+            return { data }
          }
       },
       // 包含
