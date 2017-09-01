@@ -11,9 +11,10 @@ let filterNull = require('./filterNull')
  * 验证器
  * @param {*} data 数据源
  * @param {*} options 验证表达式
- * @param {*} handler 导出数据自定义处理方法
+ * @param {Object} handler 导出数据自定义处理方法
+ * @param {Function} callback 附加回调函数（用于全局参数注入）
  */
-function Validator(data, options, handler = {}) {
+function Validator(data, options, handler = {}, callback) {
 
    // 递归验证
    let output = recursion(data, options, undefined, data)
@@ -33,6 +34,11 @@ function Validator(data, options, handler = {}) {
          let outData = options.call(output.data)
          output[name] = filterNull(outData)
       }
+   }
+
+   // 附加回调函数
+   if (callback) {
+      callback(output.data)
    }
 
    return output
