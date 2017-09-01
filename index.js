@@ -17,7 +17,7 @@ let filterNull = require('./filterNull')
 function Validator(data, options, handler = {}, callback) {
 
    // 递归验证
-   let output = recursion(data, options, undefined, data)
+   let output = recursion(data, options, '', data)
 
    if (output.error) {
       return output
@@ -52,7 +52,7 @@ function Validator(data, options, handler = {}, callback) {
  * @param {*} key 数据索引
  * @param {*} input 原始输入数据
  */
-function recursion(data, options, key = '', input) {
+function recursion(data, options, key, input) {
 
    // 选项为对象
    if (typeof options === 'object') {

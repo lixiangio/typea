@@ -39,6 +39,9 @@ let commonMethod = {
       }
       return { data }
    },
+   // rename({ data }) {
+
+   // },
 }
 
 // 类别方法
