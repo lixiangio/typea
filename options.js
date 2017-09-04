@@ -39,9 +39,10 @@ let commonMethod = {
       }
       return { data }
    },
-   // rename({ data }) {
-
-   // },
+   // 使用指定值或覆盖默认值
+   value({ option: value }) {
+      return { data: value }
+   },
 }
 
 // 类别方法

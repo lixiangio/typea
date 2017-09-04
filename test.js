@@ -3,7 +3,7 @@
 let Validator = require('./index')
 
 let query = {
-   // "tenderName": "测试",
+   "tenderName": "测试",
    "tenderNum": "123456789987",
    "tenderEndTime": "2017-07-07T09:53:30.000Z",
    "files": ["abc.js", "334", "null", "666", "12"],
@@ -40,13 +40,16 @@ let { error, data, filter } = Validator(query,
          "name": "标书名称",
          "allowNull": false,
          "default": "updatedAt",
-         "and" (value) {
+         "and"(value) {
             if (value === 'updatedAt') {
                return ["tenderNum", "tenderEndTime"]
             }
          },
       },
-      "tenderNum": Number,
+      "tenderNum": {
+         "type": Number,
+         "value": "xxxxxx",
+      },
       "tenderEndTime": {
          "type": Date,
          "name": "截标时间",
