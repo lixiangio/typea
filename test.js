@@ -4,7 +4,7 @@ let Validator = require('./index')
 
 let query = {
    "tenderName": "测试",
-   "tenderNum": "123456789987",
+   // "tenderNum": "123456789987",
    "tenderEndTime": "2017-07-07T09:53:30.000Z",
    "files": ["abc.js", "334", "null", "666", "12"],
    "auth": {
@@ -42,13 +42,13 @@ let { error, data, filter } = Validator(query,
          "default": "updatedAt",
          "and"(value) {
             if (value === 'updatedAt') {
-               return ["tenderNum", "tenderEndTime"]
+               return ["tenderEndTime"]
             }
          },
       },
       "tenderNum": {
          "type": Number,
-         "value": "xxxxxx",
+         "value": 666,
       },
       "tenderEndTime": {
          "type": Date,

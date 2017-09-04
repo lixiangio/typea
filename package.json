@@ -1,6 +1,6 @@
 {
    "name": "check-data",
-   "version": "1.6.8",
+   "version": "1.6.9",
    "description": "JS数据验证器",
    "main": "index.js",
    "scripts": {

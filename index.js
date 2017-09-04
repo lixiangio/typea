@@ -113,6 +113,11 @@ function recursion(data, options, key, input) {
                   data = options.default
                }
 
+               // 直接赋值
+               else if (options.value) {
+                  data = options.value
+               }
+
                // 允许为空
                else if (options.allowNull === false) {
                   return {
