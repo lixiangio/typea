@@ -4,8 +4,13 @@ let validator = require('validator')
 
 // 公共方法
 let commonMethod = {
+   // 参数自定义转换方法
    method({ data, option: fun, output }) {
       return { data: fun.call(output, data) }
+   },
+   // 直接赋值（覆盖导入值）
+   value({ option: value }) {
+      return { data: value }
    },
    // 与
    and({ data, option, input }) {
@@ -38,10 +43,6 @@ let commonMethod = {
          }
       }
       return { data }
-   },
-   // 直接赋值（覆盖导入值）
-   value({ option: value }) {
-      return { data: value }
    },
 }
 
@@ -167,22 +168,32 @@ let typeMethod = {
       },
    },
    // mongoDB ID
-   "ObjectId": {
+   'ObjectId': {
       type({ data }) {
-         if (!validator.isMongoId(data + '')) {
-            return { err: '必须为ObjectId' }
-         } else {
+         if (validator.isMongoId(String(data))) {
             return { data }
+         } else {
+            return { err: '必须为ObjectId' }
          }
       },
    },
    // 手机号
-   "MobilePhone": {
+   'MobilePhone': {
       type({ data }) {
-         if (!validator.isMobilePhone(data + '', 'zh-CN')) {
-            return { err: '必须为手机号' }
-         } else {
+         if (validator.isMobilePhone(String(data), 'zh-CN')) {
             return { data }
+         } else {
+            return { err: '必须为手机号' }
+         }
+      },
+   },
+   // 邮箱
+   'Email': {
+      type({ data }) {
+         if (validator.isEmail(String(data))) {
+            return { data }
+         } else {
+            return { err: '必须为Email邮箱格式' }
          }
       },
    },
