@@ -72,19 +72,22 @@
 
 #### Date、Array、Object、Boolean
 
-> 仅支持类型验证
+> 目前仅支持类型验证
 
 
 ### 扩展类型（用字符串表示）
 
 #### 'ObjectId'
 
-> 表示mongodb中的ObjectId
+> 验证mongodb中的ObjectId
 
 #### 'MobilePhone'
 
-> 表示手机号
+> 验证手机号
 
+#### 'Email'
+
+> 验证Email
 
 ## 参考示例
 
