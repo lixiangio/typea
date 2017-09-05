@@ -37,13 +37,15 @@
 
 * `default` * - 值为空时使用默认值
 
+* `value` * - 直接使用表达式赋值，类似于default赋值，区别是不管值是否为空都将使用该值替换（优先级低于default，还没有发现需要同时使用的应用场景）
+
 * `allowNull` *Boolean* - 是否允许为空，默认为true
 
 * `and` *Array* - 依赖的参数名数组
 
 * `or` *Array* - 依赖的参数名数组
 
-* `method` *Function* - 参数自定义转换方法，空值时不执行
+* `method` *Function* - 参数自定义转换方法，值为空时不执行
 
 
 ### 内置数据类型（用构造函数表示）
@@ -84,7 +86,7 @@
 > 表示手机号
 
 
-## 使用示例
+## 参考示例
 
 #### 验证数据
 
@@ -119,7 +121,7 @@
 
 #### 验证数据表达式
 
-      let { error, data, filter } = Validator(query,
+      let { error, data, filter } = Validator(data,
          {
             "tenderName": {
                "type": String,
@@ -150,6 +152,7 @@
             },
             "addressee": {
                "type": String,
+               "value": "直接在表达式上赋值"
             },
             "search": {
                "type": String,
@@ -206,7 +209,7 @@
       )
 
 
-## 相同数据结构和类型的可复用表达式
+## 具有相同数据结构、类型的复用验证表达式
 
       let { error, data } = Validator({
          "t0": false,
@@ -221,7 +224,6 @@
       }, {
          $: {
             type: Boolean,
-            allowNull: true,
          }
       })
 
