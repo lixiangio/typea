@@ -213,15 +213,13 @@
 ## 具有相同数据结构、类型的复用验证表达式
 
       let { error, data } = Validator({
-         "t0": false,
-         "t1": false,
-         "t2": true,
-         "t3": true,
-         "t4": false,
-         "t5": true,
-         "t6": true,
-         "t7": false,
-         "t8": true
+         "a": false,
+         "b": false,
+         "c": true,
+         "d": true,
+         "e": false,
+         "f": true,
+         "g": true,
       }, {
          $: {
             type: Boolean,
