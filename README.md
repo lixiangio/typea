@@ -43,7 +43,7 @@
 
 * `and` *Array、Function* - 声明依赖的参数名数组，支持数组和函数两种表达式，函数表达式用于声明指定值的依赖关系。要求依赖的所有参数都不能为空
 
-* `or` *Array、Function* - 与and相似，区别是依赖的其中一个参数都不能为空
+* `or` *Array、Function* - 与and相似，区别是只要求依赖的其中一个参数不为空即可
 
 * `method` *Function* - 参数自定义转换方法，非空值时执行
 
@@ -239,7 +239,7 @@
          "mobilePhone": "MobilePhone"
       })
 
-## and（关联验证，用于依赖参数的非空值验证）
+## and
 
       let { error, data } = Validator({
          "username": "莉莉",
@@ -268,7 +268,7 @@
          }
       })
 
-## or（关联验证，用于依赖参数的非空值验证）
+## or
 
       let { error, data } = Validator({
          "username": "莉莉",
