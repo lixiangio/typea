@@ -2,7 +2,7 @@
 
       npm install check-data --save
 
-## 使用
+## 使用方法
 
     let Validator = require('check-data')
     
@@ -10,7 +10,7 @@
 
 ## 输入
 
-*  `data` * - 导入验证数据，类型参考type选项
+*  `data` * - 输入验证数据，类型参考type选项
 
 *  `options` * - 数据验证表达式，类型参考type选项
 
@@ -18,7 +18,7 @@
 
 ## 输出
 
-*  `error` *String* - 验证错误信息，验证成功时为null
+*  `error` *String* - 验证失败时返回的错误信息，验证成功时返回null
 
 *  `data` *Objcte* - 经过验证、处理后导出数据（支持空值过滤，用于剔除对象中的空数组、空字符串、undefind、null）
 
@@ -41,11 +41,11 @@
 
 * `allowNull` *Boolean* - 是否允许为空，默认为true
 
-* `and` *Array* - 依赖的参数名数组
+* `and` *Array、Function* - 声明依赖的参数名数组，支持数组和函数两种表达式，函数表达式用于声明指定值的依赖关系。要求依赖的所有参数都不能为空
 
-* `or` *Array* - 依赖的参数名数组
+* `or` *Array、Function* - 与and相似，区别是依赖的其中一个参数都不能为空
 
-* `method` *Function* - 参数自定义转换方法，值为空时不执行
+* `method` *Function* - 参数自定义转换方法，非空值时执行
 
 
 ### 内置数据类型（用构造函数表示）
@@ -239,17 +239,16 @@
          "mobilePhone": "MobilePhone"
       })
 
+## and（关联验证，用于依赖参数的非空值验证）
 
-## 关联验证，用于存在参数依赖关系的非空值验证
-
-      # 与
       let { error, data } = Validator({
          "username": "莉莉",
          "addressee": "嘟嘟",
       }, {
          "username": {
             "type": String,
-            "and": ["addressee", "address"]
+            // 使用数组表达式
+            "and": ["addressee", "address"],
          },
          "addressee": {
             "type": String,
@@ -257,11 +256,20 @@
          },
          "address": {
             "type": String,
-            "allowNull": true
+            "allowNull": true,
+            // 使用函数表达式，表示特定值的依赖关系
+            and(value){
+               if (value === 1) {
+                  return ["addressee", "address"]
+               } else if (value === 2) {
+                  return ["username", "xx"]
+               }
+            },
          }
       })
 
-      # 或
+## or（关联验证，用于依赖参数的非空值验证）
+
       let { error, data } = Validator({
          "username": "莉莉",
          "addressee": "嘟嘟",
