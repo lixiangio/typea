@@ -96,7 +96,7 @@
       let data = {
          "username": "测试",
          "tenderNum": "123456789987",
-         "endTime": "2017-07-07T09:53:30.000Z",
+         "time": "2017-07-07T09:53:30.000Z",
          "files": ["abc.js", "334", "null", "666", , , "kkk.js"],
          "auth": {
                "weixin": "abc",
@@ -128,13 +128,13 @@
          {
             "username": {
                "type": String,
-               "name": "用于名称",
+               "name": "用户名",
                "allowNull": false
             },
             "tenderNum": String,
-            "endTime": {
+            "time": {
                "type": Date,
-               "name": "截止时间",
+               "name": "时间",
                "allowNull": false,
             },
             "auth": {
