@@ -155,7 +155,7 @@
             },
             "addressee": {
                "type": String,
-               "value": "直接在表达式上赋值"
+               "value": "直接通过表达式赋值"
             },
             "search": String,
             "phone": {
