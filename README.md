@@ -94,9 +94,9 @@
 #### 输入数据
 
       let data = {
-         "tenderName": "测试",
+         "username": "测试",
          "tenderNum": "123456789987",
-         "tenderEndTime": "2017-07-07T09:53:30.000Z",
+         "endTime": "2017-07-07T09:53:30.000Z",
          "files": ["abc.js", "334", "null", "666", , , "kkk.js"],
          "auth": {
                "weixin": "abc",
@@ -114,11 +114,11 @@
          },
          "search": "深圳",
          "email": "xxx@xx.xx",
-         "key": {
+         "keys": {
                a: "1",
                b: 2,
                c: 666,
-               d: 4
+               d: 4,
          }
       }
 
@@ -126,15 +126,15 @@
 
       let { error, data, filter } = Validator(data,
          {
-            "tenderName": {
+            "username": {
                "type": String,
-               "name": "名称",
+               "name": "用于名称",
                "allowNull": false
             },
             "tenderNum": String,
-            "tenderEndTime": {
+            "endTime": {
                "type": Date,
-               "name": "时间",
+               "name": "截止时间",
                "allowNull": false,
             },
             "auth": {
@@ -180,7 +180,7 @@
             "email": {
                "type": 'Email',
             },
-            "key": {
+            "keys": {
                "$": {
                   type: Number,
                }
