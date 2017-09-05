@@ -89,9 +89,9 @@
 
 > 验证Email
 
-## 参考示例
+## 验证示例
 
-#### 验证数据
+#### 输入数据
 
       let data = {
          "tenderName": "测试",
@@ -122,7 +122,7 @@
          }
       }
 
-#### 验证数据表达式
+#### 验证表达式
 
       let { error, data, filter } = Validator(data,
          {
@@ -178,11 +178,7 @@
                }
             },
             "email": {
-               "type": String,
-               "default": "releaseTime",
-               method(value) {
-                  return [value, , , "xx"]
-               }
+               "type": 'Email',
             },
             "key": {
                "$": {
@@ -209,6 +205,10 @@
          }
       )
 
+## 数组验证
+
+      let { error, data } = Validator(["a.js", "b.js", "c.js"], [String])
+
 
 ## 具有相同数据结构、类型的复用验证表达式
 
@@ -229,16 +229,11 @@
       })
 
 
-## 数组验证
-
-      let { error, data } = Validator(["a.js", "b.js", "c.js"], [String])
-
-
 ## 扩展数据类型验证
 
       let { error, data } = Validator({
          "id": "5968d3b4956fe04299ea5c18",
-         "mobilePhone": "18555555555"
+         "mobilePhone": "18555555555",
       }, {
          "id": "ObjectId",
          "mobilePhone": "MobilePhone"
