@@ -39,7 +39,7 @@ let commonMethod = {
       }
       return { data }
    },
-   // 使用指定值或覆盖默认值
+   // 直接赋值（覆盖导入值）
    value({ option: value }) {
       return { data: value }
    },
