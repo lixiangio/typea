@@ -128,13 +128,13 @@
          {
             "tenderName": {
                "type": String,
-               "name": "标书名称",
+               "name": "名称",
                "allowNull": false
             },
             "tenderNum": String,
             "tenderEndTime": {
                "type": Date,
-               "name": "截标时间",
+               "name": "时间",
                "allowNull": false,
             },
             "auth": {
