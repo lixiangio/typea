@@ -27,7 +27,7 @@
 
 ## 选项说明
 
-> 如果只想验证数据类型，可以直接在参数值上用数据类型赋值
+> 如果只想验证数据类型，可以直接在参数值上用数据类型赋值，参考search参数
 
 ### 通用选项
 
@@ -154,9 +154,7 @@
                "type": String,
                "value": "直接在表达式上赋值"
             },
-            "search": {
-               "type": String,
-            },
+            "search": String,
             "phone": {
                "type": "MobilePhone"
             },
