@@ -8,7 +8,7 @@
     
     let { error, data, $, ... } = Validator(data, options, constructor)
 
-## 参数输入
+## 输入
 
 *  `data` * - 导入验证数据，类型参考type选项
 
@@ -16,7 +16,7 @@
 
 *  `constructor` *Objcte* - 自定义数据导出构造方法（可选）
 
-## 结果输出
+## 输出
 
 *  `error` *String* - 验证错误信息，验证成功时为null
 
