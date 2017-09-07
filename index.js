@@ -172,6 +172,13 @@ function recursion(data, options, key, input) {
                   data: subData
                }
             }
+            
+            // 未知参数
+            else {
+               return {
+                  error: `验证器中${field}字段参数配置错误，不支持type值为${options.type}`
+               }
+            }
 
          }
 
