@@ -104,7 +104,7 @@ let { error, data, filter } = Validator(query,
          }
       },
       "email": {
-         "type": 'Email1',
+         "type": 'Email',
          method(value) {
             return [value, , , , , "7777"]
          }
