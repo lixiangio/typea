@@ -1,7 +1,5 @@
 "use strict"
 
-let validator = require('validator')
-
 let Options = require('./options')
 
 let filterNull = require('./filterNull')
