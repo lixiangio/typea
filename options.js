@@ -168,12 +168,12 @@ let typeMethod = {
       },
    },
    // mongoDB ID
-   'ObjectId': {
+   'MongoId': {
       type({ data }) {
          if (validator.isMongoId(String(data))) {
             return { data }
          } else {
-            return { err: '必须为ObjectId' }
+            return { err: '必须为MongoId' }
          }
       },
    },
