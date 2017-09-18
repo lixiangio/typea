@@ -7,11 +7,21 @@ let query = {
    // "tenderNum": "123456789987",
    "tenderEndTime": "2017-07-07T09:53:30.000Z",
    "files": ["abc.js", "334", "null", "666", "12"],
-   "auth": {
-      "weixin": "llll",
+   "user": {
+      "username": "莉莉",
+      "age": 18,
    },
-   "beneficiariesName": "莉莉",
-   "guaranteeMoney": "2",
+   "list": [
+      {
+         "username": "吖吖",
+         "age": 16,
+      },
+      {
+         "username": "可可",
+         "age": 15,
+      }
+   ],
+   "money": "2",
    "guaranteeFormat": 0,
    "addressee": "嘟嘟",
    "receiveAddress": "快点",
@@ -33,7 +43,7 @@ let query = {
 }
 
 
-let { error, data, filter } = Validator(query,
+let { error, body, filter } = Validator(query,
    {
       "tenderName": {
          "type": String,
@@ -55,15 +65,15 @@ let { error, data, filter } = Validator(query,
          "name": "截标时间",
          "allowNull": false,
       },
-      "auth": {
-         "weixin": String,
+      "user": {
+         "username": String,
+         "age": Number,
       },
-      "beneficiariesName": {
-         "type": String,
-         "name": "xxx",
-         "allowNull": false,
-      },
-      "guaranteeMoney": {
+      "list": [{
+         "username": String,
+         "age": Number,
+      }],
+      "money": {
          "type": Number,
          // "min": 15,
          // "in": [1, 2],
@@ -106,7 +116,7 @@ let { error, data, filter } = Validator(query,
       "email": {
          "type": 'Email',
          method(value) {
-            return [value, , , , , "7777"]
+            return [value, , null, , undefined, 666]
          }
       },
       "abc": {
@@ -122,36 +132,13 @@ let { error, data, filter } = Validator(query,
             "email": email,
             "integral": integral,
             "test": {
-               a: 1,
-               b: undefined,
-               c: "",
-               d: null,
-               e: NaN,
-               e: 0,
-            },
-            $or() {
-               if (search) {
-                  if (search.match(/^\d+$/)) {
-                     return [
-                        { tenderNum: new RegExp(search) },
-                        { projectNum: new RegExp(search) },
-                        { tenderProjectNum: new RegExp(search) }
-                     ]
-                  } else {
-                     return [
-                        { tenderName: new RegExp(search) },
-                        { projectName: new RegExp(search) },
-                        { tenderProjectName: new RegExp(search) }
-                     ]
-                  }
-               }
-            },
-            totalAmount() {
-               return {
-                  $gt: /12/,
-                  $lt: 666,
-               }
-            },
+               v1: 1,
+               v2: undefined,
+               v3: "",
+               v4: null,
+               v5: NaN,
+               v6: 0,
+            }
          }
       }
    }
@@ -160,6 +147,6 @@ let { error, data, filter } = Validator(query,
 if (error) {
    console.log(error)
 } else {
-   console.log(data)
+   console.log(body)
    console.log(filter)
 }

@@ -22,14 +22,14 @@ function Validator(data, options, handler = {}, callback) {
    }
 
    // data对象空值过滤
-   output.data = filterNull(output.data)
+   output.body = filterNull(output.data)
 
    // 数据构造器
    for (let name in handler) {
       let options = handler[name]
       // 使用自定义构造函数处理
       if (typeof options === 'function') {
-         let outData = options.call(output.data)
+         let outData = options.call(output.body)
          output[name] = filterNull(outData)
       }
    }
