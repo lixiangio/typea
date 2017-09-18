@@ -77,7 +77,7 @@
 
 ### 扩展类型（用字符串表示）
 
-#### 'ObjectId'
+#### 'MongoId'
 
 > 验证mongodb中的ObjectId
 

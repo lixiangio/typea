@@ -259,25 +259,6 @@ function recursion(data, options, key, input) {
 
 }
 
-
-// /**
-//  * 通过Path获取数据
-//  * @param {*} data 数据源
-//  * @param {String} path 数据路径
-//  */
-// function pathGetData(data, path) {
-//    let pathArray = path.split('.')
-//    for (let key of pathArray) {
-//       if (data[key] === undefined) {
-//          return undefined
-//       } else {
-//          data = data[key]
-//       }
-//    }
-//    return data
-// }
-
-
 // // 设置选项
 // Validator.config = function ({ language }) {
 //    if (language) {
@@ -296,7 +277,5 @@ function recursion(data, options, key, input) {
 // Validator.use(() => {
 //    console.log(111)
 // })
-
-// console.log(Validator.middleware)
 
 module.exports = Validator
