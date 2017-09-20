@@ -193,7 +193,7 @@ let typeMethod = {
          if (validator.isEmail(String(data))) {
             return { data }
          } else {
-            return { err: '必须为Email邮箱格式' }
+            return { err: '必须为Email格式' }
          }
       },
    },
