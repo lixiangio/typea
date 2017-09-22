@@ -43,7 +43,7 @@ let query = {
 }
 
 
-let { error, body, filter } = Validator(query,
+let { error, data, filter } = Validator(query,
    {
       "tenderName": {
          "type": String,
@@ -147,6 +147,6 @@ let { error, body, filter } = Validator(query,
 if (error) {
    console.log(error)
 } else {
-   console.log(body)
+   console.log(data)
    console.log(filter)
 }

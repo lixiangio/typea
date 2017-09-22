@@ -1,6 +1,6 @@
 "use strict"
 
-let Options = require('./options')
+let methods = require('./methods')
 
 let filterNull = require('./filterNull')
 
@@ -10,9 +10,8 @@ let filterNull = require('./filterNull')
  * @param {*} data 数据源
  * @param {*} options 验证表达式
  * @param {Object} handler 导出数据自定义处理方法
- * @param {Function} callback 附加回调函数（用于全局参数注入）
  */
-function Validator(data, options, handler = {}, callback) {
+function Validator(data, options, handler = {}) {
 
    // 递归验证
    let output = recursion(data, options, '', data)
@@ -21,22 +20,18 @@ function Validator(data, options, handler = {}, callback) {
       return output
    }
 
-   // data对象空值过滤
-   output.body = filterNull(output.data)
+   // 对象空值过滤（直接修改导入对象本身）
+   filterNull(output.data)
 
    // 数据构造器
    for (let name in handler) {
       let options = handler[name]
       // 使用自定义构造函数处理
       if (typeof options === 'function') {
-         let outData = options.call(output.body)
+         let outData = options.call(output.data)
+         // 对象空值过滤
          output[name] = filterNull(outData)
       }
-   }
-
-   // 附加回调函数
-   if (callback) {
-      callback(output.data)
    }
 
    return output
@@ -98,7 +93,7 @@ function recursion(data, options, key, input) {
       // 选项为对象
       else {
 
-         // 选项为验证表达式（type作为保留关键字，只允许定义数据类型，不能作为参数名使用）
+         // 选项为验证表达式（type作为内部保留关键字，不能作为参数名使用，否则会产生）
          if (options.type) {
 
             let field = options.name || key
@@ -131,10 +126,10 @@ function recursion(data, options, key, input) {
 
             }
 
-            // type为构造函数或字符串（字符串用于表示自定义数据类型）
-            if (Options[options.type]) {
+            // type为内置构造函数或字符串（字符串用于表示自定义数据类型）
+            if (methods[options.type]) {
 
-               let funObj = Options[options.type]
+               let funObj = methods[options.type]
                for (let name in options) {
                   let fun = funObj[name]
                   if (fun) {
@@ -239,13 +234,13 @@ function recursion(data, options, key, input) {
    }
 
    // 选项为构造函数或字符串（字符串用于表示自定义数据类型）
-   else if (Options[options]) {
+   else if (methods[options]) {
 
       if (data === undefined || data === '') {
          return { data }
       }
 
-      let { err, data: subData } = Options[options].type({ data })
+      let { err, data: subData } = methods[options].type({ data })
       if (err) {
          return {
             error: `${key}值${err}`
@@ -258,15 +253,6 @@ function recursion(data, options, key, input) {
    }
 
 }
-
-// // 设置选项
-// Validator.config = function ({ language }) {
-//    if (language) {
-
-//    } else {
-
-//    }
-// }
 
 // // 自定义扩展
 // Validator.middleware = []

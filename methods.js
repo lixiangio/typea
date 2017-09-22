@@ -8,7 +8,7 @@ let commonMethod = {
    method({ data, option: fun, output }) {
       return { data: fun.call(output, data) }
    },
-   // 直接赋值（覆盖导入值）
+   // 直接赋值（会覆盖原来的值）
    value({ option: value }) {
       return { data: value }
    },
@@ -46,7 +46,7 @@ let commonMethod = {
    },
 }
 
-// 类别方法
+// 数据类型方法
 let typeMethod = {
    [String]: {
       // 数据类型验证

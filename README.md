@@ -98,6 +98,20 @@
          "tenderNum": "123456789987",
          "time": "2017-07-07T09:53:30.000Z",
          "files": ["abc.js", "334", "null", "666", , , "kkk.js"],
+         "user": {
+            "username": "莉莉",
+            "age": 18,
+         },
+         "list": [
+            {
+               "username": "吖吖",
+               "age": 16,
+            },
+            {
+               "username": "可可",
+               "age": 15,
+            }
+         ],
          "auth": {
                "weixin": "abc",
          },
@@ -137,6 +151,14 @@
                "name": "时间",
                "allowNull": false,
             },
+            "user": {
+               "username": String,
+               "age": Number,
+            },
+            "list": [{
+               "username": String,
+               "age": Number,
+            }],
             "auth": {
                "weixin": String,
             },
