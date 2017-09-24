@@ -4,7 +4,7 @@ let Validator = require('./index')
 
 let query = {
    "tenderName": "测试",
-   // "tenderNum": "123456789987",
+   "tenderNum": "123456789987",
    "tenderEndTime": "2017-07-07T09:53:30.000Z",
    "files": ["abc.js", "334", "null", "666", "12"],
    "user": {
@@ -35,7 +35,7 @@ let query = {
    "searchField": "userName",
    "email": "xxx@xx.xx",
    "abc": {
-      a: "1e",
+      a: "112",
       b: 2,
       c: true,
       d: 4,
