@@ -35,7 +35,7 @@ let query = {
    "searchField": "userName",
    "email": "xxx@xx.xx",
    "abc": {
-      a: "1",
+      a: "1e",
       b: 2,
       c: true,
       d: 4,
@@ -120,9 +120,7 @@ let { error, data, filter } = Validator(query,
          }
       },
       "abc": {
-         "$": {
-            type: Number,
-         }
+         "$": Number,
       }
    },
    {
