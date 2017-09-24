@@ -2,7 +2,7 @@
 
 let Validator = require('./index')
 
-let query = {
+let json = {
    "tenderName": "测试",
    "tenderNum": "123456789987",
    "tenderEndTime": "2017-07-07T09:53:30.000Z",
@@ -43,7 +43,7 @@ let query = {
 }
 
 
-let { error, data, filter } = Validator(query,
+let { error, data, filter } = Validator(json,
    {
       "tenderName": {
          "type": String,

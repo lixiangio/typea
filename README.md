@@ -93,7 +93,7 @@
 
 #### 输入数据
 
-      let data = {
+      let json = {
          "username": "测试",
          "tenderNum": "123456789987",
          "time": "2017-07-07T09:53:30.000Z",
@@ -138,7 +138,7 @@
 
 #### 验证表达式
 
-      let { error, data, filter } = Validator(data,
+      let { error, data, filter } = Validator(json,
          {
             "username": {
                "type": String,
