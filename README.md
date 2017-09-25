@@ -257,7 +257,7 @@
          "mobilePhone": "MobilePhone"
       })
 
-## and
+## and依赖验证
 
       let { error, data } = Validator({
          "username": "莉莉",
@@ -286,7 +286,7 @@
          }
       })
 
-## or
+## or依赖验证
 
       let { error, data } = Validator({
          "username": "莉莉",
