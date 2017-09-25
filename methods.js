@@ -14,19 +14,25 @@ let commonMethod = {
    },
    // 与
    and({ data, option, input }) {
+      // 如果option为函数，应先执行函数，将函数转为数组
+      if (option instanceof Function) {
+         option = option.call(input, data)
+      }
       if (option instanceof Array) {
          for (let name of option) {
             if (input[name] === undefined || input[name] === '') {
                return { err: `必须与${name}参数同时存在` }
             }
          }
-      } else if (option instanceof Function) {
-         option = option.call(input, data)
       }
       return { data }
    },
    // 或
    or({ data, option, input }) {
+      // 如果option为函数，应先执行函数，将函数转为数组
+      if (option instanceof Function) {
+         option = option.call(input, data)
+      }
       if (option instanceof Array) {
          let status = true
          for (let name of option) {
@@ -37,8 +43,6 @@ let commonMethod = {
          if (status) {
             return { err: `必须至少与[${option}]参数中的一个同时存在` }
          }
-      } else if (option instanceof Function) {
-         option = option.call(input, data)
       }
       return { data }
    },
