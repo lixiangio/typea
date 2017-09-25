@@ -5,8 +5,8 @@ let validator = require('validator')
 // 公共方法
 let commonMethod = {
    // 参数自定义转换方法
-   method({ data, option: fun, output }) {
-      return { data: fun.call(output, data) }
+   method({ data, option: fun, input }) {
+      return { data: fun.call(input, data) }
    },
    // 直接赋值（会覆盖原来的值）
    value({ option: value }) {
@@ -14,23 +14,19 @@ let commonMethod = {
    },
    // 与
    and({ data, option, input }) {
-      if (option instanceof Function) {
-         option = option(data)
-      }
       if (option instanceof Array) {
          for (let name of option) {
             if (input[name] === undefined || input[name] === '') {
                return { err: `必须与${name}参数同时存在` }
             }
          }
+      } else if (option instanceof Function) {
+         option = option.call(input, data)
       }
       return { data }
    },
    // 或
    or({ data, option, input }) {
-      if (option instanceof Function) {
-         option = option(data)
-      }
       if (option instanceof Array) {
          let status = true
          for (let name of option) {
@@ -41,6 +37,8 @@ let commonMethod = {
          if (status) {
             return { err: `必须至少与[${option}]参数中的一个同时存在` }
          }
+      } else if (option instanceof Function) {
+         option = option.call(input, data)
       }
       return { data }
    },
