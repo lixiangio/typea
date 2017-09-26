@@ -5,7 +5,7 @@ let Validator = require('./index')
 let json = {
    "tenderName": "测试",
    "tenderNum": "123456789987",
-   "ObjectId": "59c8aea808deec3fc8da56b61",
+   "ObjectId": "59c8aea808deec3fc8da56b6",
    "tenderEndTime": "2017-07-07T09:53:30.000Z",
    "files": ["abc.js", "334", "null", "666", "12"],
    "user": {
