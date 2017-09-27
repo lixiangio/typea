@@ -41,6 +41,7 @@ let json = {
       c: true,
       d: 4,
    },
+   "arr": ['jjsd', 'ddd']
 }
 
 
@@ -125,7 +126,8 @@ let { error, data, filter } = Validator(json,
       },
       "abc": {
          "$": Number,
-      }
+      },
+      "arr": Array
    },
    {
       filter() {
