@@ -127,7 +127,18 @@ let { error, data, filter } = Validator(json,
       "abc": {
          "$": Number,
       },
-      "arr": Array
+      "arr": Array,
+      "test": {
+         "type": Array,
+         "default": "all",
+         method(data) {
+            if (data.length) {
+               return 1
+            } else {
+               return 6
+            }
+         }
+      }
    },
    {
       filter() {
