@@ -143,7 +143,7 @@
 
 
 
-## and依赖验证
+## and验证
 
       let { error, data } = Validator({
          "username": "莉莉",
@@ -172,7 +172,7 @@
          }
       })
 
-## or依赖验证
+## or验证
 
       let { error, data } = Validator({
          "username": "莉莉",
