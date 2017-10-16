@@ -128,8 +128,7 @@
       })
 
 
-## 具有相同数据结构、类型的复用验证表达式
-
+      # 同构对象验证
       let { error, data } = Validator({
          "a": false,
          "b": false,
@@ -141,6 +140,7 @@
       }, {
          $: Boolean,
       })
+
 
 
 ## and依赖验证
