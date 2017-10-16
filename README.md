@@ -193,7 +193,7 @@
       })
 
 
-## 扩展数据类型验证
+## 扩展类型验证
 
       let { error, data } = Validator({
          "id": "5968d3b4956fe04299ea5c18",
