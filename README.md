@@ -143,16 +143,6 @@
       })
 
 
-## 扩展数据类型验证
-
-      let { error, data } = Validator({
-         "id": "5968d3b4956fe04299ea5c18",
-         "mobilePhone": "18555555555",
-      }, {
-         "id": "MobilePhone",
-         "mobilePhone": "MobilePhone"
-      })
-
 ## and依赖验证
 
       let { error, data } = Validator({
@@ -202,6 +192,17 @@
          }
       })
 
+
+## 扩展数据类型验证
+
+      let { error, data } = Validator({
+         "id": "5968d3b4956fe04299ea5c18",
+         "mobilePhone": "18555555555",
+      }, {
+         "id": "MobilePhone",
+         "mobilePhone": "MobilePhone"
+      })
+      
 
 ## 实例
 
