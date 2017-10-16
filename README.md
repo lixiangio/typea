@@ -206,8 +206,7 @@
 
 ## 实例
 
-#### 输入数据
-
+      # 输入数据
       let json = {
          "username": "测试",
          "tenderNum": "123456789987",
@@ -251,8 +250,7 @@
          }
       }
 
-#### 验证表达式
-
+      # 验证表达式
       let { error, data, filter } = Validator(json,
          {
             "username": {
