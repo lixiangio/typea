@@ -18,7 +18,9 @@
 
 ## 输出
 
-*  `error` *String* - 验证失败时返回的错误信息，验证成功时返回null
+*  `msg` *String* - 验证失败时返回的错误信息，用于客户端显示
+
+*  `error` *String* - 验证失败时返回的错误信息，用于验证错误追踪
 
 *  `data` *Objcte* - 经过验证、处理后导出数据（支持空值过滤，用于剔除对象中的空数组、空字符串、undefind、null）
 
@@ -89,7 +91,102 @@
 
 > 验证Email
 
-## 验证示例
+
+## 数组验证
+
+      let { error, data } = Validator(["a", "b", "c"], [String])
+
+      let { error, data } = Validator([{
+         "a":1,
+         "b":"bibi",
+         "c":"test"
+      },{
+         "a":1,
+         "b":"bibi",
+         "c":"test"
+      }], [{
+         a:Number,
+         b:String,
+         c:String
+      }])
+
+
+## 具有相同数据结构、类型的复用验证表达式
+
+      let { error, data } = Validator({
+         "a": false,
+         "b": false,
+         "c": true,
+         "d": true,
+         "e": false,
+         "f": true,
+         "g": true,
+      }, {
+         $: Boolean,
+      })
+
+
+## 扩展数据类型验证
+
+      let { error, data } = Validator({
+         "id": "5968d3b4956fe04299ea5c18",
+         "mobilePhone": "18555555555",
+      }, {
+         "id": "MobilePhone",
+         "mobilePhone": "MobilePhone"
+      })
+
+## and依赖验证
+
+      let { error, data } = Validator({
+         "username": "莉莉",
+         "addressee": "嘟嘟",
+      }, {
+         "username": {
+            "type": String,
+            // 使用数组表达式
+            "and": ["addressee", "address"],
+         },
+         "addressee": {
+            "type": String,
+            "allowNull": true
+         },
+         "address": {
+            "type": String,
+            "allowNull": true,
+            // 使用函数表达式，表示特定值的依赖关系
+            and(value){
+               if (value === 1) {
+                  return ["addressee", "address"]
+               } else if (value === 2) {
+                  return ["username", "xx"]
+               }
+            },
+         }
+      })
+
+## or依赖验证
+
+      let { error, data } = Validator({
+         "username": "莉莉",
+         "addressee": "嘟嘟",
+      }, {
+         "username": {
+            "type": String,
+            "or": ["addressee", "address"]
+         },
+         "addressee": {
+            "type": String,
+            "allowNull": true
+         },
+         "address": {
+            "type": String,
+            "allowNull": true
+         }
+      })
+
+
+## 验证实例
 
 #### 输入数据
 
@@ -226,82 +323,3 @@
             }
          }
       )
-
-## 数组验证
-
-      let { error, data } = Validator(["a.js", "b.js", "c.js"], [String])
-
-
-## 具有相同数据结构、类型的复用验证表达式
-
-      let { error, data } = Validator({
-         "a": false,
-         "b": false,
-         "c": true,
-         "d": true,
-         "e": false,
-         "f": true,
-         "g": true,
-      }, {
-         $: Boolean,
-      })
-
-
-## 扩展数据类型验证
-
-      let { error, data } = Validator({
-         "id": "5968d3b4956fe04299ea5c18",
-         "mobilePhone": "18555555555",
-      }, {
-         "id": "ObjectId",
-         "mobilePhone": "MobilePhone"
-      })
-
-## and依赖验证
-
-      let { error, data } = Validator({
-         "username": "莉莉",
-         "addressee": "嘟嘟",
-      }, {
-         "username": {
-            "type": String,
-            // 使用数组表达式
-            "and": ["addressee", "address"],
-         },
-         "addressee": {
-            "type": String,
-            "allowNull": true
-         },
-         "address": {
-            "type": String,
-            "allowNull": true,
-            // 使用函数表达式，表示特定值的依赖关系
-            and(value){
-               if (value === 1) {
-                  return ["addressee", "address"]
-               } else if (value === 2) {
-                  return ["username", "xx"]
-               }
-            },
-         }
-      })
-
-## or依赖验证
-
-      let { error, data } = Validator({
-         "username": "莉莉",
-         "addressee": "嘟嘟",
-      }, {
-         "username": {
-            "type": String,
-            "or": ["addressee", "address"]
-         },
-         "addressee": {
-            "type": String,
-            "allowNull": true
-         },
-         "address": {
-            "type": String,
-            "allowNull": true
-         }
-      })

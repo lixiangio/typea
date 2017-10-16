@@ -130,7 +130,7 @@ let { error, data, filter } = Validator(json,
       "arr": Array,
       "test": {
          "type": Array,
-         "default": "all",
+         // "allowNull": false,
          method(data) {
             if (data.length) {
                return 1
