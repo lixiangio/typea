@@ -74,7 +74,15 @@
 
 * `to` * - 类型转换，仅支持Boolean值
 
-#### Date、Array、Object、Boolean
+#### Array
+
+> 后续扩展
+
+#### Object
+
+> 后续扩展
+
+#### Date、Boolean
 
 > 仅支持类型验证
 
