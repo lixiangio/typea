@@ -107,10 +107,25 @@
          "b":"bibi",
          "c":"test"
       }], [{
-         a:Number,
-         b:String,
-         c:String
+         a: Number,
+         b: String,
+         c: String
       }])
+
+
+## 对象验证
+
+      let { error, data } = Validator({
+         "a": 1,
+         "b": "xx",
+         "c": [1,32,34],
+         "d": 666
+      }, {
+         "a": Number,
+         "b": String,
+         "c": [String],
+         "d": Number
+      })
 
 
 ## 具有相同数据结构、类型的复用验证表达式
@@ -188,7 +203,7 @@
       })
 
 
-## 验证实例
+## 实例
 
 #### 输入数据
 
