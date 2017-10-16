@@ -33,7 +33,7 @@
 
 ### 通用选项
 
-* `type` * - 用于定义数据类型，可选类型有String、Number、Object、 Array、Date、Boolean、"ObjectId"、"MobilePhone"，带引号字符串表示扩展类型（必选）
+* `type` * - 用于定义数据类型，可选类型有String、Number、Object、 Array、Date、Boolean、"MongoId"、"MobilePhone"，带引号字符串表示扩展类型（必选）
 
 * `name` *String* - 自定义参数名称，用于错误返回值中替换默认参数名
 
