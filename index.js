@@ -4,40 +4,6 @@ let methods = require('./methods')
 
 let filterNull = require('./filterNull')
 
-
-/**
- * 验证器
- * @param {*} data 数据源
- * @param {*} options 验证表达式
- * @param {Object} handler 导出数据自定义处理方法
- */
-function Validator(data, options, handler = {}) {
-
-   // 递归验证
-   let output = recursion(data, options, '', data)
-
-   if (output.error) {
-      return output
-   }
-
-   // 对象空值过滤（直接修改导入对象本身）
-   filterNull(output.data)
-
-   // 数据构造器
-   for (let name in handler) {
-      let options = handler[name]
-      // 使用自定义构造函数处理
-      if (typeof options === 'function') {
-         let outData = options.call(output.data)
-         // 对象空值过滤
-         output[name] = filterNull(outData)
-      }
-   }
-
-   return output
-
-}
-
 /**
  * 递归验证器
  * @param {*} data 验证数据
@@ -165,7 +131,7 @@ function recursion(data, options, key, input) {
                   data: subData
                }
             }
-            
+
             // 未知参数
             else {
                return {
@@ -254,7 +220,8 @@ function recursion(data, options, key, input) {
 
 }
 
-// // 自定义扩展
+
+// 自定义扩展
 // Validator.middleware = []
 // Validator.use = function (fn) {
 //    this.middleware.push(fn)
@@ -264,4 +231,36 @@ function recursion(data, options, key, input) {
 //    console.log(111)
 // })
 
-module.exports = Validator
+
+/**
+ * 验证器
+ * @param {*} data 数据源
+ * @param {*} options 验证表达式
+ * @param {Object} handler 导出数据自定义处理方法
+ */
+module.exports = (data, options, handler = {}) => {
+
+   // 递归验证
+   let output = recursion(data, options, '', data)
+
+   if (output.error) {
+      return output
+   }
+
+   // 对象空值过滤
+   filterNull(output.data)
+
+   // 数据构造器
+   for (let name in handler) {
+      let options = handler[name]
+      // 使用自定义构造函数处理
+      if (typeof options === 'function') {
+         let outData = options.call(output.data)
+         // 对象空值过滤
+         output[name] = filterNull(outData)
+      }
+   }
+
+   return output
+
+}
