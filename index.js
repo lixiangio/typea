@@ -35,7 +35,7 @@ function recursion(data, options, key, input) {
    // 选项为对象
    else if (options instanceof Object) {
 
-      // 选项为对象验证表达式（type作为内部保留关键字，不能作为外部参数名，否则会产生冲突）
+      // 选项为验证器表达式（type作为内部保留关键字，不能作为外部参数名，否则会产生冲突）
       if (options.type) {
 
          let field = options.name || key
@@ -117,8 +117,14 @@ function recursion(data, options, key, input) {
 
       }
 
-      // 选项为数组
+      // 选项为数组表达式
       else if (options instanceof Array) {
+
+         if (data === undefined) {
+            return {
+               data: undefined
+            }
+         }
 
          if (!Array.isArray(data)) {
             return {
@@ -157,8 +163,14 @@ function recursion(data, options, key, input) {
 
       }
 
-      // 选项为对象数据
+      // 选项为对象表达式
       else {
+
+         if (data === undefined) {
+            return {
+               data: undefined
+            }
+         }
 
          if (typeof data !== 'object') {
             return {

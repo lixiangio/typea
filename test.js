@@ -28,10 +28,10 @@ let json = {
    "receiveAddress": "快点",
    "phone": "18565799072",
    "coupon": "uuuu",
-   "integral": {
-      "lala": 168,
-      "kaka": 6,
-   },
+   // "integral": {
+   //    "lala": 168,
+   //    "kaka": 6,
+   // },
    "search": "深圳",
    "searchField": "userName",
    "email": "xxx@xx.xx",
