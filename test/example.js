@@ -35,12 +35,6 @@ let json = {
    "search": "深圳",
    "searchField": "userName",
    "email": "xxx@xx.xx",
-   "abc": {
-      a: "112",
-      b: 2,
-      c: true,
-      d: 4,
-   },
    "arr": ['jjsd', 'ddd']
 }
 
@@ -123,9 +117,6 @@ let { error, data, filter } = Validator(json,
          method(value) {
             return [value, , null, , undefined, 666]
          }
-      },
-      "abc": {
-         "$": Number,
       },
       "arr": Array,
       "test": {

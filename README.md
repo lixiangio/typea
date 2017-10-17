@@ -134,21 +134,6 @@
       })
 
 
-      # 同构对象验证
-      let { error, data } = Validator({
-         "a": false,
-         "b": false,
-         "c": true,
-         "d": true,
-         "e": false,
-         "f": true,
-         "g": true,
-      }, {
-         $: Boolean,
-      })
-
-
-
 ## and验证
 
       let { error, data } = Validator({
@@ -205,7 +190,7 @@
          "id": "5968d3b4956fe04299ea5c18",
          "mobilePhone": "18555555555",
       }, {
-         "id": "MobilePhone",
+         "id": "MongoId",
          "mobilePhone": "MobilePhone"
       })
       
@@ -247,13 +232,7 @@
                "kaka": "3"
          },
          "search": "深圳",
-         "email": "xxx@xx.xx",
-         "keys": {
-               a: "1",
-               b: 2,
-               c: 666,
-               d: 4,
-         }
+         "email": "xxx@xx.xx"
       }
 
       # 验证表达式
@@ -320,11 +299,6 @@
             },
             "email": {
                "type": 'Email',
-            },
-            "keys": {
-               "$": {
-                  type: Number,
-               }
             },
          },
          {

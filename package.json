@@ -4,18 +4,19 @@
    "description": "JS数据验证器",
    "main": "index.js",
    "scripts": {
-      "test": "nodemon test/b"
+      "test": "nodemon test/array"
    },
    "author": "https://github.com/xiangle/verify.git",
    "license": "ISC",
    "dependencies": {
-      "nodemon": "^1.11.0",
       "validator": "^8.0.0"
    },
    "directories": {
       "test": "test"
    },
-   "devDependencies": {},
+   "devDependencies": {
+      "nodemon": "^1.11.0"
+   },
    "keywords": [
       "JSON",
       "schema",
