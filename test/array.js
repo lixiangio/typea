@@ -5,12 +5,12 @@ let Validator = require('../index')
 
 let { error, data } = Validator(
    {
-      a: ['xx', 'kk'],
+      a: ['xx'],//'xx', 'kk'
       b: [666, 888],
    },
    {
       a: {
-         type: [String],
+         type: [{ type: String, allowNull: false, }],
          allowNull: false,
       },
       b: [{ type: Number }],

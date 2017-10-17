@@ -56,7 +56,7 @@ class Validator {
 
             }
 
-            // type为对象或数组，用于为数组或对象添加表达式
+            // type为对象或数组，为子表达式的父级对象或数组添加验证器
             if (typeof options.type === 'object') {
                let { error, data: subData } = this.recursion(data, options.type, key)
                if (error) {
