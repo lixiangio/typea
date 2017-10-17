@@ -1,38 +1,39 @@
 {
-   "name": "check-data",
-   "version": "1.6.12",
-   "description": "JS数据验证器",
-   "main": "index.js",
-   "scripts": {
-      "test": "nodemon test/array"
-   },
-   "author": "https://github.com/xiangle/verify.git",
-   "license": "ISC",
-   "dependencies": {
-      "validator": "^8.0.0"
-   },
-   "directories": {
-      "test": "test"
-   },
-   "devDependencies": {
-      "nodemon": "^1.11.0"
-   },
-   "keywords": [
-      "JSON",
-      "schema",
-      "validator",
-      "validation",
-      "jsonschema",
-      "json-schema",
-      "json-schema-validator",
-      "json-schema-validation"
-    ],
-   "repository": {
-      "type": "git",
-      "url": "git+https://github.com/xiangle/verify.git"
-   },
-   "bugs": {
-      "url": "https://github.com/xiangle/verify/issues"
-   },
-   "homepage": "https://github.com/xiangle/verify#readme"
+  "name": "check-data",
+  "version": "1.6.12",
+  "description": "JS对象验证器",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon test/array"
+  },
+  "author": "https://github.com/xiangle/verify.git",
+  "license": "ISC",
+  "dependencies": {
+    "filter-null": "^0.1.1",
+    "validator": "^8.0.0"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  },
+  "keywords": [
+    "JSON",
+    "schema",
+    "validator",
+    "validation",
+    "jsonschema",
+    "json-schema",
+    "json-schema-validator",
+    "json-schema-validation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xiangle/verify.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xiangle/verify/issues"
+  },
+  "homepage": "https://github.com/xiangle/verify#readme"
 }
