@@ -4,7 +4,7 @@
    "description": "JS数据验证器",
    "main": "index.js",
    "scripts": {
-      "test": "nodemon test.js"
+      "test": "nodemon test/b"
    },
    "author": "https://github.com/xiangle/verify.git",
    "license": "ISC",
