@@ -56,27 +56,8 @@ class Validator {
 
             }
 
-            // type为对象或数组，为子表达式的父级对象或数组添加验证器
-            if (typeof options.type === 'object') {
-               let { error, data: subData } = this.recursion(data, options.type, key)
-               if (error) {
-                  if (Array.isArray(data)) {
-                     return {
-                        error: `${error}`
-                     }
-                  } else {
-                     return {
-                        error: `参数${field}下${error}`
-                     }
-                  }
-               }
-               return {
-                  data: subData
-               }
-            }
-
             // type为内置构造函数或字符串（字符串用于表示自定义数据类型）
-            else if (methods[options.type]) {
+            if (methods[options.type]) {
 
                let funObj = methods[options.type]
                for (let name in options) {
@@ -108,9 +89,17 @@ class Validator {
          // 选项为数组表达式
          else if (Array.isArray(options)) {
 
+            let [itemOptions, parentOptions] = options
+
             if (data === undefined) {
-               return {
-                  data: undefined
+               if (parentOptions && parentOptions.allowNull === false) {
+                  return {
+                     error: `数组${key}值不能为空`
+                  }
+               } else {
+                  return {
+                     data: undefined
+                  }
                }
             }
 
@@ -121,9 +110,7 @@ class Validator {
             }
 
             let dataArray = []
-
             let itemKey = 0
-            let itemOptions = options[0]
 
             for (let itemData of data) {
 

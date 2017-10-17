@@ -94,7 +94,7 @@ let typeMethod = {
    [Number]: {
       type({ data }) {
          if (isNaN(data)) {
-            return { err: '必须为数值或可转为数值的字符串' }
+            return { err: '必须为数值类型' }
          } else {
             return { data: Number(data) }
          }
@@ -149,7 +149,7 @@ let typeMethod = {
          } else {
             return { data }
          }
-      },
+      }
    },
    [Date]: {
       type({ data }) {
