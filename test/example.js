@@ -11,6 +11,14 @@ let json = {
    "user": {
       "username": "莉莉",
       "age": 18,
+      "address": [
+         {
+            "city": "深圳",
+         },
+         {
+            "city": "北京",
+         }
+      ],
    },
    "list": [
       {
@@ -45,12 +53,7 @@ let { error, data, filter } = Validator(json,
          "type": String,
          "name": "标书名称",
          "allowNull": false,
-         "default": "updatedAt",
-         "and"(value) {
-            if (value === 'updatedAt') {
-               return ["tenderEndTime"]
-            }
-         },
+         "default": "默认值"
       },
       "tenderNum": {
          "type": Number,
@@ -67,11 +70,24 @@ let { error, data, filter } = Validator(json,
       "user": {
          "username": String,
          "age": Number,
+         "address": [
+            {
+               "city": String,
+            },
+            {
+               "city": String,
+            }
+         ],
       },
-      "list": [{
-         "username": String,
-         "age": Number,
-      }],
+      "list": [
+         {
+            "username": String,
+            "age": Number,
+         },
+         {
+            "allowNull": false,
+         }
+      ],
       "money": {
          "type": Number,
          // "min": 15,
@@ -153,6 +169,6 @@ let { error, data, filter } = Validator(json,
 if (error) {
    console.log(error)
 } else {
-   console.log(data)
+   console.log(data.user)
    console.log(filter)
 }
