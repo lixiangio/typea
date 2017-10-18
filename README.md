@@ -104,18 +104,6 @@
 
    使用Validator.use(typename, options)
 
-#### 自定义Int示例
-
-      Validator.use('Int', {
-         type({ data }) {
-            if (Number.isInteger(data)) {
-               return { data }
-            } else {
-               return { err: '必须为Int类型' }
-            }
-         },
-      })
-
 
 ## 数组验证
 
@@ -211,6 +199,17 @@
          "mobilePhone": "MobilePhone"
       })
       
+#### 自定义Int示例
+
+      Validator.use('Int', {
+         type({ data }) {
+            if (Number.isInteger(data)) {
+               return { data }
+            } else {
+               return { err: '必须为Int类型' }
+            }
+         },
+      })
 
 ## 实例
 
