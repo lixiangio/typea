@@ -33,11 +33,11 @@
 
 ### 通用选项
 
-* `type` * - 用于定义数据类型，可选类型有String、Number、Object、 Array、Date、Boolean、"MongoId"、"MobilePhone"，带引号字符串表示扩展类型（必选）
+* `type` * - 表示数据类型，可选类型有String、Number、Object、 Array、Date、Boolean、"MongoId"、"MobilePhone"（扩展类型用字符串表示）
 
 * `name` *String* - 自定义参数名称，用于错误返回值中替换默认参数名
 
-* `default` * - 空值时的默认赋值
+* `default` * - 默认赋值
 
 * `value` * - 直接通过表达式赋值，类似于default选项，区别是不管值是否为空都将使用该值覆盖（优先级低于default，目前没有发现同时使用的应用场景）
 
