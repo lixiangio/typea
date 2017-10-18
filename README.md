@@ -199,7 +199,7 @@
          "mobilePhone": "MobilePhone"
       })
       
-### 自定义Int类型
+### 自定义类型
 
       Validator.use('Int', {
          type({ data }) {
