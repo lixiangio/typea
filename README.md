@@ -1,14 +1,14 @@
-## Installation
+### Installation
 
       npm install check-data --save
 
-## 使用方法
+### 使用方法
 
     let Validator = require('check-data')
     
     let { error, data, $, ... } = Validator(data, options, constructor)
 
-## 输入
+### 输入
 
 *  `data` * - 输入验证数据，类型参考type选项
 
@@ -16,7 +16,7 @@
 
 *  `constructor` *Objcte* - 自定义数据导出构造方法（可选）
 
-## 输出
+### 输出
 
 *  `error` *String* - 验证失败时返回的错误信息，包含错误的具体位置，仅用于验证失败时的错误定位
 
@@ -27,7 +27,7 @@
 *  `${name}` *Objcte* - 由constructor对象中构造器生成的对象，命名与构造器名称一致（空值过滤）
 
 
-## 选项说明
+### 选项说明
 
 > 如果只想验证数据类型，可以直接在参数值上用数据类型赋值
 
@@ -105,7 +105,7 @@
    使用Validator.use(typename, options)
 
 
-## 数组验证
+### 数组验证
 
       let { error, data } = Validator(["a", "b", "c"], [String])
 
@@ -124,7 +124,7 @@
       }])
 
 
-## 对象验证
+### 对象验证
 
       let { error, data } = Validator({
          "a": 1,
@@ -139,7 +139,7 @@
       })
 
 
-## and验证
+### and验证
 
       let { error, data } = Validator({
          "username": "莉莉",
@@ -168,7 +168,7 @@
          }
       })
 
-## or验证
+### or验证
 
       let { error, data } = Validator({
          "username": "莉莉",
@@ -189,7 +189,7 @@
       })
 
 
-## 扩展类型验证
+### 扩展类型验证
 
       let { error, data } = Validator({
          "id": "5968d3b4956fe04299ea5c18",
@@ -211,7 +211,7 @@
          },
       })
 
-## 实例
+### 实例
 
       # 输入数据
       let json = {
