@@ -207,3 +207,6 @@ for (let key in typeMethod) {
 }
 
 module.exports = typeMethod
+
+
+console.log(/abc/ instanceof RegExp)

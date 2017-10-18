@@ -22,7 +22,7 @@ class Validator {
 
       // 选项为对象
       if (typeof options === 'object') {
-
+         
          // 选项为验证器表达式（type作为内部保留关键字，应避免在外部使用type属性，否则会产生命名冲突）
          if (options.type) {
 
@@ -237,7 +237,7 @@ module.exports = (data, options, handler = {}) => {
    // 对象空值过滤
    filterNull(output.data)
 
-   // 数据构h函数
+   // 数据构函数
    for (let name in handler) {
       let options = handler[name]
       // 使用自定义构造函数处理
