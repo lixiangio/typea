@@ -59,7 +59,7 @@ let typeMethod = {
             return { err: '必须为字符串' }
          }
       },
-      // 长度验证
+      // 限制最小长度
       minLength({ data, option: minLength }) {
          if (data.length < minLength) {
             return { err: `长度不能小于${minLength}个字符` }
@@ -67,6 +67,7 @@ let typeMethod = {
             return { data }
          }
       },
+      // 限制最大长度
       maxLength({ data, option: maxLength }) {
          if (data.length > maxLength) {
             return { err: `长度不能大于${maxLength}个字符` }
@@ -74,6 +75,7 @@ let typeMethod = {
             return { data }
          }
       },
+      // 正则
       reg({ data, option: reg }) {
          if (data.search(reg) === -1) {
             return { err: '格式错误' }
@@ -85,7 +87,7 @@ let typeMethod = {
       in({ data, option: arr }) {
          let result = arr.indexOf(data)
          if (result === -1) {
-            return { err: `值必须为${arr}中的一个` }
+            return { err: `值必须为[${arr}]选项其中之一` }
          } else {
             return { data }
          }
@@ -207,6 +209,3 @@ for (let key in typeMethod) {
 }
 
 module.exports = typeMethod
-
-
-console.log(/abc/ instanceof RegExp)
