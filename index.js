@@ -237,7 +237,7 @@ module.exports = (data, options, handler = {}) => {
    // 对象空值过滤
    filterNull(output.data)
 
-   // 数据构造器
+   // 数据构h函数
    for (let name in handler) {
       let options = handler[name]
       // 使用自定义构造函数处理
