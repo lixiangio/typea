@@ -49,7 +49,7 @@ let commonMethod = {
 }
 
 // 数据类型方法
-let typeMethod = {
+let methods = {
    [String]: {
       // 数据类型验证
       type({ data }) {
@@ -204,8 +204,16 @@ let typeMethod = {
 }
 
 // 方法合并
-for (let key in typeMethod) {
-   typeMethod[key] = Object.assign(typeMethod[key], commonMethod)
+for (let key in methods) {
+   methods[key] = Object.assign(methods[key], commonMethod)
 }
 
-module.exports = typeMethod
+// 自定义扩展
+function extend(type, options) {
+   methods[type] = options
+}
+
+module.exports = {
+   methods,
+   extend,
+}

@@ -2,9 +2,10 @@
 
 let filterNull = require('filter-null')
 
-let methods = require('./methods')
+let { methods, extend } = require('./methods')
 
-class Validator {
+
+class validator {
 
    constructor(data, options, key) {
       this.data = data
@@ -80,7 +81,7 @@ class Validator {
             // 不支持的参数
             else {
                return {
-                  error: `验证器中${field}字段参数配置错误，不支持${options.type}类型的type`
+                  error: `${field}参数配置错误，不支持${options.type}类型`
                }
             }
 
@@ -208,27 +209,15 @@ class Validator {
 }
 
 
-// 自定义扩展
-// Validator.middleware = []
-// Validator.use = function (fn) {
-//    this.middleware.push(fn)
-// }
-
-// Validator.use(() => {
-//    console.log(111)
-// })
-
-
 /**
  * 验证器
  * @param {*} data 数据源
  * @param {*} options 验证表达式
  * @param {Object} handler 导出数据自定义处理方法
  */
-module.exports = (data, options, handler = {}) => {
+function Validator(data, options, handler = {}) {
 
-   // 递归验证
-   let output = new Validator(data, options, '')
+   let output = new validator(data, options, '')
 
    if (output.error) {
       return output
@@ -251,3 +240,8 @@ module.exports = (data, options, handler = {}) => {
    return output
 
 }
+
+// 验证类型扩展
+Validator.use = extend
+
+module.exports = Validator

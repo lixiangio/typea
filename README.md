@@ -85,7 +85,7 @@
 > 仅支持类型验证
 
 
-### 扩展类型（用字符串表示）
+### 内置扩展类型
 
 #### 'MongoId'
 
@@ -99,6 +99,23 @@
 
 > 验证Email
 
+
+### 自定义扩展类型
+
+   使用Validator.use(typename, options)
+
+#### 自定义Int示例
+
+      Validator.use('Int', {
+         type({ data }) {
+            if (Number.isInteger(data)) {
+               return { data }
+            } else {
+               return { err: '必须为Int类型' }
+            }
+         },
+      })
+      
 
 ## 数组验证
 
