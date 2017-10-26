@@ -27,11 +27,7 @@
 *  `${name}` *Objcte* - 由constructor对象中构造器生成的对象，命名与构造器名称一致（空值过滤）
 
 
-### 选项说明
-
-> 如果只想验证数据类型，可以直接在参数值上用数据类型赋值
-
-### 通用选项
+### 公共选项
 
 * `type` * - 表示数据类型，可选类型有String、Number、Object、 Array、Date、Boolean、"MongoId"、"MobilePhone"（扩展类型用字符串表示）
 
@@ -50,7 +46,7 @@
 * `method` *Function* - 参数自定义转换方法，非空值时执行
 
 
-### 不同数据类型的可选项
+### 指定数据类型的私有选项
 
 #### String
 
