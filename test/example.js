@@ -137,7 +137,6 @@ let { error, data, filter } = Validator(json,
       "arr": Array,
       "test": {
          "type": Array,
-         // "allowNull": false,
          method(data) {
             if (data.length) {
                return 1
@@ -148,8 +147,7 @@ let { error, data, filter } = Validator(json,
       }
    },
    {
-      filter() {
-         let { search, email, integral } = this
+      filter({ search, email, integral }) {
          return {
             "email": email,
             "integral": integral,
@@ -168,7 +166,8 @@ let { error, data, filter } = Validator(json,
 
 if (error) {
    console.log(error)
-} else {
-   console.log(data.user)
-   console.log(filter)
+   return
 }
+
+console.log(data)
+console.log(filter)
