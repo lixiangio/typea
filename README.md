@@ -314,8 +314,7 @@
             },
          },
          {
-            filter() {
-               let { search, email, integral } = this
+            filter({ search, email, integral }) {
                return {
                   "email": email,
                   "integral": integral,

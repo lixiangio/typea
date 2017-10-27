@@ -4,7 +4,6 @@ let filterNull = require('filter-null')
 
 let { methods, extend } = require('./methods')
 
-
 class validator {
 
    constructor(data, options, key) {
@@ -207,7 +206,6 @@ class validator {
    }
 
 }
-
 
 /**
  * 验证器
