@@ -24,7 +24,7 @@
 
 *  `data` *Objcte* - 经过验证、处理后导出数据（带空值过滤，用于剔除对象中的空数组、空字符串、undefind、null等无效数据）
 
-*  `${name}` *Objcte* - 由export导出方法生成的对象，命名与export函数名一致（带空值过滤）
+*  `${name}` *Objcte* - 由export导出方法生成的对象，命名与export中函数名一致（带空值过滤）
 
 
 ### 公共选项
