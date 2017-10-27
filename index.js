@@ -231,7 +231,7 @@ function Validator(data, options, handler = {}) {
       let options = handler[name]
       // 使用自定义构造函数处理
       if (typeof options === 'function') {
-         let outData = options.call(output.data)
+         let outData = options.call(output.data, output.data)
          // 对象空值过滤
          output[name] = filterNull(outData)
       }

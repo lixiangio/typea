@@ -16,7 +16,7 @@ Validator.use('Int', {
 
 let { error, data } = Validator(
    {
-      "name": 666.5,
+      "name": 666,
    },
    {
       "name": {
