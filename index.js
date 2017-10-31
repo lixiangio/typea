@@ -23,12 +23,12 @@ class validator {
       // 选项为对象
       if (typeof options === 'object') {
 
-         // 选项为验证器表达式（type作为内部保留关键字，应避免在外部使用type属性，否则会产生命名冲突）
+         // 选项为验证器表达式（type作为内部保留关键字，应避免使用同名的type属性，否则会产生命名冲突）
          if (options.type) {
 
             let field = options.name || key
 
-            // 前置空值拦截
+            // 空值拦截
             if (data === undefined || data === '') {
 
                // 默认
@@ -89,23 +89,25 @@ class validator {
          // 选项为数组表达式
          else if (Array.isArray(options)) {
 
-            let [itemOptions, parentOptions] = options
+            let [itemOptions] = options
 
-            if (data === undefined) {
-               if (parentOptions && parentOptions.allowNull === false) {
+            if (Array.isArray(data)) {
+               if (itemOptions.allowNull === false) {
+                  if (data.length === 0) {
+                     return {
+                        error: `数组${key}值不能为空`
+                     }
+                  }
+               }
+            } else {
+               if (itemOptions.allowNull === false) {
                   return {
-                     error: `数组${key}值不能为空`
+                     error: `${key}必须为数组`
                   }
                } else {
                   return {
                      data: undefined
                   }
-               }
-            }
-
-            if (!Array.isArray(data)) {
-               return {
-                  error: `${key}值必须为数组`
                }
             }
 
