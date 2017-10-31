@@ -90,7 +90,6 @@ class validator {
          else if (Array.isArray(options)) {
 
             let [itemOptions] = options
-
             if (Array.isArray(data)) {
                if (itemOptions.allowNull === false) {
                   if (data.length === 0) {
