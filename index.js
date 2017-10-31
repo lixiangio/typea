@@ -100,8 +100,14 @@ class validator {
                }
             } else {
                if (itemOptions.allowNull === false) {
-                  return {
-                     error: `${key}必须为数组`
+                  if (data === undefined){
+                     return {
+                        error: `数组${key}值不能为空`
+                     }
+                  } else {
+                     return {
+                        error: `${key}必须为数组类型`
+                     }
                   }
                } else {
                   return {
