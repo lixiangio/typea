@@ -63,10 +63,10 @@ class validator {
                for (let name in options) {
                   let fun = funObj[name]
                   if (fun) {
-                     let { err, data: subData } = fun({ data, option: options[name], input: this.data })
-                     if (err) {
+                     let { error, data: subData } = fun({ data, option: options[name], input: this.data })
+                     if (error) {
                         return {
-                           error: `${field}${err}`
+                           error: `${field}${error}`
                         }
                      }
                      data = subData
@@ -89,7 +89,8 @@ class validator {
          // 选项为数组表达式
          else if (Array.isArray(options)) {
 
-            let [itemOptions] = options
+            let [itemOptions, allowNull] = options
+
             if (Array.isArray(data)) {
                if (itemOptions.allowNull === false) {
                   if (data.length === 0) {
@@ -99,21 +100,23 @@ class validator {
                   }
                }
             } else {
-               if (itemOptions.allowNull === false) {
-                  if (data === undefined){
+
+               if (data === undefined || data === '') {
+                  if (allowNull === false) {
                      return {
-                        error: `数组${key}值不能为空`
+                        error: `${key}数组不能为空`
                      }
                   } else {
                      return {
-                        error: `${key}必须为数组类型`
+                        data: undefined
                      }
                   }
                } else {
                   return {
-                     data: undefined
+                     error: `${key}必须为数组类型`
                   }
                }
+
             }
 
             let dataArray = []

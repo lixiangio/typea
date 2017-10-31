@@ -7,7 +7,7 @@ let json = {
    "tenderNum": "123456789987",
    "ObjectId": "59c8aea808deec3fc8da56b6",
    "tenderEndTime": "2017-07-07T09:53:30.000Z",
-   "files": ["abc.js", "334", "null", "666", "12"],
+   // "files": ["abc.js", "334", "null", "666", "12"],
    "user": {
       "username": "莉莉",
       "age": 18,
@@ -33,7 +33,6 @@ let json = {
    "money": "2",
    "guaranteeFormat": 0,
    "addressee": "嘟嘟",
-   "receiveAddress": "快点",
    "phone": "18565799072",
    "coupon": "uuuu",
    "integral": {
@@ -96,14 +95,12 @@ let { error, data, filter } = Validator(json,
       "files": [{
          "type": String,
          "allowNull": false,
-      }],
+      }, false],
       "guaranteeFormat": {
          "type": Number,
          "to": Boolean,
       },
-      "addressee": {
-         "type": String,
-      },
+      "addressee": String,
       "search": {
          "type": String,
          // "or": ["searchField"],
@@ -111,7 +108,6 @@ let { error, data, filter } = Validator(json,
       "phone": {
          "type": "MobilePhone"
       },
-      "receiveAddress": String,
       "coupon": {
          "type": String,
          method(value) {

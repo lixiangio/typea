@@ -21,7 +21,7 @@ let commonMethod = {
       if (option instanceof Array) {
          for (let name of option) {
             if (input[name] === undefined || input[name] === '') {
-               return { err: `必须与${name}参数同时存在` }
+               return { error: `必须与${name}参数同时存在` }
             }
          }
       }
@@ -41,7 +41,7 @@ let commonMethod = {
             }
          }
          if (status) {
-            return { err: `必须至少与[${option}]参数中的一个同时存在` }
+            return { error: `必须至少与[${option}]参数中的一个同时存在` }
          }
       }
       return { data }
@@ -56,13 +56,13 @@ let methods = {
          if (typeof data === 'string') {
             return { data: data.trim() }
          } else {
-            return { err: '必须为字符串' }
+            return { error: '必须为字符串' }
          }
       },
       // 限制最小长度
       minLength({ data, option: minLength }) {
          if (data.length < minLength) {
-            return { err: `长度不能小于${minLength}个字符` }
+            return { error: `长度不能小于${minLength}个字符` }
          } else {
             return { data }
          }
@@ -70,7 +70,7 @@ let methods = {
       // 限制最大长度
       maxLength({ data, option: maxLength }) {
          if (data.length > maxLength) {
-            return { err: `长度不能大于${maxLength}个字符` }
+            return { error: `长度不能大于${maxLength}个字符` }
          } else {
             return { data }
          }
@@ -78,7 +78,7 @@ let methods = {
       // 正则
       reg({ data, option: reg }) {
          if (data.search(reg) === -1) {
-            return { err: '格式错误' }
+            return { error: '格式错误' }
          } else {
             return { data }
          }
@@ -87,7 +87,7 @@ let methods = {
       in({ data, option: arr }) {
          let result = arr.indexOf(data)
          if (result === -1) {
-            return { err: `值必须为[${arr}]选项其中之一` }
+            return { error: `值必须为[${arr}]选项其中之一` }
          } else {
             return { data }
          }
@@ -96,21 +96,21 @@ let methods = {
    [Number]: {
       type({ data }) {
          if (isNaN(data)) {
-            return { err: '必须为数值类型' }
+            return { error: '必须为数值类型' }
          } else {
             return { data: Number(data) }
          }
       },
       min({ data, option: min }) {
          if (data < min) {
-            return { err: `不能小于${min}` }
+            return { error: `不能小于${min}` }
          } else {
             return { data }
          }
       },
       max({ data, option: max }) {
          if (data > max) {
-            return { err: `不能大于${max}` }
+            return { error: `不能大于${max}` }
          } else {
             return { data }
          }
@@ -119,7 +119,7 @@ let methods = {
       in({ data, option: arr }) {
          let result = arr.indexOf(data)
          if (result === -1) {
-            return { err: `值必须为${arr}中的一个` }
+            return { error: `值必须为${arr}中的一个` }
          } else {
             return { data }
          }
@@ -138,7 +138,7 @@ let methods = {
    [Object]: {
       type({ data }) {
          if (typeof data !== 'object') {
-            return { err: '必须为对象' }
+            return { error: '必须为对象' }
          } else {
             return { data }
          }
@@ -147,16 +147,30 @@ let methods = {
    [Array]: {
       type({ data }) {
          if (!Array.isArray(data)) {
-            return { err: '必须为数组' }
+            return { error: '必须为数组' }
          } else {
             return { data }
          }
-      }
+      },
+      minLength({ data, option: minLength }) {
+         if (data.length < minLength) {
+            return { error: `长度不能小于${minLength}个字符` }
+         } else {
+            return { data }
+         }
+      },
+      maxLength({ data, option: maxLength }) {
+         if (data.length > maxLength) {
+            return { error: `长度不能大于${maxLength}个字符` }
+         } else {
+            return { data }
+         }
+      },
    },
    [Date]: {
       type({ data }) {
          if (!validator.toDate(data + '')) {
-            return { err: '必须为日期类型' }
+            return { error: '必须为日期类型' }
          } else {
             return { data }
          }
@@ -165,7 +179,7 @@ let methods = {
    [Boolean]: {
       type({ data }) {
          if (typeof data !== 'boolean') {
-            return { err: '必须为布尔值' }
+            return { error: '必须为布尔值' }
          } else {
             return { data }
          }
@@ -177,7 +191,7 @@ let methods = {
          if (validator.isMongoId(String(data))) {
             return { data }
          } else {
-            return { err: '必须为MongoId' }
+            return { error: '必须为MongoId' }
          }
       },
    },
@@ -187,7 +201,7 @@ let methods = {
          if (validator.isMobilePhone(String(data), 'zh-CN')) {
             return { data }
          } else {
-            return { err: '必须为手机号' }
+            return { error: '必须为手机号' }
          }
       },
    },
@@ -197,7 +211,7 @@ let methods = {
          if (validator.isEmail(String(data))) {
             return { data }
          } else {
-            return { err: '必须为Email格式' }
+            return { error: '必须为Email格式' }
          }
       },
    },
