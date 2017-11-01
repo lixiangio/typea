@@ -7,7 +7,7 @@ let json = {
    "tenderNum": "123456789987",
    "ObjectId": "59c8aea808deec3fc8da56b6",
    "tenderEndTime": "2017-07-07T09:53:30.000Z",
-   // "files": ["abc.js", "334", "null", "666", "12"],
+   "files": ["abc.js", "334", "null", "666", "12"],
    "user": {
       "username": "莉莉",
       "age": 18,
@@ -46,7 +46,7 @@ let json = {
 }
 
 
-let { error, data, filter } = Validator(json,
+let { error, data } = Validator(json,
    {
       "tenderName": {
          "type": String,
@@ -166,4 +166,4 @@ if (error) {
 }
 
 console.log(data)
-console.log(filter)
+console.log(data.filter)

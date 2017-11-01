@@ -231,19 +231,17 @@ function Validator(data, options, handler = {}) {
       return output
    }
 
-   // 对象空值过滤
-   filterNull(output.data)
-
    // 数据构函数
    for (let name in handler) {
-      let options = handler[name]
+      let item = handler[name]
       // 使用自定义构造函数处理
-      if (typeof options === 'function') {
-         let outData = options.call(output.data, output.data)
-         // 对象空值过滤
-         output[name] = filterNull(outData)
+      if (typeof item === 'function') {
+         output.data[name] = item.call(output.data, output.data)
       }
    }
+
+   // 对象空值过滤
+   filterNull(output.data)
 
    return output
 
