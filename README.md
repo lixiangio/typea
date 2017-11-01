@@ -248,7 +248,7 @@
       }
 
       # 验证表达式
-      let { error, data, filter } = Validator(json,
+      let { error, data } = Validator(json,
          {
             "username": {
                "type": String,
