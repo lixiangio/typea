@@ -6,7 +6,7 @@
 
     let Validator = require('check-data')
     
-    let { error, data, $, ... } = Validator(data, options, constructor)
+    let { error, data } = Validator(data, options, constructor)
 
 ### 输入
 
