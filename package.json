@@ -1,6 +1,6 @@
 {
   "name": "check-data",
-  "version": "1.7.6",
+  "version": "1.7.7",
   "description": "JS对象验证器",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
   "author": "https://github.com/xiangle/verify.git",
   "license": "ISC",
   "dependencies": {
-    "filter-null": "^0.1.1",
+    "filter-null": "^1.2.0",
     "validator": "^8.0.0"
   },
   "directories": {

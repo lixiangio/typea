@@ -45,7 +45,6 @@ let json = {
    "arr": ['jjsd', 'ddd']
 }
 
-
 let { error, data } = Validator(json,
    {
       "tenderName": {
@@ -146,6 +145,15 @@ let { error, data } = Validator(json,
                v6: 0,
             }
          }
+      },
+      where() {
+         return {
+            "email": undefined,
+            "integral": '',
+            "t": 888,
+            "j": undefined,
+            "c": '8',
+         }
       }
    }
 )
@@ -157,3 +165,4 @@ if (error) {
 
 console.log(data)
 console.log(data.filter)
+console.log(data.where)
