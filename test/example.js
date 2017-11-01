@@ -131,16 +131,6 @@ let { error, data } = Validator(json,
          }
       },
       "arr": Array,
-      "test": {
-         "type": Array,
-         method(data) {
-            if (data.length) {
-               return 1
-            } else {
-               return 6
-            }
-         }
-      }
    },
    {
       filter({ search, email, integral }) {

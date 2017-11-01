@@ -247,6 +247,11 @@ function Validator(data, options, handler = {}) {
 
 }
 
+// 预定义数据模型表达式
+Validator.schema = function (name, expression) {
+
+}
+
 // 验证类型扩展
 Validator.use = extend
 
