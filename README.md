@@ -70,7 +70,9 @@
 
 #### Array
 
-> 仅支持类型验证
+* `minLength` *Number* - 限制字符串最小长度
+
+* `maxLength` *Number* - 限制字符串最大长度
 
 #### Object
 
