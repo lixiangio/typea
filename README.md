@@ -27,7 +27,7 @@
 *  `msg` *String* - 验证失败后返回的错误信息，相对于error而言，msg对用户更加友好，可直接在客户端显示
 
 
-### 公共选项
+### options - 公共选项
 
 * `type` * - 表示数据类型，可选类型有String、Number、Object、 Array、Date、Boolean、"MongoId"、"MobilePhone"（扩展类型用字符串表示）
 
@@ -46,7 +46,7 @@
 * `method` *Function* - 参数自定义转换方法，非空值时执行
 
 
-### 不同数据类型的私有选项
+### options - 针对指定数据类型的私有选项
 
 #### String
 
