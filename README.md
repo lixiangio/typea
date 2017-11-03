@@ -29,7 +29,7 @@
 
 ### options - 公共选项
 
-* `type` * - 表示数据类型，可选类型有String、Number、Object、 Array、Date、Boolean、"MongoId"、"MobilePhone"（扩展类型用字符串表示）
+* `type` *String, Number, Object, Array, Date, Boolean, "MongoId", "MobilePhone", 'Email'* - 数据类型，扩展类型用字符串表示
 
 * `name` *String* - 自定义参数名称，用于错误返回值中替换默认参数名
 
