@@ -10,9 +10,9 @@
 
 ### 输入
 
-*  `data` * - 输入验证数据，类型参考type选项
+*  `data` *Objcte, Array, String, Number, Date, Boolean* - 输入验证数据，类型参考type选项
 
-*  `options` * - 数据验证表达式，类型参考type选项
+*  `options` *Objcte, Array, Function* - 数据验证表达式，类型参考type选项
 
 *  `customize` *Objcte* - 自定义数据导出对象（可选）
 
