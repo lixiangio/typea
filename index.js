@@ -4,14 +4,14 @@ let filterNull = require('filter-null')
 
 let schema = require('./schema')
 
-let { methods, extend } = require('./methods')
+let methods = require('./methods')
 
-class validator {
+class Parser {
 
-   constructor(data, options, key) {
+   constructor(data, options) {
       this.data = data
       this.options = options
-      return this.recursion(data, options, key)
+      return this.recursion(data, options, '')
    }
 
    /**
@@ -198,7 +198,7 @@ class validator {
 
       // 选项为构造函数或字符串（字符串表示自定义数据类型）
       else if (methods[options]) {
-         
+
          if (data === undefined || data === '') {
             return { data }
          }
@@ -225,7 +225,7 @@ class validator {
  */
 function Validator(data, options, handler = {}) {
 
-   let output = new validator(data, options, '')
+   let output = new Parser(data, options)
 
    if (output.error) {
       return output
@@ -247,11 +247,13 @@ function Validator(data, options, handler = {}) {
 
 }
 
-// 预定义数据模型表达式
-Validator.schema = schema
+// 自定义扩展
+Validator.use = function (type, options) {
+   methods[type] = options
+}
 
-// 验证类型扩展
-Validator.use = extend
+// 预定义数据模型解析、优化器
+Validator.schema = schema
 
 module.exports = Validator
 

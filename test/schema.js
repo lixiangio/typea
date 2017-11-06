@@ -8,7 +8,7 @@ let Test = Validator.schema('Test',
          "type": String,
          "name": "标书名称",
          "allowNull": false,
-         "default": "默认值"
+         "default": "默认值",
       },
       "tenderNum": {
          "type": Number,
@@ -29,18 +29,4 @@ let Test = Validator.schema('Test',
    }
 )
 
-// console.log(Test)
-
-let o = {
-   o1: 16
-}
-
-function a() {
-   console.log(this)
-}
-
-let oa = a.bind(o)
-
-a()
-oa()
-
+console.log(Test)

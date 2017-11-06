@@ -2,14 +2,13 @@
 
 let Validator = require('../index')
 
-
 let { error, data } = Validator(
    {
       a: {
          a1: 1,
          a2: "12",
       },
-      b: "xx",
+      b: "666",
    },
    {
       a: {
