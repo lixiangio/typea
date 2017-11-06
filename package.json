@@ -4,7 +4,7 @@
   "description": "JS对象验证器",
   "main": "index.js",
   "scripts": {
-    "test": "nodemon test/example"
+    "dev": "nodemon test/example"
   },
   "author": "https://github.com/xiangle/verify.git",
   "license": "ISC",
