@@ -2,6 +2,8 @@
 
 let filterNull = require('filter-null')
 
+let schema = require('./schema')
+
 let { methods, extend } = require('./methods')
 
 class validator {
@@ -196,19 +198,17 @@ class validator {
 
       // 选项为构造函数或字符串（字符串表示自定义数据类型）
       else if (methods[options]) {
-
+         
          if (data === undefined || data === '') {
             return { data }
          }
 
-         let { err, data: subData } = methods[options].type({ data })
-         if (err) {
-            return {
-               error: `${key}值${err}`
-            }
-         }
-         return {
-            data: subData
+         let { error, data: subData } = methods[options].type({ data })
+
+         if (error) {
+            return { error: `${key}值${error}` }
+         } else {
+            return { data: subData }
          }
 
       }
@@ -248,11 +248,10 @@ function Validator(data, options, handler = {}) {
 }
 
 // 预定义数据模型表达式
-Validator.schema = function (name, expression) {
-
-}
+Validator.schema = schema
 
 // 验证类型扩展
 Validator.use = extend
 
 module.exports = Validator
+
