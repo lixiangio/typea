@@ -247,13 +247,12 @@ function Validator(data, options, handler = {}) {
 
 }
 
-// 自定义扩展
+// 自定义扩展方法
 Validator.use = function (type, options) {
    methods[type] = options
 }
 
-// 预定义数据模型解析、优化器
+// 预定义数据模型解析器
 Validator.schema = schema
 
 module.exports = Validator
-

@@ -18,12 +18,8 @@ let Test = Validator.schema('Test',
          "username": String,
          "age": Number,
          "address": [
-            {
-               "city": String,
-            },
-            {
-               "city": String,
-            }
+            { "city": String, },
+            { "city": String, }
          ],
       }
    }
