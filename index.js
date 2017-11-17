@@ -12,210 +12,213 @@ class validator {
       return this.recursion(data, options, key)
    }
 
-   /**
-    * 递归验证器
-    * @param {*} data 验证数据
-    * @param {*} options 验证表达式选项
-    * @param {*} key 数据索引
-    */
-   recursion(data, options, key) {
+}
 
-      // 选项为对象
-      if (typeof options === 'object') {
+validator.prototype.recursion = recursion
 
-         // 选项为验证器表达式（type作为内部保留关键字，应避免使用同名的type属性，否则会产生命名冲突）
-         if (options.type) {
+/**
+ * 递归验证器
+ * @param {*} data 验证数据
+ * @param {*} options 验证表达式选项
+ * @param {*} key 数据索引
+ */
+function recursion(data, options, key) {
 
-            let field = options.name || key
+   // 选项为对象
+   if (typeof options === 'object') {
 
-            // 空值拦截
-            if (data === undefined || data === '') {
+      // 选项为验证器表达式（type作为内部保留关键字，应避免使用同名的type属性，否则会产生命名冲突）
+      if (options.type) {
 
-               // 默认
-               if (options.default) {
-                  data = options.default
-               }
+         let field = options.name || key
 
-               // 直接赋值
-               else if (options.value) {
-                  data = options.value
-               }
+         // 空值拦截
+         if (data === undefined || data === '') {
 
-               // 允许为空
-               else if (options.allowNull === false) {
-                  return {
-                     error: `${field}不能为空`
-                  }
-               }
-
-               else {
-                  return {
-                     data: undefined
-                  }
-               }
-
+            // 默认
+            if (options.default) {
+               data = options.default
             }
 
-            // type为内置构造函数或字符串（字符串用于表示自定义数据类型）
-            if (methods[options.type]) {
-
-               let funObj = methods[options.type]
-               for (let name in options) {
-                  let fun = funObj[name]
-                  if (fun) {
-                     let { error, data: subData } = fun({ data, option: options[name], input: this.data })
-                     if (error) {
-                        return {
-                           error: `${field}${error}`
-                        }
-                     }
-                     data = subData
-                  }
-               }
-
-               return { data }
-
+            // 直接赋值
+            else if (options.value) {
+               data = options.value
             }
 
-            // 不支持的参数
-            else {
+            // 允许为空
+            else if (options.allowNull === false) {
                return {
-                  error: `${field}参数配置错误，不支持${options.type}类型`
+                  error: `${field}不能为空`
                }
             }
 
-         }
-
-         // 选项为数组表达式
-         else if (Array.isArray(options)) {
-
-            let [itemOptions, allowNull] = options
-
-            if (Array.isArray(data)) {
-               if (itemOptions.allowNull === false) {
-                  if (data.length === 0) {
-                     return {
-                        error: `数组${key}值不能为空`
-                     }
-                  }
-               }
-            } else {
-
-               if (data === undefined || data === '') {
-                  if (allowNull === false) {
-                     return {
-                        error: `${key}数组不能为空`
-                     }
-                  } else {
-                     return {
-                        data: undefined
-                     }
-                  }
-               } else {
-                  return {
-                     error: `${key}必须为数组类型`
-                  }
-               }
-
-            }
-
-            let dataArray = []
-            let itemKey = 0
-
-            for (let itemData of data) {
-
-               let { error, data: subData } = this.recursion(itemData, itemOptions, itemKey++)
-
-               if (error) {
-                  return {
-                     error: `数组${key}中key:${error}`
-                  }
-               } else {
-                  // 空数组提示
-                  if (itemOptions.allowNull === false) {
-                     if (subData === undefined || subData === '') {
-                        return {
-                           error: `数组${key}中key:${itemKey}值不能为空`
-                        }
-                     }
-                  }
-                  dataArray.push(subData)
-               }
-            }
-
-            return {
-               data: dataArray
-            }
-
-         }
-
-         // 选项为对象表达式
-         else {
-
-            if (data === undefined) {
+            else {
                return {
                   data: undefined
                }
             }
 
-            if (typeof data !== 'object') {
-               return {
-                  error: `${key}值必须为对象`
-               }
-            }
+         }
 
-            let dataObj = {}
+         // type为内置构造函数或字符串（字符串用于表示自定义数据类型）
+         if (methods[options.type]) {
 
-            for (let subKey in options) {
-               let itemData = data[subKey]
-               let itemOptions = options[subKey]
-               let { error, data: subData } = this.recursion(itemData, itemOptions, subKey)
-
-               if (error) {
-                  if (key) {
+            let funObj = methods[options.type]
+            for (let name in options) {
+               let fun = funObj[name]
+               if (fun) {
+                  let { error, data: subData } = fun({ data, option: options[name], input: this.data })
+                  if (error) {
                      return {
-                        error: `对象${key}中${error}`
-                     }
-                  } else {
-                     return {
-                        error: error
+                        error: `${field}${error}`
                      }
                   }
-               } else {
-                  dataObj[subKey] = subData
+                  data = subData
                }
             }
 
-            return {
-               data: dataObj
-            }
+            return { data }
 
+         }
+
+         // 不支持的参数
+         else {
+            return {
+               error: `${field}参数配置错误，不支持${options.type}类型`
+            }
          }
 
       }
 
-      // 选项为构造函数或字符串（字符串表示自定义数据类型）
-      else if (methods[options]) {
+      // 选项为数组表达式
+      else if (Array.isArray(options)) {
 
-         if (data === undefined || data === '') {
-            return { data }
+         let [itemOptions, allowNull] = options
+
+         if (Array.isArray(data)) {
+            if (itemOptions.allowNull === false) {
+               if (data.length === 0) {
+                  return {
+                     error: `数组${key}值不能为空`
+                  }
+               }
+            }
+         } else {
+
+            if (data === undefined || data === '') {
+               if (allowNull === false) {
+                  return {
+                     error: `${key}数组不能为空`
+                  }
+               } else {
+                  return {
+                     data: undefined
+                  }
+               }
+            } else {
+               return {
+                  error: `${key}必须为数组类型`
+               }
+            }
+
          }
 
-         let { err, data: subData } = methods[options].type({ data })
-         if (err) {
-            return {
-               error: `${key}值${err}`
+         let dataArray = []
+         let itemKey = 0
+
+         for (let itemData of data) {
+
+            let { error, data: subData } = this.recursion(itemData, itemOptions, itemKey++)
+
+            if (error) {
+               return {
+                  error: `数组${key}中key:${error}`
+               }
+            } else {
+               // 空数组提示
+               if (itemOptions.allowNull === false) {
+                  if (subData === undefined || subData === '') {
+                     return {
+                        error: `数组${key}中key:${itemKey}值不能为空`
+                     }
+                  }
+               }
+               dataArray.push(subData)
             }
          }
+
          return {
-            data: subData
+            data: dataArray
+         }
+
+      }
+
+      // 选项为对象表达式
+      else {
+
+         if (data === undefined) {
+            return {
+               data: undefined
+            }
+         }
+
+         if (typeof data !== 'object') {
+            return {
+               error: `${key}值必须为对象`
+            }
+         }
+
+         let dataObj = {}
+
+         for (let subKey in options) {
+            let itemData = data[subKey]
+            let itemOptions = options[subKey]
+            let { error, data: subData } = this.recursion(itemData, itemOptions, subKey)
+
+            if (error) {
+               if (key) {
+                  return {
+                     error: `对象${key}中${error}`
+                  }
+               } else {
+                  return {
+                     error: error
+                  }
+               }
+            } else {
+               dataObj[subKey] = subData
+            }
+         }
+
+         return {
+            data: dataObj
          }
 
       }
 
    }
 
+   // 选项为构造函数或字符串（字符串表示自定义数据类型）
+   else if (methods[options]) {
+
+      if (data === undefined || data === '') {
+         return { data }
+      }
+
+      let { err, data: subData } = methods[options].type({ data })
+      if (err) {
+         return {
+            error: `${key}值${err}`
+         }
+      }
+      return {
+         data: subData
+      }
+
+   }
+
 }
+
 
 /**
  * 验证器
@@ -248,9 +251,9 @@ function Validator(data, options, handler = {}) {
 }
 
 // 预定义数据模型表达式
-Validator.schema = function (name, expression) {
+// Validator.schema = function (name, expression) {
 
-}
+// }
 
 // 验证类型扩展
 Validator.use = extend

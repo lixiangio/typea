@@ -100,7 +100,10 @@
 
 ### 自定义扩展
 
-   使用Validator.use(typename, options)
+> 通过Validator.use()方法添加自定义的数据类型，使用方法和扩展类型一样，用字符串声明数据类型
+
+      Validator.use(typename, options)
+
 
 
 ### 数组验证
