@@ -22,7 +22,7 @@
 
 *  `error` *String* - 验证失败时返回的错误信息，包含错误的具体位置信息，仅供开发者调试使用
 
-*  `data` *Objcte* - 经过验证、处理后导出数据（带空值过滤，用于剔除对象中的空数组、空字符串、undefind、null等无效数据）
+*  `data` *Objcte* - 经过验证、处理后导出数据，内置空值过滤，自动剔除对象、数组中的空字符串、undefind值。（更多空值过滤特性请参考[filter-null模块](https://github.com/xiangle/filter-null)）
 
 *  `msg` *String* - 验证失败后返回的错误信息，相对于error而言，msg对用户更加友好，可直接在客户端显示
 
