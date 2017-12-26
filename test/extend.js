@@ -8,7 +8,7 @@ Validator.use('Int', {
       if (Number.isInteger(data)) {
          return { data }
       } else {
-         return { err: '必须为Int类型' }
+         return { error: '必须为Int类型' }
       }
    },
 })
@@ -16,7 +16,7 @@ Validator.use('Int', {
 
 let { error, data } = Validator(
    {
-      "name": 666,
+      "name": 666.5,
    },
    {
       "name": {

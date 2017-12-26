@@ -2,14 +2,16 @@
 
 let filterNull = require('filter-null')
 
-let { methods, extend } = require('./methods')
+let schema = require('./schema')
 
-class validator {
+let methods = require('./methods')
 
-   constructor(data, options, key) {
+class Parser {
+
+   constructor(data, options) {
       this.data = data
       this.options = options
-      return this.recursion(data, options, key)
+      return this.recursion(data, options, '')
    }
 
 }
@@ -162,36 +164,12 @@ function recursion(data, options, key) {
             }
          }
 
-         if (typeof data !== 'object') {
-            return {
-               error: `${key}值必须为对象`
-            }
-         }
+         let { error, data: subData } = methods[options].type({ data })
 
-         let dataObj = {}
-
-         for (let subKey in options) {
-            let itemData = data[subKey]
-            let itemOptions = options[subKey]
-            let { error, data: subData } = this.recursion(itemData, itemOptions, subKey)
-
-            if (error) {
-               if (key) {
-                  return {
-                     error: `对象${key}中${error}`
-                  }
-               } else {
-                  return {
-                     error: error
-                  }
-               }
-            } else {
-               dataObj[subKey] = subData
-            }
-         }
-
-         return {
-            data: dataObj
+         if (error) {
+            return { error: `${key}值${error}` }
+         } else {
+            return { data: subData }
          }
 
       }
@@ -228,7 +206,7 @@ function recursion(data, options, key) {
  */
 function Validator(data, options, handler = {}) {
 
-   let output = new validator(data, options, '')
+   let output = new Parser(data, options)
 
    if (output.error) {
       return output
@@ -250,12 +228,12 @@ function Validator(data, options, handler = {}) {
 
 }
 
-// 预定义数据模型表达式
-// Validator.schema = function (name, expression) {
+// 自定义扩展方法
+Validator.use = function (type, options) {
+   methods[type] = options
+}
 
-// }
-
-// 验证类型扩展
-Validator.use = extend
+// 预定义数据模型解析器
+Validator.schema = schema
 
 module.exports = Validator

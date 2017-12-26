@@ -222,12 +222,4 @@ for (let key in methods) {
    methods[key] = Object.assign(methods[key], commonMethod)
 }
 
-// 自定义扩展
-function extend(type, options) {
-   methods[type] = options
-}
-
-module.exports = {
-   methods,
-   extend,
-}
+module.exports = methods
