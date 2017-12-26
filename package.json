@@ -12,9 +12,6 @@
       "filter-null": "^1.2.0",
       "validator": "^8.0.0"
    },
-   "directories": {
-      "test": "test"
-   },
    "devDependencies": {
       "nodemon": "^1.11.0"
    },
