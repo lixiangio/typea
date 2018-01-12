@@ -98,12 +98,52 @@
 > 验证Email
 
 
-### 自定义扩展
+### 自定义数据类型
 
-   使用Validator.use(typename, options)
+> 可添加自定义数据类型验证
+
+      Validator.use(name, options)
+
+### schema验证
+
+> 通过预定义schema，实现options复用，性能更优
+
+      Validator.schema(name, options)
 
 
-### 数组验证
+### 参考示例
+
+#### schema验证
+
+      let schema = Validator.schema('demo', {
+         a: {
+            a1: {
+               type: Number,
+               allowNull: false
+            },
+            a2: {
+               type: Number,
+               allowNull: false
+            }
+         },
+         b: Number,
+      })
+
+      let json = {
+         a: {
+            a1: "jj",
+            a2: "12",
+         },
+         b: 2,
+         c: 888,
+      }
+
+      // let { error, data } = schema(json)
+
+      let { error, data } = Validator.demo(json)
+
+
+#### 数组验证
 
       let { error, data } = Validator(["a", "b", "c"], [String])
 
@@ -122,7 +162,7 @@
       }])
 
 
-### 对象验证
+#### 对象验证
 
       let { error, data } = Validator({
          "a": 1,
@@ -137,7 +177,7 @@
       })
 
 
-### and验证
+#### and验证
 
       let { error, data } = Validator({
          "username": "莉莉",
@@ -166,7 +206,7 @@
          }
       })
 
-### or验证
+#### or验证
 
       let { error, data } = Validator({
          "username": "莉莉",
@@ -187,7 +227,7 @@
       })
 
 
-### 扩展类型验证
+#### 扩展类型验证
 
       let { error, data } = Validator({
          "id": "5968d3b4956fe04299ea5c18",
@@ -197,7 +237,7 @@
          "mobilePhone": "MobilePhone"
       })
       
-### 自定义扩展类型
+#### 自定义扩展类型
 
       Validator.use('Int', {
          type({ data }) {
@@ -209,7 +249,7 @@
          },
       })
 
-### 实例
+#### 完整示例
 
       # 输入数据
       let json = {
