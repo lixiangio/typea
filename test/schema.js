@@ -1,28 +1,53 @@
 "use strict"
 
-let Validator = require('../index')
+let Validator = require('..')
 
-let Test = Validator.schema('Test',
-   {
-      "tenderName": {
-         "type": String,
-         "name": "标书名称",
-         "allowNull": false,
-         "default": "默认值",
+let schema = Validator.schema('demo', {
+   a: {
+      a1: {
+         type: Number,
+         allowNull: false
       },
-      "tenderNum": {
-         "type": Number,
-         "value": 666,
-      },
-      "user": {
-         "username": String,
-         "age": Number,
-         "address": [
-            { "city": String, },
-            { "city": String, }
-         ],
+      a2: {
+         type: Number,
+         allowNull: false
       }
-   }
-)
+   },
+   b: Number,
+})
 
-console.log(Test)
+let data1 = {
+   a: {
+      a1: "jj",
+      a2: "12",
+   },
+   b: 2,
+   c: 888,
+}
+
+let data2 = {
+   a: {
+      a1: 666,
+      a2: "12",
+   },
+   b: 2,
+   c: 888,
+}
+
+// let { error, data } = schema(data1)
+
+let result1 = Validator.demo(data1)
+
+if (result1.error) {
+   console.log(result1.error)
+} else {
+   console.log(result1.data)
+}
+
+let result2 = Validator.demo(data2)
+
+if (result2.error) {
+   console.log(result2.error)
+} else {
+   console.log(result2.data)
+}

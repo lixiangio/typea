@@ -1,6 +1,6 @@
 "use strict"
 
-let Validator = require('../index')
+let Validator = require('..')
 
 
 Validator.use('Int', {
@@ -21,7 +21,7 @@ let { error, data } = Validator(
    {
       "name": {
          "type": 'Int',
-         "name": "标书名称",
+         "name": "名称",
          "allowNull": false,
          "default": "默认值",
       }

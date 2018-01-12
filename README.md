@@ -197,7 +197,7 @@
          "mobilePhone": "MobilePhone"
       })
       
-### 自定义类型
+### 自定义扩展类型
 
       Validator.use('Int', {
          type({ data }) {
@@ -214,7 +214,7 @@
       # 输入数据
       let json = {
          "username": "测试",
-         "tenderNum": "123456789987",
+         "num": "123456789987",
          "time": "2017-07-07T09:53:30.000Z",
          "files": ["abc.js", "334", "null", "666", , , "kkk.js"],
          "user": {
@@ -257,7 +257,7 @@
                "name": "用户名",
                "allowNull": false
             },
-            "tenderNum": String,
+            "num": String,
             "time": {
                "type": Date,
                "name": "时间",

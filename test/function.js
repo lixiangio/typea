@@ -1,6 +1,6 @@
 "use strict"
 
-let Validator = require('../index')
+let Validator = require('..')
 
 let { error, data } = Validator(
    {
