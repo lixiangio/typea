@@ -98,15 +98,55 @@
 > 验证Email
 
 
-### 自定义扩展
+### 自定义数据类型
 
 > 通过Validator.use()方法添加自定义的数据类型，使用方法和扩展类型一样，用字符串声明数据类型
 
       Validator.use(typename, options)
 
 
+      Validator.use(name, options)
 
-### 数组验证
+### schema验证
+
+> 通过预定义schema，实现options复用，性能更优
+
+      Validator.schema(name, options)
+
+
+### 参考示例
+
+#### schema验证
+
+      let schema = Validator.schema('demo', {
+         a: {
+            a1: {
+               type: Number,
+               allowNull: false
+            },
+            a2: {
+               type: Number,
+               allowNull: false
+            }
+         },
+         b: Number,
+      })
+
+      let json = {
+         a: {
+            a1: "jj",
+            a2: "12",
+         },
+         b: 2,
+         c: 888,
+      }
+
+      // let { error, data } = schema(json)
+
+      let { error, data } = Validator.demo(json)
+
+
+#### 数组验证
 
       let { error, data } = Validator(["a", "b", "c"], [String])
 
@@ -125,7 +165,7 @@
       }])
 
 
-### 对象验证
+#### 对象验证
 
       let { error, data } = Validator({
          "a": 1,
@@ -140,7 +180,7 @@
       })
 
 
-### and验证
+#### and验证
 
       let { error, data } = Validator({
          "username": "莉莉",
@@ -169,7 +209,7 @@
          }
       })
 
-### or验证
+#### or验证
 
       let { error, data } = Validator({
          "username": "莉莉",
@@ -190,7 +230,7 @@
       })
 
 
-### 扩展类型验证
+#### 扩展类型验证
 
       let { error, data } = Validator({
          "id": "5968d3b4956fe04299ea5c18",
@@ -200,7 +240,7 @@
          "mobilePhone": "MobilePhone"
       })
       
-### 自定义类型
+#### 自定义扩展类型
 
       Validator.use('Int', {
          type({ data }) {
@@ -212,12 +252,12 @@
          },
       })
 
-### 实例
+#### 完整示例
 
       # 输入数据
       let json = {
          "username": "测试",
-         "tenderNum": "123456789987",
+         "num": "123456789987",
          "time": "2017-07-07T09:53:30.000Z",
          "files": ["abc.js", "334", "null", "666", , , "kkk.js"],
          "user": {
@@ -260,7 +300,7 @@
                "name": "用户名",
                "allowNull": false
             },
-            "tenderNum": String,
+            "num": String,
             "time": {
                "type": Date,
                "name": "时间",

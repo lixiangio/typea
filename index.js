@@ -2,8 +2,6 @@
 
 let filterNull = require('filter-null')
 
-let schema = require('./schema')
-
 let methods = require('./methods')
 
 class Parser {
@@ -233,7 +231,13 @@ Validator.use = function (type, options) {
    methods[type] = options
 }
 
-// 预定义数据模型解析器
-Validator.schema = schema
+// 通过将静态的options放入函数作用域，使options持久化驻留在内存
+// 避免同一个对象被重复的创建和销毁，实现options跨接口复用，提升性能的同时，也增加了代码复用率
+Validator.schema = function (name, options) {
+   Validator[name] = function (json) {
+      return Validator(json, options)
+   }
+   return Validator[name]
+}
 
 module.exports = Validator

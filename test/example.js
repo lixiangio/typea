@@ -1,10 +1,10 @@
 "use strict"
 
-let Validator = require('../index')
+let Validator = require('..')
 
 let json = {
-   "tenderName": "测试",
-   "tenderNum": "123456789987",
+   "name": "测试",
+   "num": "123456789987",
    "ObjectId": "59c8aea808deec3fc8da56b6",
    "tenderEndTime": "2017-07-07T09:53:30.000Z",
    "files": ["abc.js", "334", "null", "666", "12"],
@@ -47,13 +47,13 @@ let json = {
 
 let { error, data } = Validator(json,
    {
-      "tenderName": {
+      "name": {
          "type": String,
-         "name": "标书名称",
+         "name": "名称",
          "allowNull": false,
          "default": "默认值"
       },
-      "tenderNum": {
+      "num": {
          "type": Number,
          "value": 666,
       },
@@ -146,13 +146,18 @@ let { error, data } = Validator(json,
             }
          }
       },
-      where() {
+      where({ search, email, integral }) {
          return {
-            "email": undefined,
-            "integral": '',
-            "t": 888,
-            "j": undefined,
-            "c": '8',
+            "email": email,
+            "integral": integral,
+            "test": {
+               v1: 1,
+               v2: undefined,
+               v3: "",
+               v4: null,
+               v5: NaN,
+               v6: 0,
+            }
          }
       }
    }
