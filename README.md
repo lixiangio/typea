@@ -2,7 +2,7 @@
 
       npm install check-data --save
 
-### 使用方法1
+### 使用方法2
 
     let Validator = require('check-data')
     
