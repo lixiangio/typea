@@ -14,9 +14,9 @@
 
 *  `options` *Objcte, Array, Function* - 数据验证表达式，类型参考type选项
 
-*  `customize` *Objcte* - 自定义数据导出对象（可选）
+*  `handler` *Objcte* - 自定义数据构建对象，根据输入数据生成新的数据结构（可选）
 
-*  `customize.$` *Function* - 自定义数据导出方法，使用已验证数据创建新的数据结构，函数中this和第一个参数指向已验证数据。函数返回对象中支持多层嵌套函数表达式，用于添加自定义业务逻辑，满足特定应用场景。
+*  `handler.$` *Function* - 数据构建方法，函数名称与输出data对象中的key相对应。通过this或第一个函数参数可快速获取验证结果。(函数返回对象中同样支持多层嵌套函数表达式，可适应更多的应用场景。)
 
 ### 输出
 
@@ -100,9 +100,20 @@
 
 ### 自定义数据类型
 
-> 可添加自定义数据类型验证
+> 通过Validator.use()方法添加自定义的数据类型，使用方法和扩展类型一样，用字符串声明数据类型
 
       Validator.use(name, options)
+
+      # 示例
+      Validator.use('Int', {
+         type({ data }) {
+            if (Number.isInteger(data)) {
+               return { data }
+            } else {
+               return { err: '必须为Int类型' }
+            }
+         },
+      })
 
 ### schema验证
 
@@ -236,18 +247,7 @@
          "id": "MongoId",
          "mobilePhone": "MobilePhone"
       })
-      
-#### 自定义扩展类型
 
-      Validator.use('Int', {
-         type({ data }) {
-            if (Number.isInteger(data)) {
-               return { data }
-            } else {
-               return { err: '必须为Int类型' }
-            }
-         },
-      })
 
 #### 完整示例
 

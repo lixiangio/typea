@@ -252,9 +252,9 @@ Validator.use = function (type, options) {
 
 // 通过将静态的options放入函数作用域，使options持久化驻留在内存
 // 避免同一个对象被重复的创建和销毁，实现options跨接口复用，提升性能的同时，也增加了代码复用率
-Validator.schema = function (name, options) {
-   Validator[name] = function (json) {
-      return Validator(json, options)
+Validator.schema = function (name, options, handler) {
+   Validator[name] = function (data) {
+      return Validator(data, options, handler)
    }
    return Validator[name]
 }

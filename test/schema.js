@@ -2,19 +2,29 @@
 
 let Validator = require('..')
 
-let schema = Validator.schema('demo', {
-   a: {
-      a1: {
-         type: Number,
-         allowNull: false
+let schema = Validator.schema('demo',
+   {
+      a: {
+         a1: {
+            type: Number,
+            allowNull: false
+         },
+         a2: {
+            type: Number,
+            allowNull: false
+         }
       },
-      a2: {
-         type: Number,
-         allowNull: false
-      }
+      b: Number,
    },
-   b: Number,
-})
+   {
+      find({ a, b }) {
+         return {
+            c: a,
+            d: b,
+         }
+      }
+   }
+)
 
 let data1 = {
    a: {
