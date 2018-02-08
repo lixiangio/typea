@@ -46,7 +46,7 @@
 * `method` *Function* - 参数自定义转换方法，非空值时执行
 
 
-### options - 针对指定数据类型的私有选项
+### options - 不同数据类型的可选项
 
 #### String
 
@@ -83,7 +83,7 @@
 > 仅支持类型验证
 
 
-### 扩展类型
+### 其它类型
 
 #### 'MongoId'
 
@@ -98,7 +98,7 @@
 > 验证Email
 
 
-### 自定义数据类型
+### 扩展自定义类型
 
 > 通过Validator.use()方法添加自定义的数据类型，使用方法和扩展类型一样，用字符串声明数据类型
 
@@ -110,17 +110,16 @@
             if (Number.isInteger(data)) {
                return { data }
             } else {
-               return { err: '必须为Int类型' }
+               return { error: '必须为Int类型' }
             }
          },
       })
 
 ### schema验证
 
-> 通过预定义schema，实现options复用，性能更优
+> 通过预定义schema，实现options单例复用（option为静态数据），避免频繁创建重复的实例，可节省内存和减少计算开销。
 
       Validator.schema(name, options)
-
 
 ### 参考示例
 
