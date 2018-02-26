@@ -27,7 +27,9 @@
 *  `msg` *String* - 验证失败后返回的错误信息，相对于error而言，msg对用户更加友好，可直接在客户端显示
 
 
-### options - 公共选项
+### options
+
+#### 通用选项
 
 * `type` *String, Number, Object, Array, Date, Boolean, "MongoId", "MobilePhone", 'Email'* - 数据类型，扩展类型用字符串表示
 
@@ -45,8 +47,6 @@
 
 * `method` *Function* - 参数自定义转换方法，非空值时执行
 
-
-### options - 不同数据类型的可选项
 
 #### String
 
@@ -98,7 +98,7 @@
 > 验证Email
 
 
-### 扩展自定义类型
+### 扩展自定义数据类型
 
 > 通过Validator.use()方法添加自定义的数据类型，使用方法和扩展类型一样，用字符串声明数据类型
 
