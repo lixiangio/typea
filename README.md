@@ -1,12 +1,14 @@
-### Installation
+### Install
 
-      npm install check-data --save
+      $ npm install check-data --save
 
 ### 使用方法
 
-    let Validator = require('check-data')
-    
-    let { error, data } = Validator(data, options, customize)
+```js
+let Validator = require('check-data')
+
+let { error, data } = Validator(data, options, customize)
+```
 
 ### 输入
 
@@ -102,272 +104,285 @@
 
 > 通过Validator.use()方法添加自定义的数据类型，使用方法和扩展类型一样，用字符串声明数据类型
 
-      Validator.use(name, options)
+```js
+Validator.use(name, options)
 
-      # 示例
-      Validator.use('Int', {
-         type({ data }) {
-            if (Number.isInteger(data)) {
-               return { data }
-            } else {
-               return { error: '必须为Int类型' }
-            }
-         },
-      })
+# 示例
+Validator.use('Int', {
+   type({ data }) {
+      if (Number.isInteger(data)) {
+         return { data }
+      } else {
+         return { error: '必须为Int类型' }
+      }
+   },
+})
+```
 
 ### schema验证
 
 > 通过预定义schema，实现options单例复用（option为静态数据），避免频繁创建重复的实例，可节省内存和减少计算开销。
 
-      Validator.schema(name, options)
+```js
+Validator.schema(name, options)
+```
 
 ### 参考示例
 
 #### schema验证
 
-      let schema = Validator.schema('demo', {
-         a: {
-            a1: {
-               type: Number,
-               allowNull: false
-            },
-            a2: {
-               type: Number,
-               allowNull: false
-            }
-         },
-         b: Number,
-      })
-
-      let json = {
-         a: {
-            a1: "jj",
-            a2: "12",
-         },
-         b: 2,
-         c: 888,
+```js
+let schema = Validator.schema('demo', {
+   a: {
+      a1: {
+         type: Number,
+         allowNull: false
+      },
+      a2: {
+         type: Number,
+         allowNull: false
       }
+   },
+   b: Number,
+})
 
-      // let { error, data } = schema(json)
+let json = {
+   a: {
+      a1: "jj",
+      a2: "12",
+   },
+   b: 2,
+   c: 888,
+}
 
-      let { error, data } = Validator.demo(json)
+// let { error, data } = schema(json)
 
+let { error, data } = Validator.demo(json)
+```
 
 #### 数组验证
 
-      let { error, data } = Validator(["a", "b", "c"], [String])
+```js
+let { error, data } = Validator(["a", "b", "c"], [String])
 
-      let { error, data } = Validator([{
-         "a":1,
-         "b":"bibi",
-         "c":"test"
-      },{
-         "a":1,
-         "b":"bibi",
-         "c":"test"
-      }], [{
-         a: Number,
-         b: String,
-         c: String
-      }])
-
+let { error, data } = Validator([{
+   "a":1,
+   "b":"bibi",
+   "c":"test"
+},{
+   "a":1,
+   "b":"bibi",
+   "c":"test"
+}], [{
+   a: Number,
+   b: String,
+   c: String
+}])
+```
 
 #### 对象验证
 
-      let { error, data } = Validator({
-         "a": 1,
-         "b": "xx",
-         "c": [1,32,34],
-         "d": 666
-      }, {
-         "a": Number,
-         "b": String,
-         "c": [String],
-         "d": Number
-      })
-
+```js
+let { error, data } = Validator({
+   "a": 1,
+   "b": "xx",
+   "c": [1,32,34],
+   "d": 666
+}, {
+   "a": Number,
+   "b": String,
+   "c": [String],
+   "d": Number
+})
+```
 
 #### and验证
 
-      let { error, data } = Validator({
-         "username": "莉莉",
-         "addressee": "嘟嘟",
-      }, {
-         "username": {
-            "type": String,
-            // 使用数组表达式
-            "and": ["addressee", "address"],
-         },
-         "addressee": {
-            "type": String,
-            "allowNull": true
-         },
-         "address": {
-            "type": String,
-            "allowNull": true,
-            // 使用函数表达式，表示特定值的依赖关系
-            and(value){
-               if (value === 1) {
-                  return ["addressee", "address"]
-               } else if (value === 2) {
-                  return ["username", "xx"]
-               }
-            },
+```js
+let { error, data } = Validator({
+   "username": "莉莉",
+   "addressee": "嘟嘟",
+}, {
+   "username": {
+      "type": String,
+      // 使用数组表达式
+      "and": ["addressee", "address"],
+   },
+   "addressee": {
+      "type": String,
+      "allowNull": true
+   },
+   "address": {
+      "type": String,
+      "allowNull": true,
+      // 使用函数表达式，表示特定值的依赖关系
+      and(value){
+         if (value === 1) {
+            return ["addressee", "address"]
+         } else if (value === 2) {
+            return ["username", "xx"]
          }
-      })
+      },
+   }
+})
+```
 
 #### or验证
 
-      let { error, data } = Validator({
-         "username": "莉莉",
-         "addressee": "嘟嘟",
-      }, {
-         "username": {
-            "type": String,
-            "or": ["addressee", "address"]
-         },
-         "addressee": {
-            "type": String,
-            "allowNull": true
-         },
-         "address": {
-            "type": String,
-            "allowNull": true
-         }
-      })
-
+```js
+let { error, data } = Validator({
+   "username": "莉莉",
+   "addressee": "嘟嘟",
+}, {
+   "username": {
+      "type": String,
+      "or": ["addressee", "address"]
+   },
+   "addressee": {
+      "type": String,
+      "allowNull": true
+   },
+   "address": {
+      "type": String,
+      "allowNull": true
+   }
+})
+```
 
 #### 扩展类型验证
 
-      let { error, data } = Validator({
-         "id": "5968d3b4956fe04299ea5c18",
-         "mobilePhone": "18555555555",
-      }, {
-         "id": "MongoId",
-         "mobilePhone": "MobilePhone"
-      })
-
+```js
+let { error, data } = Validator({
+   "id": "5968d3b4956fe04299ea5c18",
+   "mobilePhone": "18555555555",
+}, {
+   "id": "MongoId",
+   "mobilePhone": "MobilePhone"
+})
+```
 
 #### 完整示例
 
-      # 输入数据
-      let json = {
-         "username": "测试",
-         "num": "123456789987",
-         "time": "2017-07-07T09:53:30.000Z",
-         "files": ["abc.js", "334", "null", "666", , , "kkk.js"],
-         "user": {
-            "username": "莉莉",
-            "age": 18,
-         },
-         "list": [
-            {
-               "username": "吖吖",
-               "age": 16,
-            },
-            {
-               "username": "可可",
-               "age": 15,
-            }
-         ],
-         "auth": {
-               "weixin": "abc",
-         },
-         "beneficiariesName": "莉莉",
-         "guaranteeMoney": 2,
-         "guaranteeFormat": 0,
-         "addressee": "嘟嘟",
-         "receiveAddress": "北京市",
-         "phone": "18666666666",
-         "coupon": "uuuu",
-         "integral": {
-               "lala": 168,
-               "kaka": "3"
-         },
-         "search": "深圳",
-         "email": "xxx@xx.xx"
+```js
+# 输入数据
+let json = {
+   "username": "测试",
+   "num": "123456789987",
+   "time": "2017-07-07T09:53:30.000Z",
+   "files": ["abc.js", "334", "null", "666", , , "kkk.js"],
+   "user": {
+      "username": "莉莉",
+      "age": 18,
+   },
+   "list": [
+      {
+         "username": "吖吖",
+         "age": 16,
+      },
+      {
+         "username": "可可",
+         "age": 15,
       }
+   ],
+   "auth": {
+         "weixin": "abc",
+   },
+   "beneficiariesName": "莉莉",
+   "guaranteeMoney": 2,
+   "guaranteeFormat": 0,
+   "addressee": "嘟嘟",
+   "receiveAddress": "北京市",
+   "phone": "18666666666",
+   "coupon": "uuuu",
+   "integral": {
+         "lala": 168,
+         "kaka": "3"
+   },
+   "search": "深圳",
+   "email": "xxx@xx.xx"
+}
 
-      # 验证表达式
-      let { error, data } = Validator(json,
-         {
-            "username": {
-               "type": String,
-               "name": "用户名",
-               "allowNull": false
-            },
-            "num": String,
-            "time": {
-               "type": Date,
-               "name": "时间",
-               "allowNull": false,
-            },
-            "user": {
-               "username": String,
-               "age": Number,
-            },
-            "list": [{
-               "username": String,
-               "age": Number,
-            }],
-            "auth": {
-               "weixin": String,
-            },
-            "beneficiariesName": String,
-            "guaranteeMoney": {
-               "type": Number,
-               "in": [1, 2]
-            },
-            "files": [{
-               "type": String,
-               "allowNull": false,
-            }],
-            "guaranteeFormat": {
-               "type": Number,
-               "conversion": Boolean
-            },
-            "addressee": {
-               "type": String,
-               "value": "直接通过表达式赋值"
-            },
-            "search": String,
-            "phone": {
-               "type": "MobilePhone"
-            },
-            "receiveAddress": String,
-            "coupon": {
-               "type": String,
-               method(value) {
-                  return { "$gt": new Date() }
-               }
-            },
-            "integral": {
-               "lala": {
-                  "type": Number,
-               },
-               "kaka": {
-                  "type": Number,
-                  "in": [1, 2, 3],
-               }
-            },
-            "email": {
-               "type": 'Email',
-            },
-         },
-         {
-            filter({ search, email, integral }) {
-               return {
-                  "email": email,
-                  "integral": integral,
-                  "test": {
-                     a: 1,
-                     b: undefined,
-                     c: "",
-                     d: null,
-                     e: NaN,
-                     e: 0,
-                  },
-               }
-            }
+# 验证表达式
+let { error, data } = Validator(json,
+   {
+      "username": {
+         "type": String,
+         "name": "用户名",
+         "allowNull": false
+      },
+      "num": String,
+      "time": {
+         "type": Date,
+         "name": "时间",
+         "allowNull": false,
+      },
+      "user": {
+         "username": String,
+         "age": Number,
+      },
+      "list": [{
+         "username": String,
+         "age": Number,
+      }],
+      "auth": {
+         "weixin": String,
+      },
+      "beneficiariesName": String,
+      "guaranteeMoney": {
+         "type": Number,
+         "in": [1, 2]
+      },
+      "files": [{
+         "type": String,
+         "allowNull": false,
+      }],
+      "guaranteeFormat": {
+         "type": Number,
+         "conversion": Boolean
+      },
+      "addressee": {
+         "type": String,
+         "value": "直接通过表达式赋值"
+      },
+      "search": String,
+      "phone": {
+         "type": "MobilePhone"
+      },
+      "receiveAddress": String,
+      "coupon": {
+         "type": String,
+         method(value) {
+            return { "$gt": new Date() }
          }
-      )
+      },
+      "integral": {
+         "lala": {
+            "type": Number,
+         },
+         "kaka": {
+            "type": Number,
+            "in": [1, 2, 3],
+         }
+      },
+      "email": {
+         "type": 'Email',
+      },
+   },
+   {
+      filter({ search, email, integral }) {
+         return {
+            "email": email,
+            "integral": integral,
+            "test": {
+               a: 1,
+               b: undefined,
+               c: "",
+               d: null,
+               e: NaN,
+               e: 0,
+            },
+         }
+      }
+   }
+)
+```
