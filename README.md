@@ -41,13 +41,15 @@ let { error, data } = Validator(data, options, customize)
 
 * `value` * - 直接通过表达式赋值，类似于default选项，区别是不管值是否为空都将使用该值覆盖（优先级低于default，目前没有发现同时使用的应用场景）
 
-* `allowNull` *Boolean* - 是否允许为空，默认为true
+* `allowNull` *Boolean* - 是否允许为空（默认将undefined和空字符串被视为空），缺省值为true。当值为false时，必须正确匹配指定的数据类型，否则会提示数据类型错误。
+
+* `ignore` *Array* - 忽略指定值，在字段级覆盖对默认空值的定义，如将某个指定字段的空值定义为[null, ""]
 
 * `and` *Array、Function* - 声明依赖的参数名数组，支持数组和函数两种表达式，函数表达式用于声明指定值的依赖关系。要求依赖的所有参数都不能为空
 
 * `or` *Array、Function* - 与and相似，区别是只要求依赖的其中一个参数不为空即可
 
-* `method` *Function* - 参数自定义转换方法，非空值时执行
+* `handle` *Function* - 参数自定义转换方法，非空值时执行（原method方法更名为handle）。
 
 
 #### String
@@ -351,7 +353,7 @@ let { error, data } = Validator(json,
       "receiveAddress": String,
       "coupon": {
          "type": String,
-         method(value) {
+         handle(value) {
             return { "$gt": new Date() }
          }
       },

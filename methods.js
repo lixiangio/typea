@@ -5,7 +5,7 @@ let validator = require('validator')
 // 公共方法
 let commonMethod = {
    // 参数自定义转换方法
-   method({ data, option: fun, input }) {
+   handle({ data, option: fun, input }) {
       return { data: fun.call(input, data) }
    },
    // 直接赋值（会覆盖原来的值）

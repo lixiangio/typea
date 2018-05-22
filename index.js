@@ -13,6 +13,16 @@ class Parser {
    }
 
    /**
+    * 判断是否允许为空值（需要忽略的数据）
+    * @param {*} data 需要验证空值的数据
+    */
+   isNull(data, ignore = [undefined, ""]) {
+      if (ignore.indexOf(data) > -1) {
+         return true
+      }
+   }
+
+   /**
     * 递归验证器
     * @param {*} data 验证数据
     * @param {*} options 验证表达式选项
@@ -28,8 +38,8 @@ class Parser {
 
             let field = options.name || key
 
-            // 空值拦截
-            if (data === undefined || data === '') {
+            // 前置空值拦截
+            if (this.isNull(data, options.ignore)) {
 
                // 默认
                if (options.default) {
@@ -41,7 +51,7 @@ class Parser {
                   data = options.value
                }
 
-               // 允许为空
+               // 允许空值
                else if (options.allowNull === false) {
                   return {
                      error: `${field}不能为空`
@@ -101,7 +111,7 @@ class Parser {
                }
             } else {
 
-               if (data === undefined || data === '') {
+               if (this.isNull(data)) {
                   if (allowNull === false) {
                      return {
                         error: `${key}数组不能为空`
@@ -133,7 +143,7 @@ class Parser {
                } else {
                   // 空数组提示
                   if (itemOptions.allowNull === false) {
-                     if (subData === undefined || subData === '') {
+                     if (this.isNull(subData)) {
                         return {
                            error: `数组${key}中key:${itemKey}值不能为空`
                         }
@@ -153,9 +163,7 @@ class Parser {
          else {
 
             if (data === undefined) {
-               return {
-                  data: undefined
-               }
+               return { data: undefined }
             }
 
             if (typeof data !== 'object') {
@@ -167,6 +175,7 @@ class Parser {
             let dataObj = {}
 
             for (let subKey in options) {
+
                let itemData = data[subKey]
                let itemOptions = options[subKey]
                let { error, data: subData } = this.recursion(itemData, itemOptions, subKey)
@@ -184,6 +193,7 @@ class Parser {
                } else {
                   dataObj[subKey] = subData
                }
+               
             }
 
             return {
@@ -197,8 +207,8 @@ class Parser {
       // 选项为构造函数或字符串（字符串表示自定义数据类型）
       else if (methods[options]) {
 
-         if (data === undefined || data === '') {
-            return { data }
+         if (this.isNull(data)) {
+            return { data: undefined }
          }
 
          let { error, data: subData } = methods[options].type({ data })
@@ -245,7 +255,7 @@ function Validator(data, options, handler = {}) {
 
 }
 
-// 自定义扩展方法
+// 自定义数据类型扩展方法
 Validator.use = function (type, options) {
    methods[type] = options
 }
