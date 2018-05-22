@@ -14,12 +14,14 @@ class Parser {
 
    /**
     * 判断是否允许为空值（需要忽略的数据）
-    * @param {*} data 需要验证空值的数据
+    * @param {*} data 需要校验空值的数据
     */
    isNull(data, ignore = [undefined, ""]) {
+
       if (ignore.indexOf(data) > -1) {
          return true
       }
+
    }
 
    /**
@@ -257,16 +259,21 @@ function Validator(data, options, handler = {}) {
 
 // 自定义数据类型扩展方法
 Validator.use = function (type, options) {
+
    methods[type] = options
+   
 }
 
-// 通过将静态的options放入函数作用域，使options持久化驻留在内存
-// 避免同一个对象被重复的创建和销毁，实现options跨接口复用，提升性能的同时，也增加了代码复用率
+// 通过预处理方式，将提前处理好的静态options持久化驻留在内存中
+// 避免同一个对象被多次重复的创建和销毁，实现options跨接口复用，在节省资源的同时，也增加了代码复用率
 Validator.schema = function (name, options, handler) {
+
    Validator[name] = function (data) {
       return Validator(data, options, handler)
    }
+   
    return Validator[name]
+
 }
 
 module.exports = Validator
