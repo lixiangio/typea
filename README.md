@@ -70,8 +70,6 @@ let { error, data } = Validator(data, options, customize)
 
 * `in` *Array* - 匹配多个可选值中的一个
 
-* `to` * - 类型转换，仅支持Boolean值
-
 #### Array
 
 * `minLength` *Number* - 限制字符串最小长度

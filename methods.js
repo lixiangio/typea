@@ -123,17 +123,7 @@ let methods = {
          } else {
             return { data }
          }
-      },
-      // 转换类型
-      to({ data, option: type }) {
-         if (type === Boolean) {
-            if (data) {
-               return { data: true }
-            } else {
-               return { data: false }
-            }
-         }
-      },
+      }
    },
    [Object]: {
       type({ data }) {

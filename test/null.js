@@ -7,6 +7,7 @@ let { error, data } = Validator(
    {
       a: undefined,
       b: ["kkk", "xxx"],
+      c: "是"
    },
    {
       a: {
@@ -16,6 +17,12 @@ let { error, data } = Validator(
          type: Array,
          handle(data) {
             return data.join()
+         }
+      },
+      c: {
+         type: String,
+         handle(data) {
+            return data
          }
       }
    }
