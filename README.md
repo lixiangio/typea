@@ -43,7 +43,7 @@ let { error, data } = Validator(data, options, customize)
 
 * `allowNull` *Boolean* - 是否允许为空（默认将undefined和空字符串被视为空），缺省值为true。当值为false时，必须正确匹配指定的数据类型，否则会提示数据类型错误。
 
-* `ignore` *Array* - 忽略指定值，在字段级覆盖对默认空值的定义，如将某个指定字段的空值定义为[null, ""]
+* `ignore` *Array* - 忽略指定的值，在字段级覆盖对默认空值的定义，如将某个指定字段的空值定义为[null, ""]
 
 * `and` *Array、Function* - 声明依赖的参数名数组，支持数组和函数两种表达式，函数表达式用于声明指定值的依赖关系。要求依赖的所有参数都不能为空
 
@@ -121,9 +121,10 @@ Validator.use('Int', {
 })
 ```
 
-### schema验证
+### schema验证（预定义验证器）
 
-> 通过预定义schema，实现options单例复用（option为静态数据），避免频繁创建重复的实例，可节省内存和减少计算开销。
+> 通过预定义schema，实现options单例复用（option为静态数据），避免频繁创建重复的实例，可节省内存和减少计算开销。在环境允许的情况下应优先考虑schema方式。
+
 
 ```js
 Validator.schema(name, options)
@@ -157,16 +158,19 @@ let json = {
    c: 888,
 }
 
-// let { error, data } = schema(json)
+let { error, data } = schema(json)
 
+// 或
 let { error, data } = Validator.demo(json)
 ```
 
 #### 数组验证
 
 ```js
+// 一维数组
 let { error, data } = Validator(["a", "b", "c"], [String])
 
+// 内嵌对象
 let { error, data } = Validator([{
    "a":1,
    "b":"bibi",

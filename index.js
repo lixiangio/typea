@@ -13,10 +13,11 @@ class Parser {
    }
 
    /**
-    * 判断是否允许为空值（需要忽略的数据）
+    * 判断是否允许为空值，默认将undefined、 null、空字符串视为空值
+    * 默认值在大多数场景下适用，在出现例外时，可以在指定字段上使用ignore属性，重置对默认空值的定义
     * @param {*} data 需要校验空值的数据
     */
-   isNull(data, ignore = [undefined, ""]) {
+   isNull(data, ignore = [undefined, null, '']) {
 
       if (ignore.indexOf(data) > -1) {
          return true
@@ -195,7 +196,7 @@ class Parser {
                } else {
                   dataObj[subKey] = subData
                }
-               
+
             }
 
             return {
@@ -261,7 +262,7 @@ function Validator(data, options, handler = {}) {
 Validator.use = function (type, options) {
 
    methods[type] = options
-   
+
 }
 
 // 通过预处理方式，将提前处理好的静态options持久化驻留在内存中
@@ -271,7 +272,7 @@ Validator.schema = function (name, options, handler) {
    Validator[name] = function (data) {
       return Validator(data, options, handler)
    }
-   
+
    return Validator[name]
 
 }

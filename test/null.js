@@ -10,12 +10,10 @@ let { error, data } = Validator(
    },
    {
       a: {
-         type: String,
-         ignore: [null, undefined]
+         type: String
       },
       b: {
          type: Array,
-         ignore: [null, undefined, ''],
          handle(data) {
             return data.join()
          }
