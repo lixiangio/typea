@@ -1,6 +1,6 @@
 ### Install
 
-		npm install check-data --save
+      npm install check-data --save
 
 ### 使用方法
 
@@ -33,9 +33,11 @@ let { error, data } = Validator(data, options, customize)
 *  `msg` *String* - 验证失败后返回的错误信息，相对于error而言，msg对用户更加友好，可直接在客户端显示
 
 
-### options
+### Options
 
-> 验证表达式中判断一个对象节点是否为验证选项的唯一依据是看对象中是否包含type属性，否则会被视为对象结构。type作为验证表达式的保留关键字，应尽量避免在入参中包含type属性，否则可能导致验证器出现混乱。
+> 验证表达式中判断一个对象节点是否为验证选项的唯一依据是检查对象中是否包含type属性，如果没有type则被视为对象结构。
+
+> type作为验证表达式的保留关键字，应尽量避免在入参中包含同名的type属性，否则可能导致验证结果出现混乱。
 
 #### 通用选项
 
@@ -59,7 +61,7 @@ let { error, data } = Validator(data, options, customize)
 
 ### 专用选项
 
-> 针对不同的数据类型，会有不同的可选参数，参数如下
+> 针对不同的数据类型，会有不同的可选参数，选项如下
 
 #### String
 
@@ -125,9 +127,9 @@ Validator.use(name, options)
 
 * `options.$name` *Function* - 其它验证函数（可选）
 
-##### 参考示例
 
 ```js
+// 示例
 Validator.use('Int', {
 	type({ data }) {
 		if (Number.isInteger(data)) {
@@ -432,7 +434,7 @@ let { error, data } = Validator(json,
 ```
 
 
-### 更新内容
+### 版本更新内容
 
 * 新增Function类型验证
 
