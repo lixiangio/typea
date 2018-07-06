@@ -7,7 +7,7 @@
 ```js
 let Validator = require('check-data')
 
-let { error, data } = Validator(data, options, customize)
+let { error, data } = Validator(data, options, extend)
 ```
 
 ### 输入参数
@@ -129,7 +129,6 @@ Validator.use(name, options)
 
 
 ```js
-// 示例
 Validator.use('Int', {
 	type({ data }) {
 		if (Number.isInteger(data)) {
