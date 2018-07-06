@@ -109,7 +109,7 @@ let { error, data } = Validator(json,
       },
       "coupon": {
          "type": String,
-         method(value) {
+         set(value) {
             return { "$gt": value }
          }
       },
@@ -125,7 +125,7 @@ let { error, data } = Validator(json,
       },
       "email": {
          "type": 'Email',
-         method(value) {
+         set(value) {
             return [value, , null, , undefined, 666]
          }
       },

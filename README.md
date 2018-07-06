@@ -1,6 +1,6 @@
 ### Install
 
-      $ npm install check-data --save
+		npm install check-data --save
 
 ### 使用方法
 
@@ -10,17 +10,21 @@ let Validator = require('check-data')
 let { error, data } = Validator(data, options, customize)
 ```
 
-### 输入
+### 输入参数
 
 *  `data` *Objcte, Array, String, Number, Date, Boolean* - 输入待验证数据
 
-*  `options` *Objcte, Array, Function* - 数据验证表达式，类型参考type选项
+*  `options` *Objcte, Array, Function* - 数据验证表达式，类型参考type选项。
 
-*  `handler` *Objcte* - 自定义数据构建对象，根据输入数据生成新的数据结构（可选）
+*  `extend` *Objcte* - 自定义数据构建对象，根据输入数据生成新的数据结构（可选）
 
-*  `handler.$` *Function* - 数据构建方法，函数名称与输出data对象中的key相对应。通过this或第一个函数参数可快速获取验证结果。(函数返回对象中同样支持多层嵌套函数表达式，可适应更多的应用场景。)
+*  `extend.$name` *Function* - 数据扩展函数，基于已验证的数据构建新的数据结构，输出结果将以函数名作为key保存到data中。函数中this和第一个入参指向data（已存在的同名属性值会被函数返回值覆盖）
 
-### 输出
+*  `extend.$name` * - 数据扩展，除函数外的其它任意数据类型，在已验证的数据结构上添加新的属性或覆盖已存在的同名属性
+
+### 返回值
+
+> 输出数据是基于约定的对象结构，error和data不会同时存在，验证成功返回data，验证失败返回error和msg
 
 *  `error` *String* - 验证失败时返回的错误信息，包含错误的具体位置信息，仅供开发者调试使用
 
@@ -31,13 +35,15 @@ let { error, data } = Validator(data, options, customize)
 
 ### options
 
+> 验证表达式中判断一个对象节点是否为验证选项的唯一依据是看对象中是否包含type属性，否则会被视为对象结构。type作为验证表达式的保留关键字，应尽量避免在入参中包含type属性，否则可能导致验证器出现混乱。
+
 #### 通用选项
 
-* `type` *String, Number, Object, Array, Date, Boolean, "MongoId", "MobilePhone", 'Email'* - 数据类型，扩展类型用字符串表示
+* `type` * - 数据类型
 
-* `name` *String* - 自定义参数名称，用于错误返回值中替换默认参数名
+* `default` * - 空值时的默认赋值
 
-* `default` * - 默认赋值
+* `set` *Function* - 赋值函数，用于对输入值处理后再输出赋值，函数中this指向原始数据data，当值为空时不执行（原method方法）
 
 * `value` * - 直接通过表达式赋值，类似于default选项，区别是不管值是否为空都将使用该值覆盖（优先级低于default，目前没有发现同时使用的应用场景）
 
@@ -49,8 +55,11 @@ let { error, data } = Validator(data, options, customize)
 
 * `or` *Array、Function* - 与and相似，区别是只要求依赖的其中一个参数不为空即可
 
-* `handle` *Function* - 参数自定义转换方法，非空值时执行（原method方法更名为handle）。
+* `name` *String* - 参数名称，为参数名定义一个更易于理解的别名，在返回错误描述文本中会优先使用该别名替换属性名
 
+### 专用选项
+
+> 针对不同的数据类型，会有不同的可选参数，参数如下
 
 #### String
 
@@ -80,12 +89,12 @@ let { error, data } = Validator(data, options, customize)
 
 > 仅支持类型验证
 
-#### Date、Boolean
+#### Date、Boolean、Function
 
 > 仅支持类型验证
 
 
-### 其它类型
+### 其它数据类型
 
 #### 'MongoId'
 
@@ -106,16 +115,42 @@ let { error, data } = Validator(data, options, customize)
 
 ```js
 Validator.use(name, options)
+```
 
-# 示例
+* `name` *String* - 类型名称（必填）
+
+* `options` *Object* - 类型选项（必填）
+
+* `options.type` *Function* - 数据类型验证函数（必填）
+
+* `options.$name` *Function* - 其它验证函数（可选）
+
+##### 参考示例
+
+```js
 Validator.use('Int', {
-   type({ data }) {
-      if (Number.isInteger(data)) {
-         return { data }
-      } else {
-         return { error: '必须为Int类型' }
-      }
-   },
+	type({ data }) {
+		if (Number.isInteger(data)) {
+		return { data }
+		} else {
+		return { error: '必须为Int类型' }
+		}
+	},
+	max({ data, option: max }) {
+		if (data > max) {
+		return { error: `不能大于${max}` }
+		} else {
+		return { data }
+		}
+	},
+	in({ data, option: arr }) {
+		let result = arr.indexOf(data)
+		if (result === -1) {
+		return { error: `值必须为${arr}中的一个` }
+		} else {
+		return { data }
+		}
+	}
 })
 ```
 
@@ -127,6 +162,11 @@ Validator.use('Int', {
 ```js
 Validator.schema(name, options)
 ```
+
+* `name` *String* - schema名称
+
+* `options` * - 验证表达式
+
 
 ### 参考示例
 
@@ -390,3 +430,12 @@ let { error, data } = Validator(json,
    }
 )
 ```
+
+
+### 更新内容
+
+* 新增Function类型验证
+
+* 将handle函数名改为set
+
+* 升级filter-null，取消递归执行嵌套函数

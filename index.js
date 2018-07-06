@@ -6,10 +6,10 @@ let methods = require('./methods')
 
 class Parser {
 
-   constructor(data, options) {
-      this.data = data
+   constructor(origin, options) {
+      this.origin = origin
       this.options = options
-      return this.recursion(data, options, '')
+      return this.recursion(origin, options, '')
    }
 
    /**
@@ -27,16 +27,16 @@ class Parser {
 
    /**
     * 递归验证器
-    * @param {*} data 验证数据
-    * @param {*} options 验证表达式选项
-    * @param {*} key 数据索引
+    * @param {*} data 待验证数据
+    * @param {*} options 验证表达式
+    * @param {String,Number} key 数据索引
     */
    recursion(data, options, key) {
 
       // 选项为对象
       if (typeof options === 'object') {
 
-         // 选项为验证器表达式（type作为内部保留关键字，应避免使用同名的type属性，否则会产生命名冲突）
+         // 选项为验证表达式
          if (options.type) {
 
             let field = options.name || key
@@ -76,7 +76,7 @@ class Parser {
                for (let name in options) {
                   let fun = funObj[name]
                   if (fun) {
-                     let { error, data: subData } = fun({ data, option: options[name], input: this.data })
+                     let { error, data: subData } = fun({ data, option: options[name], origin: this.origin })
                      if (error) {
                         return {
                            error: `${field}${error}`
@@ -242,13 +242,14 @@ function Validator(data, options, handler = {}) {
       return output
    }
 
-   // 数据构函数
+   // 数据扩展函数，基于已验证的数据构建新的数据结构
    for (let name in handler) {
       let item = handler[name]
       // 使用自定义构造函数处理
       if (typeof item === 'function') {
-         output.data[name] = item.call(output.data, output.data)
+         item = item.call(output.data, output.data)
       }
+      output.data[name] = item
    }
 
    // 对象空值过滤

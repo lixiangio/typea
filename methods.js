@@ -5,22 +5,22 @@ let validator = require('validator')
 // 公共方法
 let commonMethod = {
    // 参数自定义转换方法
-   handle({ data, option: fun, input }) {
-      return { data: fun.call(input, data) }
+   set({ data, option: fun, origin }) {
+      return { data: fun.call(origin, data) }
    },
    // 直接赋值（会覆盖原来的值）
    value({ option: value }) {
       return { data: value }
    },
    // 与
-   and({ data, option, input }) {
+   and({ data, option, origin }) {
       // 如果option为函数，应先执行函数，将函数转为数组
       if (option instanceof Function) {
-         option = option.call(input, data)
+         option = option.call(origin, data)
       }
       if (option instanceof Array) {
          for (let name of option) {
-            if (input[name] === undefined || input[name] === '') {
+            if (origin[name] === undefined || origin[name] === '') {
                return { error: `必须与${name}参数同时存在` }
             }
          }
@@ -28,15 +28,15 @@ let commonMethod = {
       return { data }
    },
    // 或
-   or({ data, option, input }) {
+   or({ data, option, origin }) {
       // 如果option为函数，应先执行函数，将函数转为数组
       if (option instanceof Function) {
-         option = option.call(input, data)
+         option = option.call(origin, data)
       }
       if (option instanceof Array) {
          let status = true
          for (let name of option) {
-            if (input[name] !== undefined && input[name] !== '') {
+            if (origin[name] !== undefined && origin[name] !== '') {
                status = false
             }
          }
@@ -48,7 +48,7 @@ let commonMethod = {
    },
 }
 
-// 数据类型方法
+// 数据类型验证方法
 let methods = {
    [String]: {
       // 数据类型验证
@@ -127,19 +127,19 @@ let methods = {
    },
    [Object]: {
       type({ data }) {
-         if (typeof data !== 'object') {
-            return { error: '必须为对象' }
-         } else {
+         if (typeof data === 'object') {
             return { data }
+         } else {
+            return { error: '必须为对象' }
          }
       },
    },
    [Array]: {
       type({ data }) {
-         if (!Array.isArray(data)) {
-            return { error: '必须为数组' }
-         } else {
+         if (Array.isArray(data)) {
             return { data }
+         } else {
+            return { error: '必须为数组' }
          }
       },
       minLength({ data, option: minLength }) {
@@ -159,19 +159,28 @@ let methods = {
    },
    [Date]: {
       type({ data }) {
-         if (!validator.toDate(data + '')) {
-            return { error: '必须为日期类型' }
-         } else {
+         if (validator.toDate(data + '')) {
             return { data }
+         } else {
+            return { error: '必须为日期类型' }
          }
       },
    },
    [Boolean]: {
       type({ data }) {
-         if (typeof data !== 'boolean') {
-            return { error: '必须为布尔值' }
-         } else {
+         if (typeof data === 'boolean') {
             return { data }
+         } else {
+            return { error: '必须为布尔值' }
+         }
+      },
+   },
+   [Function]: {
+      type({ data }) {
+         if (typeof data === 'function') {
+            return { data }
+         } else {
+            return { error: '必须为函数' }
          }
       },
    },

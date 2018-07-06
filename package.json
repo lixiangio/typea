@@ -1,15 +1,15 @@
 {
    "name": "check-data",
-   "version": "2.0.1",
+   "version": "3.0.0",
    "description": "JS对象验证器",
    "main": "index.js",
    "scripts": {
-      "dev": "nodemon test/schema"
+      "dev": "nodemon test/object"
    },
    "author": "https://github.com/xiangle/verify.git",
    "license": "ISC",
    "dependencies": {
-      "filter-null": "^1.2.0",
+      "filter-null": "^2.0.0",
       "validator": "^8.0.0"
    },
    "devDependencies": {
