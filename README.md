@@ -18,7 +18,7 @@ let { error, data } = Validator(data, options, extend)
 
 *  `extend` *Objcte* - 自定义数据构建对象，根据输入数据生成新的数据结构（可选）
 
-*  `extend.$name` *Function* - 数据扩展函数，基于已验证的数据构建新的数据结构，输出结果将以函数名作为key保存到data中。函数中this和第一个入参指向data（已存在的同名属性值会被函数返回值覆盖）
+*  `extend.$name` *Function* - 数据扩展函数，基于已验证的数据构建新的数据结构，输出结果将以函数名作为key保存到返回值的data中。函数中this和第一个入参指向data（已存在的同名属性值会被函数返回值覆盖）
 
 *  `extend.$name` * - 数据扩展，除函数外的其它任意数据类型，在已验证的数据结构上添加新的属性或覆盖已存在的同名属性
 
