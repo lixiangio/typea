@@ -1,6 +1,8 @@
 ### Install
 
-      npm install check-data --save
+```
+npm install check-data --save
+```
 
 ### 使用方法
 
@@ -24,20 +26,21 @@ let { error, data } = Validator(data, options, extend)
 
 ### 返回值
 
-> 输出数据是基于约定的对象结构，error和data不会同时存在，验证成功返回data，验证失败返回error和msg
+> 返回值是基于约定的对象结构，error和data属性不会同时存在，验证成功返回data，验证失败返回error和msg
+
+*  `data` * - 经过验证、处理后导出数据，内置空值过滤，自动剔除对象、数组中的空字符串、undefind值。（更多空值过滤特性请参考[filter-null模块](https://github.com/xiangle/filter-null)）
 
 *  `error` *String* - 验证失败时返回的错误信息，包含错误的具体位置信息，仅供开发者调试使用
 
-*  `data` *Objcte* - 经过验证、处理后导出数据，内置空值过滤，自动剔除对象、数组中的空字符串、undefind值。（更多空值过滤特性请参考[filter-null模块](https://github.com/xiangle/filter-null)）
-
 *  `msg` *String* - 验证失败后返回的错误信息，相对于error而言，msg对用户更加友好，可直接在客户端显示
-
 
 ### Options
 
+options验证表达式支持无限嵌套，不管你的数据层级有多深。整体数据结构上保持与待验证数据结构基本一致，除了使用type对象表达式不得不增加额外的数据结构。
+
 > 验证表达式中判断一个对象节点是否为验证选项的唯一依据是检查对象中是否包含type属性，如果没有type则被视为对象结构。
 
-> type作为验证表达式的保留关键字，应尽量避免在入参中包含同名的type属性，否则可能导致验证结果出现混乱。
+> type作为验证表达式的内部保留关键字，应尽量避免在入参中包含同名的type属性，否则可能导致验证结果出现混乱。
 
 #### 通用选项
 
@@ -53,7 +56,7 @@ let { error, data } = Validator(data, options, extend)
 
 * `ignore` *Array* - 忽略指定的值，在字段级覆盖对默认空值的定义，如将某个指定字段的空值定义为[null, ""]
 
-* `and` *Array、Function* - 声明依赖的参数名数组，支持数组和函数两种表达式，函数表达式用于声明指定值的依赖关系。要求依赖的所有参数都不能为空
+* `and` *Array、Function* - 声明依赖的参数名数组，支持数组和函数两种表达式，函数表达式用于声明指定值的依赖关系。要求依赖的所有参数都不能为空（注意：这里的and用于依赖判断，如参数a必须依赖参数b构成一个完整的数据，那么就要将参数b加入到and的数组中建立依赖关系）
 
 * `or` *Array、Function* - 与and相似，区别是只要求依赖的其中一个参数不为空即可
 
@@ -113,7 +116,7 @@ let { error, data } = Validator(data, options, extend)
 
 ### 扩展自定义数据类型
 
-> 通过Validator.use()方法添加自定义的数据类型，使用方法和扩展类型一样，用字符串声明数据类型
+验证器中只内置了一部分常用的数据类型，如果不能满足你的需求，可以通过Validator.use()自行扩展，使用时和扩展类型一样，用类型名称字符串声明数据类型
 
 ```js
 Validator.use(name, options)
@@ -130,34 +133,34 @@ Validator.use(name, options)
 
 ```js
 Validator.use('Int', {
-	type({ data }) {
-		if (Number.isInteger(data)) {
-		return { data }
-		} else {
-		return { error: '必须为Int类型' }
-		}
-	},
-	max({ data, option: max }) {
-		if (data > max) {
-		return { error: `不能大于${max}` }
-		} else {
-		return { data }
-		}
-	},
-	in({ data, option: arr }) {
-		let result = arr.indexOf(data)
-		if (result === -1) {
-		return { error: `值必须为${arr}中的一个` }
-		} else {
-		return { data }
-		}
-	}
+   type({ data }) {
+      if (Number.isInteger(data)) {
+         return { data }
+      } else {
+         return { error: '必须为Int类型' }
+      }
+   },
+   max({ data, option: max }) {
+      if (data > max) {
+         return { error: `不能大于${max}` }
+      } else {
+         return { data }
+      }
+   },
+   in({ data, option: arr }) {
+      let result = arr.indexOf(data)
+      if (result === -1) {
+         return { error: `值必须为${arr}中的一个` }
+      } else {
+         return { data }
+      }
+   }
 })
 ```
 
 ### schema验证（预定义验证器）
 
-> 通过预定义schema，实现options单例复用（option为静态数据），避免频繁创建重复的实例，可节省内存和减少计算开销。在环境允许的情况下应优先考虑schema方式。
+通过预定义schema，实现options单例复用（option为静态数据），避免频繁创建重复的实例，可节省内存和减少计算开销。在环境允许的情况下应优先考虑schema方式。
 
 
 ```js
@@ -309,7 +312,7 @@ let { error, data } = Validator({
 #### 完整示例
 
 ```js
-# 输入数据
+// 输入数据
 let json = {
    "username": "测试",
    "num": "123456789987",
@@ -347,7 +350,7 @@ let json = {
    "email": "xxx@xx.xx"
 }
 
-# 验证表达式
+// 验证表达式
 let { error, data } = Validator(json,
    {
       "username": {
@@ -396,7 +399,7 @@ let { error, data } = Validator(json,
       "receiveAddress": String,
       "coupon": {
          "type": String,
-         handle(value) {
+         set(value) {
             return { "$gt": new Date() }
          }
       },
