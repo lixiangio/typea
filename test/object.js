@@ -1,8 +1,9 @@
 "use strict"
 
-let Validator = require('..')
+import test from 'ava';
+import Check from '..';
 
-let obj = {
+let json = {
    a: {
       a1: 1,
       a2: "12",
@@ -14,40 +15,40 @@ let obj = {
    },
 }
 
-let { error, data } = Validator(obj,
-   {
-      // a: {
-      //    a1: {
-      //       type: Number,
-      //       allowNull: false
-      //    },
-      //    a2: {
-      //       type: Number,
-      //       allowNull: false
-      //    }
-      // },
-      b: {
-         type: Number,
-         set(data) {
-            return data * 2
-         }
-      },
-      s: {
-         type: Number,
-         name: "拉拉",
-      },
-      c: Function,
-   },
-   {
-      test() {
-         return 888
-      },
-      ss: 999
-   }
-)
+test('null', t => {
 
-if (error) {
-   console.log(error)
-} else {
-   console.log(data)
-}
+   let { error, data } = Check(json,
+      {
+         // a: {
+         //    a1: {
+         //       type: Number,
+         //       allowNull: false
+         //    },
+         //    a2: {
+         //       type: Number,
+         //       allowNull: false
+         //    }
+         // },
+         b: {
+            type: Number,
+            set(data) {
+               return data * 2
+            }
+         },
+         s: {
+            type: Number,
+            name: "拉拉",
+         },
+         c: Function,
+      },
+      {
+         test() {
+            return 888
+         },
+         ss: 999
+      }
+   )
+
+   t.truthy(data, error);
+
+});

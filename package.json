@@ -4,7 +4,8 @@
    "description": "JS对象验证器",
    "main": "index.js",
    "scripts": {
-      "dev": "nodemon test/object"
+      "dev": "nodemon test/object",
+      "test": "ava test/ -w"
    },
    "author": "https://github.com/xiangle/verify.git",
    "license": "ISC",
@@ -13,6 +14,7 @@
       "validator": "^8.0.0"
    },
    "devDependencies": {
+      "ava": "^0.25.0",
       "nodemon": "^1.11.0"
    },
    "keywords": [

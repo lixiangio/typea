@@ -1,26 +1,27 @@
 "use strict"
 
-let Validator = require('..')
+import test from 'ava';
+import Check from '..';
 
-let { error, data } = Validator(
-   {
-      a: {
-         a1: 1,
-         a2: "12",
-      },
-      b: "666",
-   },
-   {
-      a: {
-         a1: Number,
-         a2: Number,
-      },
-      b: Number,
-   }
-)
+test('function', t => {
 
-if (error) {
-   console.log(error)
-} else {
-   console.log(data)
-}
+   let { error, data } = Check(
+      {
+         a: {
+            a1: 1,
+            a2: "12",
+         },
+         b: "666",
+      },
+      {
+         a: {
+            a1: Number,
+            a2: Number,
+         },
+         b: Number,
+      }
+   )
+
+   t.truthy(data, error);
+
+});

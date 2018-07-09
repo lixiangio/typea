@@ -1,35 +1,35 @@
 "use strict"
 
-let Validator = require('..')
+import test from 'ava';
+import Check from '..';
 
+test('null', t => {
 
-let { error, data } = Validator(
-   {
-      a: undefined,
-      b: ["kkk", "xxx"],
-      c: "是"
-   },
-   {
-      a: {
-         type: String
+   let { error, data } = Check(
+      {
+         a: undefined,
+         b: ["kkk", "xxx"],
+         c: "是"
       },
-      b: {
-         type: Array,
-         handle(data) {
-            return data.join()
-         }
-      },
-      c: {
-         type: String,
-         handle(data) {
-            return data
+      {
+         a: {
+            type: String
+         },
+         b: {
+            type: Array,
+            handle(data) {
+               return data.join()
+            }
+         },
+         c: {
+            type: String,
+            handle(data) {
+               return data
+            }
          }
       }
-   }
-)
+   )
 
-if (error) {
-   console.log(error)
-} else {
-   console.log(data)
-}
+   t.truthy(data, error);
+
+});

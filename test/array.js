@@ -1,20 +1,25 @@
 "use strict"
 
-let Validator = require('..')
+import test from 'ava';
+import Check from '..';
 
-
-let { error, data } = Validator(
-   {
-      a: ['xx', 'kk'],
-      b: [666, 1, 88],
-   },
-   {
-      b: [{ "type": Number, "allowNull": false }, { "allowNull": false }],
-   }
-)
-
-if (error) {
-   console.log(error)
-} else {
-   console.log(data)
+let json = {
+   a: ['xx', 'kk'],
+   b: [666, 999, 88],
 }
+
+test('example', t => {
+
+   let { error, data } = Check(json, {
+      b: [{
+         "type": Number,
+         "allowNull": false
+      }, {
+         "allowNull": false
+      }]
+   })
+
+
+   t.truthy(data, error);
+
+});

@@ -1,8 +1,9 @@
 "use strict"
 
-let Validator = require('..')
+import test from 'ava';
+import Check from '..';
 
-let schema = Validator.schema('demo',
+let schema = Check.schema('demo',
    {
       a: {
          a1: {
@@ -26,38 +27,33 @@ let schema = Validator.schema('demo',
    }
 )
 
-let data1 = {
-   a: {
-      a1: "jj",
-      a2: "12",
-   },
-   b: 2,
-   c: 888,
-}
 
-let data2 = {
-   a: {
-      a1: 666,
-      a2: "12",
-   },
-   b: 2,
-   c: 888,
-}
+test('schema 1', t => {
 
-// let { error, data } = schema(data1)
+   let { error, data } = Check.demo({
+      a: {
+         a1: 999,
+         a2: "12",
+      },
+      b: 2,
+      c: 888,
+   })
 
-let result1 = Validator.demo(data1)
+   t.truthy(data, error);
 
-if (result1.error) {
-   console.log(result1.error)
-} else {
-   console.log(result1.data)
-}
+});
 
-let result2 = Validator.demo(data2)
+test('schema 2', t => {
 
-if (result2.error) {
-   console.log(result2.error)
-} else {
-   console.log(result2.data)
-}
+   let { error, data } = Check.demo({
+      a: {
+         a1: 666,
+         a2: "12",
+      },
+      b: 344,
+      c: 333,
+   })
+
+   t.truthy(data, error);
+
+});

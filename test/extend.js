@@ -1,9 +1,10 @@
 "use strict"
 
-let Validator = require('..')
+import test from 'ava';
+import Check from '..';
 
 
-Validator.use('Int', {
+Check.use('Int', {
    type({ data }) {
       if (Number.isInteger(data)) {
          return { data }
@@ -13,24 +14,21 @@ Validator.use('Int', {
    },
 })
 
-
-let { error, data } = Validator(
-   {
-      "name": 666.5,
-   },
-   {
-      "name": {
-         "type": 'Int',
-         "name": "名称",
-         "allowNull": false,
-         "default": "默认值",
+test('extend', t => {
+   let { error, data } = Check(
+      {
+         "name": 666,
+      },
+      {
+         "name": {
+            "type": 'Int',
+            "name": "名称",
+            "allowNull": false,
+            "default": "默认值",
+         }
       }
-   }
-)
+   )
 
+   t.truthy(data, error);
 
-if (error) {
-   console.log(error)
-} else {
-   console.log(data)
-}
+});

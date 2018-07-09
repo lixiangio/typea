@@ -56,7 +56,7 @@ let methods = {
          if (typeof data === 'string') {
             return { data: data.trim() }
          } else {
-            return { error: '必须为字符串' }
+            return { error: '必须为String类型' }
          }
       },
       // 限制最小长度
@@ -96,7 +96,7 @@ let methods = {
    [Number]: {
       type({ data }) {
          if (isNaN(data)) {
-            return { error: '必须为数值类型' }
+            return { error: '必须为Number类型' }
          } else {
             return { data: Number(data) }
          }
@@ -130,7 +130,7 @@ let methods = {
          if (typeof data === 'object') {
             return { data }
          } else {
-            return { error: '必须为对象' }
+            return { error: '必须为Object类型' }
          }
       },
    },
@@ -139,7 +139,7 @@ let methods = {
          if (Array.isArray(data)) {
             return { data }
          } else {
-            return { error: '必须为数组' }
+            return { error: '必须为Array类型' }
          }
       },
       minLength({ data, option: minLength }) {
@@ -162,7 +162,7 @@ let methods = {
          if (validator.toDate(data + '')) {
             return { data }
          } else {
-            return { error: '必须为日期类型' }
+            return { error: '必须为Date类型' }
          }
       },
    },
@@ -171,7 +171,7 @@ let methods = {
          if (typeof data === 'boolean') {
             return { data }
          } else {
-            return { error: '必须为布尔值' }
+            return { error: '必须为Boolean值' }
          }
       },
    },
@@ -180,7 +180,7 @@ let methods = {
          if (typeof data === 'function') {
             return { data }
          } else {
-            return { error: '必须为函数' }
+            return { error: '必须为Function类型' }
          }
       },
    },
