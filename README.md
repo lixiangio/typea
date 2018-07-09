@@ -34,9 +34,9 @@ let { error, data } = Validator(data, options, extend)
 
 *  `msg` *String* - 验证失败后返回的错误信息，相对于error而言，msg对用户更加友好，可直接在客户端显示
 
-### Options
+### options验证表达式
 
-options验证表达式支持无限嵌套，不管你的数据层级有多深。整体数据结构上保持与待验证数据结构基本一致，除了使用type对象表达式不得不增加额外的数据结构。
+options数据验证表达式支持无限嵌套，不管你的数据层级有多深。整体数据结构与待验证数据结构基本保持一致，除了使用type对象表达式不得不增加额外的数据结构。
 
 > 验证表达式中判断一个对象节点是否为验证选项的唯一依据是检查对象中是否包含type属性，如果没有type则被视为对象结构。
 
@@ -62,11 +62,11 @@ options验证表达式支持无限嵌套，不管你的数据层级有多深。�
 
 * `name` *String* - 参数名称，为参数名定义一个更易于理解的别名，在返回错误描述文本中会优先使用该别名替换属性名
 
-### 专用选项
+#### 专用选项
 
 > 针对不同的数据类型，会有不同的可选参数，选项如下
 
-#### String
+##### String
 
 * `minLength` *Number* - 限制字符串最小长度
 
@@ -76,7 +76,7 @@ options验证表达式支持无限嵌套，不管你的数据层级有多深。�
 
 * `in` *Array* - 匹配多个可选值中的一个
 
-#### Number
+##### Number
 
 * `min` *Number* - 限制最小值
 
@@ -84,32 +84,32 @@ options验证表达式支持无限嵌套，不管你的数据层级有多深。�
 
 * `in` *Array* - 匹配多个可选值中的一个
 
-#### Array
+##### Array
 
 * `minLength` *Number* - 限制字符串最小长度
 
 * `maxLength` *Number* - 限制字符串最大长度
 
-#### Object
+##### Object
 
 > 仅支持类型验证
 
-#### Date、Boolean、Function
+##### Date、Boolean、Function
 
 > 仅支持类型验证
 
 
-### 其它数据类型
+#### 其它数据类型
 
-#### 'MongoId'
+##### 'MongoId'
 
 > 验证mongodb中的ObjectId
 
-#### 'MobilePhone'
+##### 'MobilePhone'
 
 > 验证手机号
 
-#### 'Email'
+##### 'Email'
 
 > 验证Email
 
@@ -158,7 +158,7 @@ Validator.use('Int', {
 })
 ```
 
-### schema验证（预定义验证器）
+### schema验证器
 
 通过预定义schema，实现options单例复用（option为静态数据），避免频繁创建重复的实例，可节省内存和减少计算开销。在环境允许的情况下应优先考虑schema方式。
 
