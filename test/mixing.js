@@ -3,7 +3,7 @@
 import test from 'ava';
 import Check from '..';
 
-let json = {
+let sample = {
    "name": "测试",
    "num": "123456789987",
    "ObjectId": "59c8aea808deec3fc8da56b6",
@@ -24,11 +24,18 @@ let json = {
    "list": [
       {
          "username": "吖吖",
-         "age": 16,
+         "age": {
+            "kk": [{ kkk: 666 }]
+         },
       },
       {
          "username": "可可",
-         "age": 15,
+         "age": {
+            "kk": [
+               { kkk: 666 },
+               { kkk: 999 }
+            ]
+         },
       }
    ],
    "money": "2",
@@ -46,126 +53,128 @@ let json = {
    "arr": ['jjsd', 'ddd']
 }
 
-test('mixing', t => {
-
-   let { error, data } = Check(json,
-      {
-         "name": {
-            "type": String,
-            "name": "名称",
-            "allowNull": false,
-            "default": "默认值"
-         },
-         "num": {
-            "type": Number,
-            "value": 666,
-         },
-         "tenderEndTime": {
-            "type": Date,
-            "name": "时间",
-            "allowNull": false,
-         },
-         "ObjectId": {
-            "type": "MongoId",
-         },
-         "user": {
-            "username": String,
-            "age": Number,
-            "address": [
-               {
-                  "city": String,
-               },
-               {
-                  "city": String,
-               }
-            ],
-         },
-         "list": [
+let { error, data } = Check(sample,
+   {
+      "name": {
+         "type": String,
+         "name": "名称",
+         "allowNull": false,
+         "default": "默认值"
+      },
+      "num": {
+         "type": Number,
+         "value": 666,
+      },
+      "tenderEndTime": {
+         "type": Date,
+         "name": "时间",
+         "allowNull": false,
+      },
+      "ObjectId": {
+         "type": "MongoId",
+      },
+      "user": {
+         "username": String,
+         "age": Number,
+         "address": [
             {
-               "username": String,
-               "age": Number,
+               "city": String,
             },
             {
-               "allowNull": false,
+               "city": String,
             }
          ],
-         "money": {
-            "type": Number,
-            // "min": 15,
-            // "in": [1, 2],
-         },
-         "files": [{
-            "type": String,
-            "allowNull": false,
-         }, false],
-         "guaranteeFormat": {
-            "type": Number,
-            "to": Boolean,
-         },
-         "addressee": String,
-         "search": {
-            "type": String,
-            // "or": ["searchField"],
-         },
-         "phone": {
-            "type": "MobilePhone"
-         },
-         "coupon": {
-            "type": String,
-            set(value) {
-               return { "$gt": value }
-            }
-         },
-         "integral": {
-            "lala": {
-               "type": Number,
-            },
-            "kaka": {
-               "type": Number,
-               "allowNull": false,
-               "in": [1, 3, 8, 6],
-            }
-         },
-         "email": {
-            "type": 'Email',
-            set(value) {
-               return [value, , null, , undefined, 666]
-            }
-         },
-         "arr": [String],
       },
-      {
-         filter({ search, email, integral }) {
-            return {
-               "email": email,
-               "integral": integral,
-               "test": {
-                  v1: 1,
-                  v2: undefined,
-                  v3: "",
-                  v4: null,
-                  v5: NaN,
-                  v6: 0,
-               }
-            }
+      "list": [
+         {
+            "username": String,
+            "age": {
+               "kk": [{ kkk: Number }]
+            },
          },
-         where({ search, email, integral }) {
-            return {
-               "email": email,
-               "integral": integral,
-               "test": {
-                  v1: 1,
-                  v2: undefined,
-                  v3: "",
-                  v4: null,
-                  v5: NaN,
-                  v6: 0,
-               }
+         {
+            "allowNull": false,
+         }
+      ],
+      "money": {
+         "type": Number,
+         // "min": 15,
+         // "in": [1, 2],
+      },
+      "files": [{
+         "type": String,
+         "allowNull": false,
+      }, false],
+      "guaranteeFormat": {
+         "type": Number,
+         "to": Boolean,
+      },
+      "addressee": String,
+      "search": {
+         "type": String,
+         // "or": ["searchField"],
+      },
+      "phone": {
+         "type": "MobilePhone"
+      },
+      "coupon": {
+         "type": String,
+         set(value) {
+            return { "$gt": value }
+         }
+      },
+      "integral": {
+         "lala": {
+            "type": Number,
+         },
+         "kaka": {
+            "type": Number,
+            "allowNull": false,
+            "in": [1, 3, 8, 6],
+         }
+      },
+      "email": {
+         "type": 'Email',
+         set(value) {
+            return [value, , null, , undefined, 666]
+         }
+      },
+      "arr": [String],
+   },
+   {
+      filter({ email, integral }) {
+         return {
+            "email": email,
+            "integral": integral,
+            "test": {
+               v1: 1,
+               v2: undefined,
+               v3: "",
+               v4: null,
+               v5: NaN,
+               v6: 0,
+            }
+         }
+      },
+      where({ email, integral }) {
+         return {
+            "email": email,
+            "integral": integral,
+            "test": {
+               v1: 1,
+               v2: undefined,
+               v3: "",
+               v4: null,
+               v5: NaN,
+               v6: 0,
             }
          }
       }
-   )
+   }
+)
 
-   t.truthy(data, error);
+test(t => {
+
+   t.truthy(error, data);
 
 });

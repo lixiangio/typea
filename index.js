@@ -2,7 +2,8 @@
 
 let filterNull = require('filter-null')
 
-let methods = require('./methods')
+let Types = require('./type')
+let symbols = require('./symbol')
 
 class Parser {
 
@@ -33,28 +34,29 @@ class Parser {
     */
    recursion(data, options, key) {
 
-      // 选项为对象
+      // 选项值为对象
       if (typeof options === 'object') {
 
-         // 选项为验证表达式
+         // 选项值为验证表达式
          if (options.type) {
 
+            // 优先使用别名
             let field = options.name || key
 
-            // 前置空值拦截
+            // 空值处理
             if (this.isNull(data, options.ignore)) {
 
-               // 默认
+               // 默认值
                if (options.default) {
                   data = options.default
                }
 
-               // 直接赋值
+               // value赋值
                else if (options.value) {
                   data = options.value
                }
 
-               // 允许空值
+               // 禁止空值
                else if (options.allowNull === false) {
                   return {
                      error: `${field}不能为空`
@@ -62,21 +64,20 @@ class Parser {
                }
 
                else {
-                  return {
-                     data: undefined
-                  }
+                  return {}
                }
 
             }
 
             // type为内置构造函数或字符串（字符串用于表示自定义数据类型）
-            if (methods[options.type]) {
+            if (Types[options.type]) {
 
-               let funObj = methods[options.type]
+               let funObj = Types[options.type]
                for (let name in options) {
                   let fun = funObj[name]
                   if (fun) {
-                     let { error, data: subData } = fun({ data, option: options[name], origin: this.origin })
+                     let option = options[name]
+                     let { error, data: subData } = fun({ data, option, origin: this.origin })
                      if (error) {
                         return {
                            error: `${field}${error}`
@@ -99,35 +100,13 @@ class Parser {
 
          }
 
-         // 选项为数组表达式
+         // 选项值为数组结构
          else if (Array.isArray(options)) {
 
-            let [itemOptions, allowNull] = options
+            if (!Array.isArray(data)) {
 
-            if (Array.isArray(data)) {
-               if (itemOptions.allowNull === false) {
-                  if (data.length === 0) {
-                     return {
-                        error: `数组${key}值不能为空`
-                     }
-                  }
-               }
-            } else {
-
-               if (this.isNull(data)) {
-                  if (allowNull === false) {
-                     return {
-                        error: `${key}数组不能为空`
-                     }
-                  } else {
-                     return {
-                        data: undefined
-                     }
-                  }
-               } else {
-                  return {
-                     error: `${key}必须为数组类型`
-                  }
+               return {
+                  error: `${key}必须为数组类型`
                }
 
             }
@@ -135,25 +114,50 @@ class Parser {
             let dataArray = []
             let itemKey = 0
 
-            for (let itemData of data) {
+            // options为单数时采用通用匹配
+            if (options.length === 1) {
 
-               let { error, data: subData } = this.recursion(itemData, itemOptions, itemKey++)
+               let [option] = options
 
-               if (error) {
-                  return {
-                     error: `数组${key}中key:${error}`
-                  }
-               } else {
-                  // 空数组提示
-                  if (itemOptions.allowNull === false) {
-                     if (this.isNull(subData)) {
-                        return {
-                           error: `数组${key}中key:${itemKey}值不能为空`
-                        }
+               for (let itemData of data) {
+
+                  // 子集递归验证
+                  let { error, data: subData } = this.recursion(itemData, option, itemKey)
+
+                  if (error) {
+                     return {
+                        error: `[${itemKey}]${error}`
                      }
+                  } else {
+                     dataArray.push(subData)
                   }
-                  dataArray.push(subData)
+
+                  itemKey++
                }
+            }
+
+            // options为复数时采用精确匹配
+            else {
+
+               for (let option of options) {
+
+                  let itemData = data[itemKey]
+
+                  // 子集递归验证
+                  let { error, data: subData } = this.recursion(itemData, option, itemKey)
+
+                  if (error) {
+                     return {
+                        error: `[${itemKey}]${error}`
+                     }
+                  } else {
+                     dataArray.push(subData)
+                  }
+
+                  itemKey++
+
+               }
+
             }
 
             return {
@@ -162,16 +166,12 @@ class Parser {
 
          }
 
-         // 选项为对象表达式
+         // 选项值为对象结构
          else {
-
-            if (data === undefined) {
-               return { data: undefined }
-            }
 
             if (typeof data !== 'object') {
                return {
-                  error: `${key}值必须为对象`
+                  error: `值必须为对象`
                }
             }
 
@@ -184,13 +184,14 @@ class Parser {
                let { error, data: subData } = this.recursion(itemData, itemOptions, subKey)
 
                if (error) {
+                  // 非根节点
                   if (key) {
                      return {
-                        error: `对象${key}中${error}`
+                        error: `.${subKey}${error}`
                      }
                   } else {
                      return {
-                        error: error
+                        error: `${subKey}${error}`
                      }
                   }
                } else {
@@ -207,20 +208,34 @@ class Parser {
 
       }
 
-      // 选项为构造函数或字符串（字符串表示自定义数据类型）
-      else if (methods[options]) {
+      // 选项值为数据类型（值为构造函数或字符串，字符串表示自定义类型）
+      else if (Types[options]) {
 
          if (this.isNull(data)) {
-            return { data: undefined }
+            return {}
          }
 
-         let { error, data: subData } = methods[options].type({ data })
+         let { error, data: subData } = Types[options].type({ data })
 
          if (error) {
-            return { error: `${key}值${error}` }
+            return { error: `值${error}` }
          } else {
             return { data: subData }
          }
+
+      }
+
+      // 选项值为严格匹配的精确值类型
+      else if (data === options) {
+
+         return { data }
+
+      }
+
+      // 精确值匹配失败
+      else {
+
+         return { error: `值必须为${options}` }
 
       }
 
@@ -234,7 +249,7 @@ class Parser {
  * @param {*} options 验证表达式
  * @param {Object} handler 导出数据自定义处理方法
  */
-function Validator(data, options, handler = {}) {
+function Check(data, options, handler = {}) {
 
    let output = new Parser(data, options)
 
@@ -259,23 +274,77 @@ function Validator(data, options, handler = {}) {
 
 }
 
-// 自定义数据类型扩展方法
-Validator.use = function (type, options) {
+Check.types = symbols
 
-   methods[type] = options
+/**
+ * 自定义数据类型扩展方法
+ * @param {Function, Symbol, String} type 数据类型
+ * @param {Object} options 扩展选项
+ * @param {Object.Function} options 扩展方法
+ */
+Check.use = function (type, options = {}) {
 
-}
+   if (!type) return
 
-// 通过预处理方式，将提前处理好的静态options持久化驻留在内存中
-// 避免同一个对象被多次重复的创建和销毁，实现options跨接口复用，在节省资源的同时，也增加了代码复用率
-Validator.schema = function (name, options, handler) {
+   // 通过Function、Symbol定位，扩展已有数据类型
+   if (Types[type]) {
 
-   Validator[name] = function (data) {
-      return Validator(data, options, handler)
+      Object.assign(Types[type], options)
+
    }
 
-   return Validator[name]
+   // 通过String定位，扩展已有数据类型或创建新类型
+   else if (typeof type === 'string') {
+
+      // 扩展已有Symbol类型
+      if (symbols[type]) {
+         let symbol = symbols[type]
+         Object.assign(Types[symbol], options)
+      }
+
+      // 创建新类型
+      else {
+         let symbol = Symbol(type)
+         symbols[type] = symbol
+         Types[symbol] = options
+      }
+
+   }
 
 }
 
-module.exports = Validator
+
+/**
+ * 通过预处理方式，将提前处理好的静态options持久化驻留在内存中
+ * 避免同一个对象被多次重复的创建和销毁，实现options跨接口复用，在节省资源的同时，也增加了代码复用率
+ * @param {String} name schema名称
+ * @param {*} options 验证表达式
+ * @param {Object} extend 数据扩展选项
+ */
+Check.schema = function (name, options, extend) {
+
+   Check[name] = function (data) {
+      return Check(data, options, extend)
+   }
+
+   /**
+    * 严格模式，禁止空值
+    */
+   Check[name].strict = function () {
+
+   }
+
+
+   /**
+    * 宽松模式，用于数据更新
+    * 忽略所有allowNull值，有值验证，无值跳过，
+    */
+   Check[name].loose = function () {
+
+   }
+
+   return Check[name]
+
+}
+
+module.exports = Check

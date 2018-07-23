@@ -3,33 +3,34 @@
 import test from 'ava';
 import Check from '..';
 
-test('null', t => {
+let sample = {
+   a: undefined,
+   b: ["kkk", "xxx"],
+   c: "666"
+}
 
-   let { error, data } = Check(
-      {
-         a: undefined,
-         b: ["kkk", "xxx"],
-         c: "是"
+let { error, data } = Check(sample,
+   {
+      a: {
+         type: String,
+         allowNull: false,
+         default: 'xxx',
       },
-      {
-         a: {
-            type: String
-         },
-         b: {
-            type: Array,
-            handle(data) {
-               return data.join()
-            }
-         },
-         c: {
-            type: String,
-            handle(data) {
-               return data
-            }
-         }
+      b: [String],
+      c: {
+         type: String
       }
-   )
+   }
+)
 
-   t.truthy(data, error);
+// console.log(data);
+
+test(t => {
+
+   t.deepEqual({
+      a: 'xxx',
+      b: ["kkk", "xxx"],
+      c: "666"
+   }, data, error);
 
 });

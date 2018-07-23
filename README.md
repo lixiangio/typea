@@ -7,40 +7,42 @@ npm install check-data --save
 ### 使用方法
 
 ```js
-let Validator = require('check-data')
+let Check = require('check-data')
 
-let { error, data } = Validator(data, options, extend)
+let { error, data } = Check(data, options, extend)
 ```
 
 ### 输入参数
 
-*  `data` *Objcte, Array, String, Number, Date, Boolean* - 输入待验证数据
+*  `data` * - 待验证数据，允许任意数据类型
 
-*  `options` *Objcte, Array, Function* - 数据验证表达式，类型参考type选项。
+*  `options` * - 待验证数据的结构镜像验证表达式，参考[验证表达式](###验证表达式)。
 
-*  `extend` *Objcte* - 自定义数据构建对象，根据输入数据生成新的数据结构（可选）
+*  `extend` *Objcte* - 数据扩展选项，根据输入数据生成新的数据结构（可选）
 
 *  `extend.$name` *Function* - 数据扩展函数，基于已验证的数据构建新的数据结构，输出结果将以函数名作为key保存到返回值的data中。函数中this和第一个入参指向data（已存在的同名属性值会被函数返回值覆盖）
 
-*  `extend.$name` * - 数据扩展，除函数外的其它任意数据类型，在已验证的数据结构上添加新的属性或覆盖已存在的同名属性
+*  `extend.$name` * - 除函数外的其它任意数据类型，在已验证的数据结构上添加新的属性或覆盖已存在的同名属性
 
 ### 返回值
 
 > 返回值是基于约定的对象结构，error和data属性不会同时存在，验证成功返回data，验证失败返回error和msg
 
-*  `data` * - 经过验证、处理后导出数据，内置空值过滤，自动剔除对象、数组中的空字符串、undefind值。（更多空值过滤特性请参考[filter-null模块](https://github.com/xiangle/filter-null)）
+*  `data` * - 经过验证、处理后导出数据，仅保留options中定义的数据结构，未定义的部分会被忽略。内置空值过滤，自动剔除对象、数组中的空字符串、undefind值。
 
 *  `error` *String* - 验证失败时返回的错误信息，包含错误的具体位置信息，仅供开发者调试使用
 
 *  `msg` *String* - 验证失败后返回的错误信息，相对于error而言，msg对用户更加友好，可直接在客户端显示
 
-### options验证表达式
+### 验证表达式
 
 options数据验证表达式支持无限嵌套，不管你的数据层级有多深。整体数据结构与待验证数据结构基本保持一致，除了使用type对象表达式不得不增加额外的数据结构。
 
 > 验证表达式中判断一个对象节点是否为验证选项的唯一依据是检查对象中是否包含type属性，如果没有type则被视为对象结构。
 
 > type作为验证表达式的内部保留关键字，应尽量避免在入参中包含同名的type属性，否则可能导致验证结果出现混乱。
+
+> 当使用数组表达式时，需要区分单数和复数模式，单数时会共享同一个子表达式，通常用于验证具有相似结构的子集。复数时为精确匹配模式，可以完整定义每个子集。
 
 #### 通用选项
 
@@ -78,6 +80,8 @@ options数据验证表达式支持无限嵌套，不管你的数据层级有多�
 
 ##### Number
 
+> 内置类型转换，允许字符串类型的纯数字
+
 * `min` *Number* - 限制最小值
 
 * `max` *Number* - 限制最大值
@@ -86,58 +90,61 @@ options数据验证表达式支持无限嵌套，不管你的数据层级有多�
 
 ##### Array
 
-* `minLength` *Number* - 限制字符串最小长度
+* `minLength` *Number* - 限制数组最小长度
 
-* `maxLength` *Number* - 限制字符串最大长度
+* `maxLength` *Number* - 限制数组最大长度
 
-##### Object
+##### Object、Date、Boolean、Function
 
-> 仅支持类型验证
-
-##### Date、Boolean、Function
-
-> 仅支持类型验证
+> 无专用选项
 
 
 #### 其它数据类型
 
-##### 'MongoId'
+其它类型通过Check.types定义，types中内置了以下常见类型
 
-> 验证mongodb中的ObjectId
+##### email
 
-##### 'MobilePhone'
+验证Email
 
-> 验证手机号
+##### mobilePhone
 
-##### 'Email'
+验证手机号
 
-> 验证Email
+##### mongoId
+
+验证mongodb中的ObjectId
 
 
 ### 扩展自定义数据类型
 
-验证器中只内置了一部分常用的数据类型，如果不能满足你的需求，可以通过Validator.use()自行扩展，使用时和扩展类型一样，用类型名称字符串声明数据类型
+验证器中仅内置了一部分常用的数据类型，如果不能满足你的需求，可以通过Check.use()自行扩展。
+
+check-data依赖validator库，你可以使用Check.use()搭配validator来定制自己的数据类型。
+
+
+> 当定义的数据类型不存在时则创建，已存在时则合并，新的验证函数会覆盖内置的同名验证函数。
 
 ```js
-Validator.use(name, options)
+Check.use(name, options)
 ```
 
-* `name` *String* - 类型名称（必填）
+* `name` *Function, Symbol, String* - 类型Key（必填）
 
 * `options` *Object* - 类型选项（必填）
 
 * `options.type` *Function* - 数据类型验证函数（必填）
 
-* `options.$name` *Function* - 其它验证函数（可选）
+* `options.$name` *Function* - 自定义验证函数（可选）
 
 
 ```js
-Validator.use('Int', {
+Check.use('int', {
    type({ data }) {
       if (Number.isInteger(data)) {
          return { data }
       } else {
-         return { error: '必须为Int类型' }
+         return { error: '必须为int类型' }
       }
    },
    max({ data, option: max }) {
@@ -160,24 +167,26 @@ Validator.use('Int', {
 
 ### schema验证器
 
-通过预定义schema，实现options单例复用（option为静态数据），避免频繁创建重复的实例，可节省内存和减少计算开销。在环境允许的情况下应优先考虑schema方式。
+schema用于创建可复用的验证器，在环境允许的情况下应优先使用schema模式。
 
+> schema的定义应该在应用启动时被执行，而不是运行时。目的是通过预先缓存一部分静态数据，从而减少运行时的内存和计算开销。
 
 ```js
-Validator.schema(name, options)
+Check.schema(name, options)
 ```
 
 * `name` *String* - schema名称
 
 * `options` * - 验证表达式
 
+* `extend` Object - 数据扩展选项
 
 ### 参考示例
 
 #### schema验证
 
 ```js
-let schema = Validator.schema('demo', {
+let test = Check.schema('test', {
    a: {
       a1: {
          type: Number,
@@ -191,7 +200,7 @@ let schema = Validator.schema('demo', {
    b: Number,
 })
 
-let json = {
+let sample = {
    a: {
       a1: "jj",
       a2: "12",
@@ -200,54 +209,107 @@ let json = {
    c: 888,
 }
 
-let { error, data } = schema(json)
+
+let { error, data } = test(sample)
 
 // 或
-let { error, data } = Validator.demo(json)
+let { error, data } = Check.test(sample)
 ```
 
 #### 数组验证
 
 ```js
-// 一维数组
-let { error, data } = Validator(["a", "b", "c"], [String])
+let sample = {
+   a: ['xx', 'kk'],
+   b: [666, 999, 88,],
+   c: [{ a: 1 }, { a: 2 }, { b: '3' }],
+   d: [
+      {
+         d1: 666,
+         d2: "888"
+      },
+      999,
+      [
+         {
+            xa: 1,
+            xb: [1, 2, 3],
+         },
+         {
+            xa: 9,
+            xb: [2, 4, 3],
+         }
+      ],
+      "hello"
+   ],
+   e: [1, 2, 3],
+}
 
-// 内嵌对象
-let { error, data } = Validator([{
-   "a":1,
-   "b":"bibi",
-   "c":"test"
-},{
-   "a":1,
-   "b":"bibi",
-   "c":"test"
-}], [{
-   a: Number,
-   b: String,
-   c: String
-}])
+let { error, data } = Check(sample, {
+   a: [{ "type": String }],
+   b: [{
+      "type": Number,
+      "allowNull": false
+   }],
+   c: [{ a: Number, b: Number }],
+   d: [
+      {
+         d1: 666,
+         d2: String
+      },
+      Number,
+      [
+         {
+            xa: Number,
+            xb: [{
+               "type": Number,
+               "allowNull": false
+            }],
+         }
+      ],
+      String
+   ],
+   e: Array
+})
 ```
 
 #### 对象验证
 
 ```js
-let { error, data } = Validator({
-   "a": 1,
-   "b": "xx",
-   "c": [1,32,34],
-   "d": 666
-}, {
-   "a": Number,
-   "b": String,
-   "c": [String],
-   "d": Number
-})
+let sample = {
+   a: {
+      a1: 1,
+      a2: 12,
+   },
+   b: 99,
+   f(a, b) {
+      return a + b
+   },
+}
+
+let { error, data } = Check(sample,
+   {
+      a: {
+         a1: {
+            type: Number,
+            allowNull: false
+         },
+         a2: 12
+      },
+      b: 99,
+      f: {
+         type: Function,
+         set(func) {
+            return func(1, 1)
+         }
+      },
+   }
+)
 ```
 
-#### and验证
+#### and依赖验证
 
 ```js
-let { error, data } = Validator({
+let { error, data } = Check({
    "username": "莉莉",
    "addressee": "嘟嘟",
 }, {
@@ -275,10 +337,10 @@ let { error, data } = Validator({
 })
 ```
 
-#### or验证
+#### or依赖验证
 
 ```js
-let { error, data } = Validator({
+let { error, data } = Check({
    "username": "莉莉",
    "addressee": "嘟嘟",
 }, {
@@ -300,20 +362,27 @@ let { error, data } = Validator({
 #### 扩展类型验证
 
 ```js
-let { error, data } = Validator({
-   "id": "5968d3b4956fe04299ea5c18",
-   "mobilePhone": "18555555555",
-}, {
-   "id": "MongoId",
-   "mobilePhone": "MobilePhone"
-})
+let { mongoId, email, mobilePhone, int } = Check.types
+
+let { error, data } = Check(
+   {
+      "id": "5968d3b4956fe04299ea5c18",
+      "mobilePhone": "18555555555",
+      "age": 20,
+   }, 
+   {
+      "age": int,
+      "id": mongoId,
+      "mobilePhone": mobilePhone
+   }
+)
 ```
 
-#### 完整示例
+#### 混合示例
 
 ```js
 // 输入数据
-let json = {
+let sample = {
    "username": "测试",
    "num": "123456789987",
    "time": "2017-07-07T09:53:30.000Z",
@@ -351,7 +420,7 @@ let json = {
 }
 
 // 验证表达式
-let { error, data } = Validator(json,
+let { error, data } = Check(sample,
    {
       "username": {
          "type": String,
@@ -417,29 +486,20 @@ let { error, data } = Validator(json,
       },
    },
    {
-      filter({ search, email, integral }) {
+      filter({ email, integral }) {
          return {
             "email": email,
             "integral": integral,
             "test": {
                a: 1,
-               b: undefined,
-               c: "",
-               d: null,
-               e: NaN,
-               e: 0,
             },
          }
-      }
+      },
+      more({ email }) {
+         return [email]
+      },
+      xxx: 1,
+      yyy: 222
    }
 )
 ```
-
-
-### 版本更新内容
-
-* 新增Function类型验证
-
-* 将handle函数名改为set
-
-* 升级filter-null，取消递归执行嵌套函数

@@ -3,25 +3,47 @@
 import test from 'ava';
 import Check from '..';
 
-test('function', t => {
+test(t => {
 
-   let { error, data } = Check(
-      {
-         a: {
-            a1: 1,
-            a2: "12",
-         },
-         b: "666",
+   function func() { }
+
+   let { error, data } = Check(func, Function)
+
+   // console.log(data);
+
+   t.deepEqual(func, data, error);
+
+});
+
+
+test('inline', t => {
+
+   let sample = {
+      a(x, y) {
+         return [x, y]
       },
+      b(a, b) {
+         return a + b
+      },
+   }
+
+   let { error, data } = Check(sample,
       {
-         a: {
-            a1: Number,
-            a2: Number,
+         a: Function,
+         b: {
+            type: Function,
+            set(func) {
+               return func(1, 1)
+            }
          },
-         b: Number,
       }
    )
 
-   t.truthy(data, error);
+   // console.log(data);
+
+   t.deepEqual({
+      a: sample.a,
+      b: 2,
+   }, data, error, data);
 
 });

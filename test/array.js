@@ -3,23 +3,62 @@
 import test from 'ava';
 import Check from '..';
 
-let json = {
-   a: ['xx', 'kk'],
-   b: [666, 999, 88],
-}
+test(t => {
 
-test('example', t => {
+   let sample = {
+      a: ['xx', 'kk'],
+      b: [666, 999, 88,],
+      c: [{ a: 1 }, { a: 2 }, { b: 3 }],
+      d: [
+         {
+            d1: 666,
+            d2: "888"
+         },
+         999,
+         [
+            {
+               xa: 1,
+               xb: [1, 2, 3],
+            },
+            {
+               xa: 9,
+               xb: [2, 4, 3],
+            }
+         ],
+         "hello"
+      ],
+      e: [1, 2, 3],
+   }
 
-   let { error, data } = Check(json, {
+   let { error, data } = Check(sample, {
+      a: [{ "type": String }],
       b: [{
          "type": Number,
          "allowNull": false
-      }, {
-         "allowNull": false
-      }]
+      }],
+      c: [{ a: Number, b: Number }],
+      d: [
+         {
+            d1: 666,
+            d2: String
+         },
+         Number,
+         [
+            {
+               xa: Number,
+               xb: [{
+                  "type": Number,
+                  "allowNull": false
+               }],
+            }
+         ],
+         String
+      ],
+      e: Array
    })
 
+   // console.log(data);
 
-   t.truthy(data, error);
+   t.deepEqual(sample, data, error);
 
 });

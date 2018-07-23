@@ -1,10 +1,9 @@
 {
    "name": "check-data",
-   "version": "3.0.0",
-   "description": "JS对象验证器",
+   "version": "4.0.0",
+   "description": "JS数据验证、转换递归器",
    "main": "index.js",
    "scripts": {
-      "dev": "nodemon test/object",
       "test": "ava test/ -w"
    },
    "author": "https://github.com/xiangle/verify.git",
@@ -14,18 +13,14 @@
       "validator": "^8.0.0"
    },
    "devDependencies": {
-      "ava": "^0.25.0",
-      "nodemon": "^1.11.0"
+      "ava": "^0.25.0"
    },
    "keywords": [
-      "JSON",
+      "check",
+      "check data",
       "schema",
       "validator",
-      "validation",
-      "jsonschema",
-      "json-schema",
-      "json-schema-validator",
-      "json-schema-validation"
+      "validation"
    ],
    "repository": {
       "type": "git",

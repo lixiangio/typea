@@ -3,43 +3,42 @@
 import test from 'ava';
 import Check from '..';
 
-let json = {
-   a: {
-      a1: 1,
-      a2: "12",
-   },
-   b: 2,
-   s: 99,
-   c(a, b) {
-      return a + b
-   },
-}
 
-test('null', t => {
+test(t => {
 
-   let { error, data } = Check(json,
+   let sample = {
+      a: {
+         a1: 1,
+         a2: 12,
+      },
+      b: 99,
+      f(a, b) {
+         return a + b
+      },
+   }
+
+   let { error, data } = Check(sample,
       {
-         // a: {
-         //    a1: {
-         //       type: Number,
-         //       allowNull: false
-         //    },
-         //    a2: {
-         //       type: Number,
-         //       allowNull: false
-         //    }
-         // },
+         a: {
+            a1: {
+               type: Number,
+               allowNull: false
+            },
+            a2: Number
+         },
          b: {
             type: Number,
+            name: "拉拉",
             set(data) {
                return data * 2
             }
          },
-         s: {
-            type: Number,
-            name: "拉拉",
+         f: {
+            type: Function,
+            set(func) {
+               return func(1, 1)
+            }
          },
-         c: Function,
       },
       {
          test() {
@@ -49,6 +48,13 @@ test('null', t => {
       }
    )
 
-   t.truthy(data, error);
+
+   t.deepEqual({
+      a: { a1: 1, a2: 12 },
+      b: 198,
+      f: 2,
+      test: 888,
+      ss: 999
+   }, data, error);
 
 });

@@ -1,14 +1,15 @@
 "use strict"
 
 let validator = require('validator')
+let symbols = require('./symbol')
 
 // 公共方法
-let commonMethod = {
+let common = {
    // 参数自定义转换方法
    set({ data, option: fun, origin }) {
       return { data: fun.call(origin, data) }
    },
-   // 直接赋值（会覆盖原来的值）
+   // 直接赋值（覆盖原来的值）
    value({ option: value }) {
       return { data: value }
    },
@@ -49,7 +50,7 @@ let commonMethod = {
 }
 
 // 数据类型验证方法
-let methods = {
+let types = {
    [String]: {
       // 数据类型验证
       type({ data }) {
@@ -125,15 +126,6 @@ let methods = {
          }
       }
    },
-   [Object]: {
-      type({ data }) {
-         if (typeof data === 'object') {
-            return { data }
-         } else {
-            return { error: '必须为Object类型' }
-         }
-      },
-   },
    [Array]: {
       type({ data }) {
          if (Array.isArray(data)) {
@@ -157,6 +149,15 @@ let methods = {
          }
       },
    },
+   [Object]: {
+      type({ data }) {
+         if (typeof data === 'object') {
+            return { data }
+         } else {
+            return { error: '必须为Object类型' }
+         }
+      },
+   },
    [Date]: {
       type({ data }) {
          if (validator.toDate(data + '')) {
@@ -171,7 +172,7 @@ let methods = {
          if (typeof data === 'boolean') {
             return { data }
          } else {
-            return { error: '必须为Boolean值' }
+            return { error: '必须为Boolean类型' }
          }
       },
    },
@@ -184,8 +185,7 @@ let methods = {
          }
       },
    },
-   // mongoDB ID
-   'MongoId': {
+   [symbols.mongoId]: {
       type({ data }) {
          if (validator.isMongoId(String(data))) {
             return { data }
@@ -194,8 +194,7 @@ let methods = {
          }
       },
    },
-   // 手机号
-   'MobilePhone': {
+   [symbols.mobilePhone]: {
       type({ data }) {
          if (validator.isMobilePhone(String(data), 'zh-CN')) {
             return { data }
@@ -204,8 +203,7 @@ let methods = {
          }
       },
    },
-   // 邮箱
-   'Email': {
+   [symbols.email]: {
       type({ data }) {
          if (validator.isEmail(String(data))) {
             return { data }
@@ -216,9 +214,9 @@ let methods = {
    },
 }
 
-// 方法合并
-for (let key in methods) {
-   methods[key] = Object.assign(methods[key], commonMethod)
+// 合并公共方法
+for (let key in types) {
+   Object.assign(types[key], common)
 }
 
-module.exports = methods
+module.exports = types
