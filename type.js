@@ -158,21 +158,21 @@ let types = {
          }
       },
    },
-   [Date]: {
-      type({ data }) {
-         if (validator.toDate(data + '')) {
-            return { data }
-         } else {
-            return { error: '必须为Date类型' }
-         }
-      },
-   },
    [Boolean]: {
       type({ data }) {
          if (typeof data === 'boolean') {
             return { data }
          } else {
             return { error: '必须为Boolean类型' }
+         }
+      },
+   },
+   [Date]: {
+      type({ data }) {
+         if (validator.toDate(data + '')) {
+            return { data }
+         } else {
+            return { error: '必须为Date类型' }
          }
       },
    },

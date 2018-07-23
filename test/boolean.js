@@ -9,7 +9,7 @@ test(t => {
 
    // console.log(data);
 
-   t.deepEqual(data, true, error);
+   t.deepEqual(true, data, error);
 
 });
 
@@ -18,15 +18,24 @@ test('inline', t => {
 
    let sample = {
       a: true,
-      b: false,
+      b: {
+         b1: true,
+         b2: false
+      },
       c: [true, false, true, true]
    }
 
    let { error, data } = Check(sample, {
       a: Boolean,
       b: {
-         type: Boolean,
-         allowNull: false
+         b1: {
+            type: Boolean,
+            allowNull: false
+         },
+         b2: {
+            type: Boolean,
+            allowNull: false
+         },
       },
       c: [Boolean]
    })
@@ -35,4 +44,4 @@ test('inline', t => {
 
    t.deepEqual(sample, data, error);
 
-});
+})

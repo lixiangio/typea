@@ -172,10 +172,8 @@ schema用于创建可复用的验证器，在环境允许的情况下应优先�
 > schema的定义应该在应用启动时被执行，而不是运行时。目的是通过预先缓存一部分静态数据，从而减少运行时的内存和计算开销。
 
 ```js
-Check.schema(name, options)
+Check.schema(options, extend)
 ```
-
-* `name` *String* - schema名称
 
 * `options` * - 验证表达式
 
@@ -186,7 +184,7 @@ Check.schema(name, options)
 #### schema验证
 
 ```js
-let test = Check.schema('test', {
+let schema = Check.schema({
    a: {
       a1: {
          type: Number,
@@ -209,11 +207,7 @@ let sample = {
    c: 888,
 }
 
-
-let { error, data } = test(sample)
-
-// 或
-let { error, data } = Check.test(sample)
+let { error, data } = schema(sample)
 ```
 
 #### 数组验证

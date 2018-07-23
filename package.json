@@ -1,6 +1,6 @@
 {
    "name": "check-data",
-   "version": "4.0.0",
+   "version": "4.0.1",
    "description": "JS数据验证、转换递归器",
    "main": "index.js",
    "scripts": {

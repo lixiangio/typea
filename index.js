@@ -69,18 +69,18 @@ class Parser {
 
             }
 
-            // type为内置构造函数或字符串（字符串用于表示自定义数据类型）
+            // type为内置数据类型
             if (Types[options.type]) {
 
-               let funObj = Types[options.type]
+               let checks = Types[options.type]
                for (let name in options) {
-                  let fun = funObj[name]
-                  if (fun) {
+                  let func = checks[name]
+                  if (func) {
                      let option = options[name]
-                     let { error, data: subData } = fun({ data, option, origin: this.origin })
+                     let { error, data: subData } = func({ data, option, origin: this.origin })
                      if (error) {
                         return {
-                           error: `${field}${error}`
+                           error: `${error}`
                         }
                      }
                      data = subData
@@ -317,20 +317,19 @@ Check.use = function (type, options = {}) {
 /**
  * 通过预处理方式，将提前处理好的静态options持久化驻留在内存中
  * 避免同一个对象被多次重复的创建和销毁，实现options跨接口复用，在节省资源的同时，也增加了代码复用率
- * @param {String} name schema名称
  * @param {*} options 验证表达式
  * @param {Object} extend 数据扩展选项
  */
-Check.schema = function (name, options, extend) {
+Check.schema = function (options, extend) {
 
-   Check[name] = function (data) {
+   let schema = function (data) {
       return Check(data, options, extend)
    }
 
    /**
     * 严格模式，禁止空值
     */
-   Check[name].strict = function () {
+   schema.strict = function () {
 
    }
 
@@ -339,11 +338,11 @@ Check.schema = function (name, options, extend) {
     * 宽松模式，用于数据更新
     * 忽略所有allowNull值，有值验证，无值跳过，
     */
-   Check[name].loose = function () {
+   schema.loose = function () {
 
    }
 
-   return Check[name]
+   return schema
 
 }
 
