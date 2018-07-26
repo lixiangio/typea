@@ -1,9 +1,9 @@
 "use strict"
 
 let filterNull = require('filter-null')
-
-let Types = require('./type')
-let symbols = require('./symbol')
+let Types = require('./lib/type')
+let symbols = require('./lib/symbol')
+let common = require('./lib/common')
 
 class Parser {
 
@@ -50,183 +50,7 @@ class Parser {
       // 选项值为对象
       if (typeof options === 'object') {
 
-         // 选项值为验证表达式
-         if (options.type) {
-
-            // 优先使用别名
-            let field = options.name || key
-
-            // 空值处理
-            if (this.isNull(data, options.ignore)) {
-
-               // 默认值
-               if (options.default) {
-                  data = options.default
-               }
-
-               // 禁止空值
-               else if (options.allowNull === false) {
-                  return { error: `值不允许为空` }
-               }
-
-               // 允许空值
-               else if (options.allowNull === true) {
-                  return {}
-               }
-
-               // 严格模式下，禁止空值
-               else if (this.mode === 'strict') {
-                  return { error: `值不允许为空` }
-               }
-
-               else {
-                  return {}
-               }
-
-            }
-
-            let checks = Types[options.type]
-
-            // type为内置数据类型
-            if (checks) {
-
-               for (let name in options) {
-                  let check = checks[name]
-                  if (check) {
-                     let option = options[name]
-                     let { error, data: subData } = check({ data, option, origin: this.origin })
-                     if (error) {
-                        return {
-                           error: `${error}`
-                        }
-                     }
-                     data = subData
-                  }
-               }
-
-               return { data }
-
-            }
-
-            // 不支持的数据类型
-            else {
-               return {
-                  error: `${field}参数配置错误，不支持${options.type}类型`
-               }
-            }
-
-         }
-
-         // 选项值为数组结构
-         else if (Array.isArray(options)) {
-
-            if (!Array.isArray(data)) {
-               // 宽松模式下，跳过空值
-               if (this.mode === 'loose') {
-                  if (this.isNull(data)) return {}
-               }
-               return {
-                  error: `${key}必须为数组类型`
-               }
-
-            }
-
-            let dataArray = []
-            let itemKey = 0
-
-            // options为单数时采用通用匹配
-            if (options.length === 1) {
-
-               let [option] = options
-
-               for (let itemData of data) {
-
-                  // 子集递归验证
-                  let { error, data: subData } = this.recursion(itemData, option, itemKey)
-
-                  if (error) {
-                     return {
-                        error: `[${itemKey}]${error}`
-                     }
-                  } else {
-                     dataArray.push(subData)
-                  }
-
-                  itemKey++
-               }
-            }
-
-            // options为复数时采用精确匹配
-            else {
-
-               for (let option of options) {
-
-                  let itemData = data[itemKey]
-
-                  // 子集递归验证
-                  let { error, data: subData } = this.recursion(itemData, option, itemKey)
-
-                  if (error) {
-                     return {
-                        error: `[${itemKey}]${error}`
-                     }
-                  } else {
-                     dataArray.push(subData)
-                  }
-
-                  itemKey++
-
-               }
-
-            }
-
-            return {
-               data: dataArray
-            }
-
-         }
-
-         // 选项值为对象结构
-         else {
-
-            if (typeof data !== 'object') {
-               // 宽松模式下，跳过空值
-               if (this.mode === 'loose') {
-                  if (this.isNull(data)) return {}
-               }
-               return {
-                  error: `值必须为Object类型`
-               }
-            }
-
-            let dataObj = {}
-
-            for (let subKey in options) {
-
-               let itemData = data[subKey]
-               let itemOptions = options[subKey]
-               let { error, data: subData } = this.recursion(itemData, itemOptions, subKey)
-
-               if (error) {
-                  // 非根节点
-                  if (key) {
-                     return {
-                        error: `.${subKey}${error}`
-                     }
-                  } else {
-                     return {
-                        error: `${subKey}${error}`
-                     }
-                  }
-               } else {
-                  dataObj[subKey] = subData
-               }
-
-            }
-
-            return { data: dataObj }
-
-         }
+         return this.Object(data, options, key)
 
       }
 
@@ -263,6 +87,218 @@ class Parser {
 
          return { error: `值必须为${options}` }
 
+      }
+
+   }
+
+   /**
+    * 验证表达式
+    * @param {*} data 
+    * @param {*} options 
+    * @param {*} key 
+    */
+   expression(data, options, key) {
+
+      // 优先使用别名
+      let field = options.name || key
+
+      // 空值处理
+      if (this.isNull(data, options.ignore)) {
+
+         // 默认值
+         if (options.default) {
+            data = options.default
+         }
+
+         // 禁止空值
+         else if (options.allowNull === false) {
+            return { error: `值不允许为空` }
+         }
+
+         // 允许空值
+         else if (options.allowNull === true) {
+            return {}
+         }
+
+         // 严格模式下，禁止空值
+         else if (this.mode === 'strict') {
+            return { error: `值不允许为空` }
+         }
+
+         else {
+            return {}
+         }
+
+      }
+
+      let checks = Types[options.type]
+
+      // type为内置数据类型
+      if (checks) {
+
+         for (let name in options) {
+            let check = checks[name]
+            if (check) {
+               let option = options[name]
+               let { error, data: subData } = check({ data, option, origin: this.origin })
+               if (error) {
+                  return {
+                     error: `${error}`
+                  }
+               }
+               data = subData
+            }
+         }
+
+         return { data }
+
+      }
+
+      // 不支持的数据类型
+      else {
+         return {
+            error: `${field}参数配置错误，不支持${options.type}类型`
+         }
+      }
+
+   }
+
+   /**
+    * 对象结构
+    * @param {*} data 
+    * @param {*} options 
+    * @param {*} key 
+    */
+   Object(data, options, key) {
+
+      // 选项值为验证表达式
+      if (options.type) {
+
+         return this.expression(data, options, key)
+
+      }
+
+      // 选项值为数组结构
+      else if (Array.isArray(options)) {
+
+         return this.Array(data, options, key)
+
+      }
+
+      // 选项值为对象结构
+      else {
+
+         if (typeof data !== 'object') {
+            // 宽松模式下，跳过空值
+            if (this.mode === 'loose') {
+               if (this.isNull(data)) return {}
+            }
+            return {
+               error: `值必须为Object类型`
+            }
+         }
+
+         let dataObj = {}
+
+         for (let subKey in options) {
+
+            let itemData = data[subKey]
+            let itemOptions = options[subKey]
+            let { error, data: subData } = this.recursion(itemData, itemOptions, subKey)
+
+            if (error) {
+               // 非根节点
+               if (key) {
+                  return {
+                     error: `.${subKey}${error}`
+                  }
+               } else {
+                  return {
+                     error: `${subKey}${error}`
+                  }
+               }
+            } else {
+               dataObj[subKey] = subData
+            }
+
+         }
+
+         return { data: dataObj }
+
+      }
+
+   }
+
+   /**
+    * 数组结构
+    * @param {*} data 
+    * @param {*} options 
+    * @param {*} key 
+    */
+   Array(data, options, key) {
+
+      if (!Array.isArray(data)) {
+         // 宽松模式下，跳过空值
+         if (this.mode === 'loose') {
+            if (this.isNull(data)) return {}
+         }
+         return {
+            error: `${key}必须为数组类型`
+         }
+
+      }
+
+      let dataArray = []
+      let itemKey = 0
+
+      // options为单数时采用通用匹配
+      if (options.length === 1) {
+
+         let [option] = options
+
+         for (let itemData of data) {
+
+            // 子集递归验证
+            let { error, data: subData } = this.recursion(itemData, option, itemKey)
+
+            if (error) {
+               return {
+                  error: `[${itemKey}]${error}`
+               }
+            } else {
+               dataArray.push(subData)
+            }
+
+            itemKey++
+         }
+      }
+
+      // options为复数时采用精确匹配
+      else {
+
+         for (let option of options) {
+
+            let itemData = data[itemKey]
+
+            // 子集递归验证
+            let { error, data: subData } = this.recursion(itemData, option, itemKey)
+
+            if (error) {
+               return {
+                  error: `[${itemKey}]${error}`
+               }
+            } else {
+               dataArray.push(subData)
+            }
+
+            itemKey++
+
+         }
+
+      }
+
+      return {
+         data: dataArray
       }
 
    }
@@ -346,6 +382,7 @@ Check.use = function (type, options = {}) {
          let symbol = Symbol(type)
          symbols[type] = symbol
          Types[symbol] = options
+         Object.assign(Types[symbol], common)
       }
 
    }

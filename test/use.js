@@ -11,6 +11,21 @@ Check.use('int', {
          return { error: '必须为int类型' }
       }
    },
+   max({ data, option: max }) {
+      if (data > max) {
+         return { error: `不能大于${max}` }
+      } else {
+         return { data }
+      }
+   },
+   in({ data, option: arr }) {
+      let result = arr.indexOf(data)
+      if (result === -1) {
+         return { error: `值必须为${arr}中的一个` }
+      } else {
+         return { data }
+      }
+   }
 })
 
 let { mongoId, email, mobilePhone, int } = Check.types
@@ -25,15 +40,10 @@ test(t => {
       "mobileArr": [
          "15855155547",
          "18955535547",
-         "13055655547",
-         "18655655512",
-         "15055655512"
       ],
       "mobileArr2": [
          "13055656647",
-         "18655655512",
-         "15055699512",
-         "15855155547"
+         "18655655512"
       ],
    }
 
@@ -44,7 +54,10 @@ test(t => {
       },
       "age": {
          "type": int,
-         "allowNull": false
+         "allowNull": false,
+         set(value) {
+            return value * 2
+         }
       },
       "email": {
          "type": email,
@@ -52,20 +65,28 @@ test(t => {
       "mobile": {
          "type": mobilePhone,
       },
-      "mobileArr": [mobilePhone],
-      "mobileArr2": [
-         mobilePhone,
-         "18655655512",
+      "mobileArr": [
          mobilePhone,
          {
-            type: mobilePhone,
+            "type": mobilePhone,
             "allowNull": false
          }
+      ],
+      "mobileArr2": [
+         mobilePhone,
+         "18655655512"
       ]
    })
 
    // console.log(data)
 
-   t.deepEqual(sample, data, error);
+   t.deepEqual({
+      id: '5687862c08d67e29cd000001',
+      age: 56,
+      email: 'erer@gmail.com',
+      mobile: '15855555547',
+      mobileArr: ['15855155547', '18955535547'],
+      mobileArr2: ['13055656647', '18655655512']
+   }, data, error);
 
 });

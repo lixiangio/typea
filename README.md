@@ -1,14 +1,70 @@
+功能强大JS数据模型验证、处理工具
+
 ### Install
 
 ```
 npm install check-data
 ```
 
-### 使用方法
+## 示例
 
-check-data支持常规模式、严格模式、宽松模式，默认使用常规模式。
+```js
+let sample = {
+   "name": "test",
+   "num": "123456789987",
+   "ObjectId": "59c8aea808deec3fc8da56b6",
+   "files": ["abc.js", "null", "edb.js"],
+   "user": {
+      "username": "莉莉",
+      "age": 18,
+      "address": [
+         { "city": "深圳" },
+         { "city": "北京" }
+      ],
+   },
+   "money": "2"
+}
 
-> 引入严格模式和宽松模式的主要目的是为了弥补验证表达式的设计缺陷，在数组、对象结构中使用子表达式时无法声明节点自身是否允许为空值。
+let { mongoId, email } = Check.types
+
+let { error, data } = Check(sample, {
+   "ObjectId": mongoId,
+   "name": String,
+   "email": email,
+   "num": String,
+   "files": [String],
+   "user": {
+      "username": "莉莉",
+      "age": Number,
+      "address": [
+         { "city": String },
+         { "city": "北京" }
+      ],
+   },
+   "money": "2"
+})
+```
+
+## 功能特性
+
+* 采用全镜像数据模型设计，相比其它数据验证器拥有更好的数据结构表现能力和聚合能力。
+
+* 支持对象和数组的无限嵌套，只管按你的数据结构去建模就好了，不必担心数据复杂度、层级深度的问题。
+
+* 可以直接复制你的数据进行快速建模，只需要将值替换为类型后就得到了一个基础的验证模型，甚至有时候连值都不用不替换。
+
+* check-data不仅仅只是数据验证器，同时还拥有很好的数据处理能力，可以在验证前、后灵活的对数据进行扩展。另外，基于js对象的树状结构使代码看起来高度类聚，大大降低了碎片化率。
+
+* 拥有足够的容错能力，在验证期间你几乎不需要使用try/catch来捕获异常，返回值中的path错误定位信息可以帮助快速追踪错误来源。
+
+* 当内置数据类型无法满足需求时，可以通过check.use()方法扩展自定义的数据类型。
+
+
+## 验证模式
+
+check-data支持常规、严格、宽松三种验证模式，多数情况下只需要使用常规模式即可。
+
+引入严格模式和宽松模式的主要原因是为了弥补js对象结构自身的表达分歧，在数组、对象结构中包含子表达式时没有额外的结构来定义空值。
 
 #### 常规模式
 
@@ -176,14 +232,6 @@ Check.use('int', {
       } else {
          return { data }
       }
-   },
-   in({ data, option: arr }) {
-      let result = arr.indexOf(data)
-      if (result === -1) {
-         return { error: `值必须为${arr}中的一个` }
-      } else {
-         return { data }
-      }
    }
 })
 ```
@@ -257,7 +305,7 @@ let sample = {
 }
 
 let { error, data } = Check(sample, {
-   a: [{ "type": String }],
+   a: [String],
    b: [{
       "type": Number,
       "allowNull": false
