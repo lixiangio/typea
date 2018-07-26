@@ -7,10 +7,23 @@ let symbols = require('./symbol')
 
 class Parser {
 
-   constructor(origin, options) {
-      this.origin = origin
+   /**
+    * 
+    * @param {*} options 验证表达式
+    * @param {*} mode 验证模式
+    */
+   constructor(options, mode) {
       this.options = options
-      return this.recursion(origin, options, '')
+      this.mode = mode
+   }
+
+   /**
+    * 执行数据验证
+    * @param {*} origin 待验证原始数据
+    */
+   run(origin) {
+      this.origin = origin
+      return this.recursion(origin, this.options, '')
    }
 
    /**
@@ -51,16 +64,19 @@ class Parser {
                   data = options.default
                }
 
-               // value赋值
-               else if (options.value) {
-                  data = options.value
-               }
-
                // 禁止空值
                else if (options.allowNull === false) {
-                  return {
-                     error: `${field}不能为空`
-                  }
+                  return { error: `值不允许为空` }
+               }
+
+               // 允许空值
+               else if (options.allowNull === true) {
+                  return {}
+               }
+
+               // 严格模式下，禁止空值
+               else if (this.mode === 'strict') {
+                  return { error: `值不允许为空` }
                }
 
                else {
@@ -69,15 +85,16 @@ class Parser {
 
             }
 
-            // type为内置数据类型
-            if (Types[options.type]) {
+            let checks = Types[options.type]
 
-               let checks = Types[options.type]
+            // type为内置数据类型
+            if (checks) {
+
                for (let name in options) {
-                  let func = checks[name]
-                  if (func) {
+                  let check = checks[name]
+                  if (check) {
                      let option = options[name]
-                     let { error, data: subData } = func({ data, option, origin: this.origin })
+                     let { error, data: subData } = check({ data, option, origin: this.origin })
                      if (error) {
                         return {
                            error: `${error}`
@@ -91,7 +108,7 @@ class Parser {
 
             }
 
-            // 不支持的参数
+            // 不支持的数据类型
             else {
                return {
                   error: `${field}参数配置错误，不支持${options.type}类型`
@@ -104,7 +121,10 @@ class Parser {
          else if (Array.isArray(options)) {
 
             if (!Array.isArray(data)) {
-
+               // 宽松模式下，跳过空值
+               if (this.mode === 'loose') {
+                  if (this.isNull(data)) return {}
+               }
                return {
                   error: `${key}必须为数组类型`
                }
@@ -170,8 +190,12 @@ class Parser {
          else {
 
             if (typeof data !== 'object') {
+               // 宽松模式下，跳过空值
+               if (this.mode === 'loose') {
+                  if (this.isNull(data)) return {}
+               }
                return {
-                  error: `值必须为对象`
+                  error: `值必须为Object类型`
                }
             }
 
@@ -200,9 +224,7 @@ class Parser {
 
             }
 
-            return {
-               data: dataObj
-            }
+            return { data: dataObj }
 
          }
 
@@ -212,6 +234,10 @@ class Parser {
       else if (Types[options]) {
 
          if (this.isNull(data)) {
+            // 严格模式下，禁止空值
+            if (this.mode === 'strict') {
+               return { error: "值不允许为空" }
+            }
             return {}
          }
 
@@ -247,34 +273,47 @@ class Parser {
  * 验证器
  * @param {*} data 数据源
  * @param {*} options 验证表达式
- * @param {Object} handler 导出数据自定义处理方法
+ * @param {Object} extend 导出数据扩展函数集合
+ * @param {String} mode 验证模式（仅供内部使用）
  */
-function Check(data, options, handler = {}) {
+function Check(data, options, extend = {}, mode) {
 
-   let output = new Parser(data, options)
+   let parser = new Parser(options, mode)
 
-   if (output.error) {
-      return output
+   let result = parser.run(data)
+
+   if (result.error) {
+      return result
    }
 
    // 数据扩展函数，基于已验证的数据构建新的数据结构
-   for (let name in handler) {
-      let item = handler[name]
-      // 使用自定义构造函数处理
+   for (let name in extend) {
+      let item = extend[name]
       if (typeof item === 'function') {
-         item = item.call(output.data, output.data)
+         item = item.call(result.data, result.data)
       }
-      output.data[name] = item
+      result.data[name] = item
    }
 
    // 对象空值过滤
-   filterNull(output.data)
+   filterNull(result.data)
 
-   return output
+   return result
 
 }
 
+// 严格模式
+Check.strict = function (data, options, extend = {}) {
+   return Check(data, options, extend, 'strict')
+}
+
+// 宽松模式
+Check.loose = function (data, options, extend = {}) {
+   return Check(data, options, extend, 'loose')
+}
+
 Check.types = symbols
+
 
 /**
  * 自定义数据类型扩展方法
@@ -327,19 +366,19 @@ Check.schema = function (options, extend) {
    }
 
    /**
-    * 严格模式，禁止空值
+    * 严格模式
+    * 禁止所有空值，有值验证，无值报错
     */
-   schema.strict = function () {
-
+   schema.strict = function (data) {
+      return Check(data, options, extend, 'strict')
    }
 
-
    /**
-    * 宽松模式，用于数据更新
-    * 忽略所有allowNull值，有值验证，无值跳过，
+    * 宽松模式
+    * 忽略所有空值，有值验证，无值跳过，即使allowNull值为true
     */
-   schema.loose = function () {
-
+   schema.loose = function (data) {
+      return Check(data, options, extend, 'loose')
    }
 
    return schema

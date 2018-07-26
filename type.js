@@ -15,10 +15,11 @@ let common = {
    },
    // 与
    and({ data, option, origin }) {
-      // 如果option为函数，应先执行函数，将函数转为数组
+      // option为函数时先执行函数，将函数转为数组表达式
       if (option instanceof Function) {
          option = option.call(origin, data)
       }
+      // 数组表达式
       if (option instanceof Array) {
          for (let name of option) {
             if (origin[name] === undefined || origin[name] === '') {
@@ -214,9 +215,16 @@ let types = {
    },
 }
 
-// 合并公共方法
+
+// 将common与内置构造函数key中方法合并
 for (let key in types) {
    Object.assign(types[key], common)
+}
+
+// 将common与Symbol key中方法合并（for/in 无法遍历symbol key，需要单独处理）
+for (let name in symbols) {
+   let symbol = symbols[name]
+   Object.assign(types[symbol], common)
 }
 
 module.exports = types

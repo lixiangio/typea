@@ -1,15 +1,38 @@
 ### Install
 
 ```
-npm install check-data --save
+npm install check-data
 ```
 
 ### 使用方法
 
+check-data支持常规模式、严格模式、宽松模式，默认使用常规模式。
+
+> 引入严格模式和宽松模式的主要目的是为了弥补验证表达式的设计缺陷，在数组、对象结构中使用子表达式时无法声明节点自身是否允许为空值。
+
+#### 常规模式
+
+常规模式下默认只对allowNull为false的节点强制执行非空验证，默认对包含子表达式的数组、对象结构体执行强制非空验证。
+
+#### 严格模式
+
+严格模式下默认会为所有节点强制执行非空验证，除非明确声明allowNull为true。
+
+#### 宽松模式
+
+宽松模式下不会对包含子表达式的数组、对象结构体进行强制非空验证。
+
 ```js
 let Check = require('check-data')
 
+// 常规模式
 let { error, data } = Check(data, options, extend)
+
+// 严格模式
+let { error, data } = Check.strict(data, options, extend)
+
+// 宽松模式
+let { error, data } = Check.loose(data, options, extend)
 ```
 
 ### 输入参数
@@ -36,33 +59,33 @@ let { error, data } = Check(data, options, extend)
 
 ### 验证表达式
 
-options数据验证表达式支持无限嵌套，不管你的数据层级有多深。整体数据结构与待验证数据结构基本保持一致，除了使用type对象表达式不得不增加额外的数据结构。
-
-验证表达式中判断一个对象节点是否为验证选项的唯一依据是检查对象中是否包含type属性，如果没有type则被视为对象结构。
+options数据验证表达式支持无限嵌套，不管你的数据层级有多深。
 
 type作为验证表达式的内部保留关键字，应尽量避免在入参中包含同名的type属性，否则可能导致验证结果出现混乱。
 
-当使用数组表达式时，需要区分单数和复数模式，单数时会共享同一个子表达式，通常用于验证具有相似结构的子集。复数时为精确匹配模式，可以完整定义每个子集。
+整体数据结构与待验证数据结构基本保持一致，除了使用type对象表达式不得不增加额外的数据结构。验证表达式中判断一个对象节点是否为验证选项的唯一依据是检查对象中是否包含type属性，如果没有type则被视为对象结构。
+
+options中支持值表达式，可以对表达式节点直接赋值，实现输入、输出的完全匹配或部分匹配，在用于对象动态断言时很方便。
+
+当使用数组表达式时，需要区分单数和复数模式，单数时多个同级子节点会共用一个子表达式，通常用于验证具有相似数据结构的子集。复数时为精确匹配模式，可以完整定义每个子集。
 
 #### 通用选项
 
 * `type` * - 数据类型
 
-* `default` * - 空值时的默认赋值
+* `default` * - 空值时的默认赋值，优先级高于allowNull
 
-* `set` *Function* - 赋值函数，用于对输入值处理后再输出赋值，函数中this指向原始数据data，当值为空时不执行（原method方法）
+* `allowNull` *Boolean* - 是否允许为空，当值为false时强制进行非空验证。
 
-* `value` * - 直接通过表达式赋值，类似于default选项，区别是不管值是否为空都将使用该值覆盖（优先级低于default，目前没有发现同时使用的应用场景）
+* `set` *Function* - 赋值函数，用于对输入值处理后再输出赋值，函数中this指向原始数据data，当值为空时不执行。
 
-* `allowNull` *Boolean* - 是否允许为空（默认将undefined和空字符串被视为空），缺省值为true。当值为false时，必须正确匹配指定的数据类型，否则会提示数据类型错误。
+* `ignore` *Array* - 忽略指定的值，当存在匹配项时该字段不会被创建。如忽略空值，通过[null, ""]重新定义空值。
 
-* `ignore` *Array* - 忽略指定的值，在字段级覆盖对默认空值的定义，如将某个指定字段的空值定义为[null, ""]
+* `and` *Array、Function* - 声明节点的依赖关系，限制所有依赖的参数都不能为空。如参数a必须依赖参数b构成一个完整的数据，那么就要将参数名b加入到and数组中建立依赖关系。除了数组表达式外，还支持通过函数表达式动态生成依赖数组。
 
-* `and` *Array、Function* - 声明依赖的参数名数组，支持数组和函数两种表达式，函数表达式用于声明指定值的依赖关系。要求依赖的所有参数都不能为空（注意：这里的and用于依赖判断，如参数a必须依赖参数b构成一个完整的数据，那么就要将参数b加入到and的数组中建立依赖关系）
+* `or` *Array、Function* - 与and相似，区别是只要满足任意一个依赖不为空即可。
 
-* `or` *Array、Function* - 与and相似，区别是只要求依赖的其中一个参数不为空即可
-
-* `name` *String* - 参数名称，为参数名定义一个更易于理解的别名，在返回错误描述文本中会优先使用该别名替换属性名
+* `name` *String* - 节点名称，为参数名定义一个更易于理解的别名，在返回错误描述文本中会优先使用该别名替换属性名
 
 #### 专用选项
 
@@ -165,9 +188,9 @@ Check.use('int', {
 })
 ```
 
-### schema验证器
+### 可复用验证器
 
-schema用于创建可复用的验证器，在环境允许的情况下应优先使用schema模式。
+schema用于创建可复用的验证器，相比每次都将验证表达式作为一次性消耗品，schema是更好的选择，在环境允许的情况下应优先使用schema模式。
 
 > schema的定义应该在应用启动时被执行，而不是运行时。目的是通过预先缓存一部分静态数据，从而减少运行时的内存和计算开销。
 
@@ -186,16 +209,11 @@ Check.schema(options, extend)
 ```js
 let schema = Check.schema({
    a: {
-      a1: {
-         type: Number,
-         allowNull: false
-      },
-      a2: {
-         type: Number,
-         allowNull: false
-      }
+      a1: String,
+      a2: String
    },
-   b: Number,
+   b: 2,
+   c: Number,
 })
 
 let sample = {
@@ -356,6 +374,16 @@ let { error, data } = Check({
 #### 扩展类型验证
 
 ```js
+Check.use('int', {
+   type({ data }) {
+      if (Number.isInteger(data)) {
+         return { data }
+      } else {
+         return { error: '必须为int类型' }
+      }
+   },
+})
+
 let { mongoId, email, mobilePhone, int } = Check.types
 
 let { error, data } = Check(
@@ -365,83 +393,104 @@ let { error, data } = Check(
       "age": 20,
    }, 
    {
-      "age": int,
       "id": mongoId,
-      "mobilePhone": mobilePhone
+      "mobilePhone": mobilePhone,
+      "age": int
    }
 )
 ```
 
-#### 混合示例
+#### 综合示例
 
 ```js
-// 输入数据
 let sample = {
-   "username": "测试",
+   "name": "测试",
    "num": "123456789987",
-   "time": "2017-07-07T09:53:30.000Z",
-   "files": ["abc.js", "334", "null", "666", , , "kkk.js"],
+   "ObjectId": "59c8aea808deec3fc8da56b6",
+   "files": ["abc.js", "334", "null", "666", "12"],
    "user": {
       "username": "莉莉",
       "age": 18,
+      "address": [
+         {
+            "city": "深圳",
+         },
+         {
+            "city": "北京",
+         }
+      ],
    },
    "list": [
       {
          "username": "吖吖",
-         "age": 16,
+         "age": {
+            "kk": [{ kkk: 666 }]
+         },
       },
       {
          "username": "可可",
-         "age": 15,
+         "age": {
+            "kk": [
+               { kkk: 666 },
+               { kkk: 999 }
+            ]
+         },
       }
    ],
-   "auth": {
-         "weixin": "abc",
-   },
-   "beneficiariesName": "莉莉",
-   "guaranteeMoney": 2,
+   "money": "2",
    "guaranteeFormat": 0,
    "addressee": "嘟嘟",
-   "receiveAddress": "北京市",
-   "phone": "18666666666",
+   "phone": "18565799072",
    "coupon": "uuuu",
    "integral": {
-         "lala": 168,
-         "kaka": "3"
+      "lala": "168",
+      "kaka": 6,
    },
    "search": "深圳",
-   "email": "xxx@xx.xx"
+   "searchField": "userName",
+   "email": "xxx@xx.xx",
+   "arr": ['jjsd', 'ddd']
 }
 
-// 验证表达式
+let { mongoId, email, mobilePhone } = Check.types
+
 let { error, data } = Check(sample,
    {
-      "username": {
+      "name": {
          "type": String,
-         "name": "用户名",
-         "allowNull": false
-      },
-      "num": String,
-      "time": {
-         "type": Date,
-         "name": "时间",
+         "name": "名称",
          "allowNull": false,
+         "default": "默认值"
       },
-      "user": {
-         "username": String,
-         "age": Number,
-      },
-      "list": [{
-         "username": String,
-         "age": Number,
-      }],
-      "auth": {
-         "weixin": String,
-      },
-      "beneficiariesName": String,
-      "guaranteeMoney": {
+      "num": {
          "type": Number,
-         "in": [1, 2]
+         "value": 666,
+      },
+      "ObjectId": mongoId,
+      "user": {
+         "username": "莉莉",
+         "age": Number,
+         "address": [
+            {
+               "city": String,
+            },
+            {
+               "city": "北京",
+            }
+         ],
+      },
+      "list": [
+         {
+            "username": String,
+            "age": {
+               "kk": [{ kkk: Number }]
+            },
+         }
+      ],
+      "money": {
+         "type": Number,
+         "min": 1,
+         "in": [1, 2],
       },
       "files": [{
          "type": String,
@@ -449,21 +498,17 @@ let { error, data } = Check(sample,
       }],
       "guaranteeFormat": {
          "type": Number,
-         "conversion": Boolean
+         "to": Boolean,
       },
-      "addressee": {
-         "type": String,
-         "value": "直接通过表达式赋值"
-      },
-      "search": String,
+      "addressee": String,
+      "search": "深圳",
       "phone": {
-         "type": "MobilePhone"
+         "type": mobilePhone
       },
-      "receiveAddress": String,
       "coupon": {
          "type": String,
          set(value) {
-            return { "$gt": new Date() }
+            return { "$gt": value }
          }
       },
       "integral": {
@@ -472,28 +517,29 @@ let { error, data } = Check(sample,
          },
          "kaka": {
             "type": Number,
-            "in": [1, 2, 3],
+            "allowNull": false,
+            "in": [1, 3, 8, 6],
          }
       },
       "email": {
-         "type": 'Email',
+         "type": email,
+         set(value) {
+            return [value, , null, , undefined, 666]
+         }
       },
+      "arr": [String],
    },
    {
       filter({ email, integral }) {
          return {
-            "email": email,
-            "integral": integral,
-            "test": {
-               a: 1,
-            },
+            "email": email
          }
       },
-      more({ email }) {
-         return [email]
-      },
-      xxx: 1,
-      yyy: 222
+      where({ email, integral }) {
+         return {
+            "integral": integral
+         }
+      }
    }
 )
 ```

@@ -7,7 +7,6 @@ let sample = {
    "name": "测试",
    "num": "123456789987",
    "ObjectId": "59c8aea808deec3fc8da56b6",
-   "tenderEndTime": "2017-07-07T09:53:30.000Z",
    "files": ["abc.js", "334", "null", "666", "12"],
    "user": {
       "username": "莉莉",
@@ -53,6 +52,8 @@ let sample = {
    "arr": ['jjsd', 'ddd']
 }
 
+let { mongoId, email, mobilePhone } = Check.types
+
 let { error, data } = Check(sample,
    {
       "name": {
@@ -65,23 +66,16 @@ let { error, data } = Check(sample,
          "type": Number,
          "value": 666,
       },
-      "tenderEndTime": {
-         "type": Date,
-         "name": "时间",
-         "allowNull": false,
-      },
-      "ObjectId": {
-         "type": "MongoId",
-      },
+      "ObjectId": mongoId,
       "user": {
-         "username": String,
+         "username": "莉莉",
          "age": Number,
          "address": [
             {
                "city": String,
             },
             {
-               "city": String,
+               "city": "北京",
             }
          ],
       },
@@ -91,31 +85,25 @@ let { error, data } = Check(sample,
             "age": {
                "kk": [{ kkk: Number }]
             },
-         },
-         {
-            "allowNull": false,
          }
       ],
       "money": {
          "type": Number,
-         // "min": 15,
-         // "in": [1, 2],
+         "min": 1,
+         "in": [1, 2],
       },
       "files": [{
          "type": String,
          "allowNull": false,
-      }, false],
+      }],
       "guaranteeFormat": {
          "type": Number,
          "to": Boolean,
       },
       "addressee": String,
-      "search": {
-         "type": String,
-         // "or": ["searchField"],
-      },
+      "search": "深圳",
       "phone": {
-         "type": "MobilePhone"
+         "type": mobilePhone
       },
       "coupon": {
          "type": String,
@@ -134,7 +122,7 @@ let { error, data } = Check(sample,
          }
       },
       "email": {
-         "type": 'Email',
+         "type": email,
          set(value) {
             return [value, , null, , undefined, 666]
          }
@@ -173,8 +161,10 @@ let { error, data } = Check(sample,
    }
 )
 
+// console.log(data)
+
 test(t => {
 
-   t.truthy(error, data);
+   t.truthy(data , error);
 
 });
