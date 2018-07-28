@@ -49,11 +49,13 @@ let { error, data } = Check(sample, {
 
 * 借鉴于mongoosejs数据模型表达式，采用全镜像的数据模型设计，相比其它数据验证器拥有更好的数据结构表现能力和聚合能力。
 
+* 基于js对象的树状结构让代码看起来高度类聚，大大降低了碎片化率。
+
 * 支持对象和数组的无限嵌套，只管按你的数据结构去建模就好了，不必担心数据复杂度、层级深度的问题。
 
 * 可以直接复制你的数据进行快速建模，只需要将值替换为类型后就得到了一个基础的验证模型，甚至有时候连值都不用不替换。
 
-* check-data不仅仅只是数据验证器，同时还拥有很好的数据处理能力，可以在验证前、后灵活的进行数据扩展。另外，基于js对象的树状结构让代码看起来高度类聚，大大降低了碎片化率。
+* check-data不仅仅只是数据验证器，同时还拥有很便捷的数据处理能力，可以在验证前、后灵活的进行数据扩展。
 
 * 拥有足够的容错能力，在验证期间你几乎不需要使用try/catch来捕获异常，返回值中的path错误定位信息可以帮助快速追踪错误来源。
 
@@ -95,7 +97,7 @@ let { error, data } = Check.loose(data, options, extend)
 
 *  `data` * - 待验证数据，允许任意数据类型
 
-*  `options` * - 待验证数据的结构镜像验证表达式，参考[验证表达式](#验证表达式)。
+*  `options` * - 待验证数据的结构镜像验证表达式，参考[验证表达式](#模型验证表达式)。
 
 *  `extend` *Objcte* - 数据扩展选项，根据输入数据生成新的数据结构（可选）
 
@@ -113,7 +115,7 @@ let { error, data } = Check.loose(data, options, extend)
 
 *  `msg` *String* - 验证失败后返回的错误信息，相对于error而言，msg对用户更加友好，可直接在客户端显示
 
-### options验证表达式
+### 模型验证表达式
 
 options数据验证表达式支持无限嵌套，不管你的数据层级有多深。
 
@@ -204,9 +206,7 @@ check-data依赖validator库，你可以使用Check.use()搭配validator来定�
 
 > 当定义的数据类型不存在时则创建，已存在时则合并，新的验证函数会覆盖内置的同名验证函数。
 
-```js
-Check.use(name, options)
-```
+#### Check.use(name, options)
 
 * `name` *Function, Symbol, String* - 类型Key（必填）
 
@@ -242,13 +242,11 @@ schema用于创建可复用的验证器，相比每次都将验证表达式作�
 
 > schema的定义应该在应用启动时被执行，而不是运行时。目的是通过预先缓存一部分静态数据，从而减少运行时的内存和计算开销。
 
-```js
-Check.schema(options, extend)
-```
+#### Check.schema(options, extend)
 
-* `options` * - 验证表达式
+* `options` * - 验证表达式，参考[验证表达式](#模型验证表达式)
 
-* `extend` Object - 数据扩展选项
+* `extend` Object - 数据扩展选项，参考[输入参数](#输入参数)
 
 ```js
 let schema = Check.schema({

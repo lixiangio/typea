@@ -50,7 +50,7 @@ class Parser {
       // 选项值为对象
       if (typeof options === 'object') {
 
-         return this.Object(data, options, key)
+         return this.object(data, options, key)
 
       }
 
@@ -169,7 +169,7 @@ class Parser {
     * @param {*} options 
     * @param {*} key 
     */
-   Object(data, options, key) {
+   object(data, options, key) {
 
       // 选项值为验证表达式
       if (options.type) {
@@ -181,7 +181,7 @@ class Parser {
       // 选项值为数组结构
       else if (Array.isArray(options)) {
 
-         return this.Array(data, options, key)
+         return this.array(data, options, key)
 
       }
 
@@ -235,7 +235,7 @@ class Parser {
     * @param {*} options 
     * @param {*} key 
     */
-   Array(data, options, key) {
+   array(data, options, key) {
 
       if (!Array.isArray(data)) {
          // 宽松模式下，跳过空值
