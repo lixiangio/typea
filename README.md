@@ -1,4 +1,22 @@
-功能强大JS数据模型验证、处理工具
+# check-data
+
+功能强大的JS数据模型验证与处理工具，借鉴于mongoose的数据模型表达式，采用全镜像数据结构设计，相比非镜像的验证器拥有更好的数据结构表现能力。
+
+通常，经过验证后的数据需要经过二次处理后才能被使用，因此我们为模型上的每个节点都提供了数据处理函数，这样可以直接在数据节点上合成新数据，实现关联代码高度聚合。
+
+### 特性
+
+* 不仅仅提供数据验证，同时还拥有很好的数据处理能力，通过分布在节点上的set方法合成新的数据结构。
+
+* 支持对象和数组的无限嵌套，只管按数据结构建模即可，不必担心数据层级深度、复杂度的问题。
+
+* 可以直接复制数据进行快速建模，只需要将值替换为类型后就得到了基础验证模型，有时候甚至连值都不用不替换。
+
+* 基于js对象的树状结构让代码看起来高度类聚，大大降低了碎片化率。
+
+* 拥有足够的容错能力，在验证期间你几乎不需要使用try/catch来捕获异常，返回值中的path错误定位信息可以帮助快速追踪错误来源。
+
+* 当内置数据类型无法满足需求时，可以通过扩展方法定制新的数据类型。
 
 ### Install
 
@@ -9,10 +27,15 @@ npm install check-data
 ### 示例
 
 ```js
+let Check = require('check-data')
+
+let { mongoId, email } = Check.types
+
 let sample = {
    "name": "test",
-   "num": "123456789987",
-   "ObjectId": "59c8aea808deec3fc8da56b6",
+   "num": 12345,
+   "email": "gmail@gmail.com",
+   "id": "59c8aea808deec3fc8da56b6",
    "files": ["abc.js", "null", "edb.js"],
    "user": {
       "username": "莉莉",
@@ -25,13 +48,11 @@ let sample = {
    "money": "2"
 }
 
-let { mongoId, email } = Check.types
-
 let { error, data } = Check(sample, {
-   "ObjectId": mongoId,
    "name": String,
+   "num": Number,
+   "id": mongoId,
    "email": email,
-   "num": String,
    "files": [String],
    "user": {
       "username": "莉莉",
@@ -45,22 +66,6 @@ let { error, data } = Check(sample, {
 })
 ```
 
-### 特性
-
-* 借鉴于mongoosejs数据模型表达式，采用全镜像的数据模型设计，相比其它数据验证器拥有更好的数据结构表现能力和聚合能力。
-
-* 基于js对象的树状结构让代码看起来高度类聚，大大降低了碎片化率。
-
-* 支持对象和数组的无限嵌套，只管按你的数据结构去建模就好了，不必担心数据复杂度、层级深度的问题。
-
-* 可以直接复制你的数据进行快速建模，只需要将值替换为类型后就得到了一个基础的验证模型，甚至有时候连值都不用不替换。
-
-* check-data不仅仅只是数据验证器，同时还拥有很便捷的数据处理能力，可以在验证前、后灵活的进行数据扩展。
-
-* 拥有足够的容错能力，在验证期间你几乎不需要使用try/catch来捕获异常，返回值中的path错误定位信息可以帮助快速追踪错误来源。
-
-* 当内置数据类型无法满足需求时，可以通过check.use()方法扩展自定义的数据类型。
-
 
 ### 验证模式
 
@@ -72,9 +77,21 @@ check-data支持常规、严格、宽松三种验证模式，多数情况下只�
 
 常规模式下默认只对allowNull为false的节点强制执行非空验证，默认对包含子表达式的数组、对象结构体执行强制非空验证。
 
+```js
+let Check = require('check-data')
+
+let { error, data } = Check(data, options, extend)
+```
+
 #### 严格模式
 
 严格模式下默认会为所有节点强制执行非空验证，除非明确声明allowNull为true。
+
+```js
+let Check = require('check-data')
+
+let { error, data } = Check.strict(data, options, extend)
+```
 
 #### 宽松模式
 
@@ -83,13 +100,6 @@ check-data支持常规、严格、宽松三种验证模式，多数情况下只�
 ```js
 let Check = require('check-data')
 
-// 常规模式
-let { error, data } = Check(data, options, extend)
-
-// 严格模式
-let { error, data } = Check.strict(data, options, extend)
-
-// 宽松模式
 let { error, data } = Check.loose(data, options, extend)
 ```
 
@@ -123,7 +133,7 @@ type作为验证表达式的内部保留关键字，应尽量避免在入参中�
 
 整体数据结构与待验证数据结构基本保持一致，除了使用type对象表达式不得不增加额外的数据结构。验证表达式中判断一个对象节点是否为验证选项的唯一依据是检查对象中是否包含type属性，如果没有type则被视为对象结构。
 
-options中支持值表达式，可以对表达式节点直接赋值，实现输入、输出的完全匹配或部分匹配，在用于对象动态断言时很方便。
+options中支持值表达式，可以对表达式节点直接赋值，实现输入、输出的完全匹配或部分匹配，在用于对象模糊断言时非常有用。
 
 当使用数组表达式时，需要区分单数和复数模式，单数时多个同级子节点会共用一个子表达式，通常用于验证具有相似数据结构的子集。复数时为精确匹配模式，可以完整定义每个子集。
 

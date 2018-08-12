@@ -10,7 +10,7 @@ class Parser {
    /**
     * 
     * @param {*} options 验证表达式
-    * @param {*} mode 验证模式
+    * @param {String} mode 验证模式
     */
    constructor(options, mode) {
       this.options = options
