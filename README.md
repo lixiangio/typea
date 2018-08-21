@@ -51,8 +51,8 @@ let sample = {
 let { error, data } = Check(sample, {
    "name": String,
    "num": Number,
-   "id": mongoId,
    "email": email,
+   "id": mongoId,
    "files": [String],
    "user": {
       "username": "莉莉",
@@ -111,9 +111,9 @@ let { error, data } = Check.loose(data, options, extend)
 
 *  `extend` *Objcte* - 数据扩展选项，根据输入数据生成新的数据结构（可选）
 
-*  `extend.$name` *Function* - 数据扩展函数，基于已验证的数据构建新的数据结构，输出结果将以函数名作为key保存到返回值的data中。函数中this和第一个入参指向data（已存在的同名属性值会被函数返回值覆盖）
+   *  `$name` *Function* - 数据扩展函数，基于已验证的数据构建新的数据结构，输出结果将以函数名作为key保存到返回值的data中。函数中this和第一个入参指向data（已存在的同名属性值会被函数返回值覆盖）
 
-*  `extend.$name` * - 除函数外的其它任意数据类型，在已验证的数据结构上添加新的属性或覆盖已存在的同名属性
+   *  `$name` * - 除函数外的其它任意数据类型，在已验证的数据结构上添加新的属性或覆盖已存在的同名属性
 
 ### 返回值
 
@@ -222,9 +222,9 @@ check-data依赖validator库，你可以使用Check.use()搭配validator来定�
 
 * `options` *Object* - 类型选项（必填）
 
-* `options.type` *Function* - 数据类型验证函数（必填）
+   * `type` *Function* - 数据类型验证函数（必填）
 
-* `options.$name` *Function* - 自定义验证函数（可选）
+   * `$name` *Function* - 自定义验证函数（可选）
 
 
 ```js
