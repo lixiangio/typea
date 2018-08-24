@@ -256,7 +256,7 @@ schema用于创建可复用的验证器，相比每次都将验证表达式作�
 
 * `options` * - 验证表达式，参考[验证表达式](#模型验证表达式)
 
-* `extend` Object - 数据扩展选项，参考[输入参数](#输入参数)
+* `extend` *Object* - 数据扩展选项，参考[输入参数](#输入参数)
 
 ```js
 let schema = Check.schema({
