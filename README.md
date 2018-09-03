@@ -16,7 +16,7 @@
 
 * 拥有足够的容错能力，在验证期间你几乎不需要使用try/catch来捕获异常，返回值中的path错误定位信息可以帮助快速追踪错误来源。
 
-* 当内置数据类型无法满足需求时，可以通过扩展方法定制新的数据类型。
+* 当内置数据类型无法满足需求时，可以通过扩展的方式创建新的数据类型。
 
 ### Install
 
@@ -222,21 +222,27 @@ check-data依赖validator库，你可以使用Check.use()搭配validator来定�
 
 * `options` *Object* - 类型选项（必填）
 
-   * `type` *Function* - 数据类型验证函数（必填）
+   * `type(data, options, origin)` *Function* - 数据类型验证函数（必填）
 
-   * `$name` *Function* - 自定义验证函数（可选）
+      * `data` * - 待验证数据
+
+      * `options` * - 验证表达式或数据类型
+
+      * `origin` * - 原始数据
+
+   * `$name(data, options, origin)` *Function* - 自定义验证函数（可选）
 
 
 ```js
 Check.use('int', {
-   type({ data }) {
+   type(data) {
       if (Number.isInteger(data)) {
          return { data }
       } else {
          return { error: '必须为int类型' }
       }
    },
-   max({ data, option: max }) {
+   max(data, max) {
       if (data > max) {
          return { error: `不能大于${max}` }
       } else {
@@ -427,7 +433,7 @@ let { error, data } = Check({
 
 ```js
 Check.use('int', {
-   type({ data }) {
+   type(data) {
       if (Number.isInteger(data)) {
          return { data }
       } else {

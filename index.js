@@ -65,7 +65,7 @@ class Parser {
             return {}
          }
 
-         let { error, data: subData } = Types[options].type({ data })
+         let { error, data: subData } = Types[options].type(data)
 
          if (error) {
             return { error: `值${error}` }
@@ -140,7 +140,7 @@ class Parser {
             let check = checks[name]
             if (check) {
                let option = options[name]
-               let { error, data: subData } = check({ data, option, origin: this.origin })
+               let { error, data: subData } = check(data, option, this.origin)
                if (error) {
                   return {
                      error: `${error}`
@@ -248,8 +248,8 @@ class Parser {
 
       }
 
-      let dataArray = []
       let itemKey = 0
+      let dataArray = []
 
       // options为单数时采用通用匹配
       if (options.length === 1) {
@@ -297,9 +297,7 @@ class Parser {
 
       }
 
-      return {
-         data: dataArray
-      }
+      return { data: dataArray }
 
    }
 

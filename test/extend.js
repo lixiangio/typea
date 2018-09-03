@@ -1,9 +1,9 @@
 "use strict"
 
-import test from 'ava';
-import Check from '..';
+const test = require('jtf')
+const Check = require('..')
 
-test(t => {
+test('extend', t => {
 
    let { mongoId, email, mobilePhone } = Check.types
 

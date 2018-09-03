@@ -40,3 +40,7 @@
 * schema新增严格模式schema.strict()方法
 
 * schema新增宽松模式schema.loose()方法
+
+## 4.2.0
+
+* 取消Check.use(options)的单对象传参方式，改用简化的函数多入口传参，方便使用动态化参数名

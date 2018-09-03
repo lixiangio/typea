@@ -1,10 +1,10 @@
 {
    "name": "check-data",
-   "version": "4.1.1",
+   "version": "4.2.0",
    "description": "JS数据验证、转换递归器",
    "main": "index.js",
    "scripts": {
-      "test": "ava test/ -w"
+      "test": "jtf -w"
    },
    "author": "https://github.com/xiangle/verify.git",
    "license": "ISC",
@@ -13,11 +13,10 @@
       "validator": "^8.0.0"
    },
    "devDependencies": {
-      "ava": "^0.25.0"
+      "jtf": "^1.5.0"
    },
    "keywords": [
       "check",
-      "check data",
       "schema",
       "validator",
       "validation"

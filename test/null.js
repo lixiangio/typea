@@ -1,7 +1,7 @@
 "use strict"
 
-import test from 'ava';
-import Check from '..';
+const test = require('jtf')
+const Check = require('..')
 
 let sample = {
    a: undefined,
@@ -25,7 +25,7 @@ let { error, data } = Check(sample,
 
 // console.log(data);
 
-test(t => {
+test('null', t => {
 
    t.deepEqual({
       a: 'xxx',

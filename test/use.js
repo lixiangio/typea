@@ -1,27 +1,27 @@
 "use strict"
 
-import test from 'ava';
-import Check from '..';
+const test = require('jtf')
+const Check = require('..')
 
 Check.use('int', {
-   type({ data }) {
+   type(data) {
       if (Number.isInteger(data)) {
          return { data }
       } else {
          return { error: '必须为int类型' }
       }
    },
-   max({ data, option: max }) {
+   max(data, max) {
       if (data > max) {
          return { error: `不能大于${max}` }
       } else {
          return { data }
       }
    },
-   in({ data, option: arr }) {
-      let result = arr.indexOf(data)
+   in(data, array) {
+      let result = array.indexOf(data)
       if (result === -1) {
-         return { error: `值必须为${arr}中的一个` }
+         return { error: `值必须为${array}中的一个` }
       } else {
          return { data }
       }
@@ -30,7 +30,7 @@ Check.use('int', {
 
 let { mongoId, email, mobilePhone, int } = Check.types
 
-test(t => {
+test('extend', t => {
 
    let sample = {
       "id": "5687862c08d67e29cd000001",
@@ -45,6 +45,7 @@ test(t => {
          "13055656647",
          "18655655512"
       ],
+      "v": 6
    }
 
    let { error, data } = Check(sample, {
@@ -55,6 +56,7 @@ test(t => {
       "age": {
          "type": int,
          "allowNull": false,
+         "max": 50,
          set(value) {
             return value * 2
          }
@@ -72,13 +74,11 @@ test(t => {
             "allowNull": false
          }
       ],
-      "mobileArr2": [
-         mobilePhone,
-         "18655655512"
-      ]
+      "v": {
+         "type": int,
+         "in": [3, 5, 7, 6]
+      }
    })
-
-   // console.log(data)
 
    t.deepEqual({
       id: '5687862c08d67e29cd000001',
@@ -86,7 +86,7 @@ test(t => {
       email: 'erer@gmail.com',
       mobile: '15855555547',
       mobileArr: ['15855155547', '18955535547'],
-      mobileArr2: ['13055656647', '18655655512']
+      "v": 6 
    }, data, error);
 
 });

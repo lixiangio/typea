@@ -1,7 +1,7 @@
 "use strict"
 
-import test from 'ava';
-import Check from '..';
+const test = require('jtf')
+const Check = require('..')
 
 let sample = {
    "name": "测试",
@@ -108,7 +108,7 @@ test('结构镜像', t => {
 
    // console.log(data)
    
-   t.truthy(data, error);
+   t.ok(data, error);
 
 });
 
@@ -119,6 +119,6 @@ test('结构、值镜像', t => {
 
    // console.log(data)
 
-   t.truthy(data, error);
+   t.ok(data, error);
 
 });

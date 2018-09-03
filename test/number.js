@@ -1,10 +1,9 @@
 "use strict"
 
-import test from 'ava';
-import Check from '..';
+const test = require('jtf')
+const Check = require('..')
 
-
-test(t => {
+test('number', t => {
 
    let { error, data } = Check(1212, Number)
 
