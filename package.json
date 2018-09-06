@@ -1,5 +1,5 @@
 {
-   "name": "check-data",
+   "name": "typea",
    "version": "4.2.0",
    "description": "JS数据验证、转换递归器",
    "main": "index.js",
@@ -13,10 +13,10 @@
       "validator": "^8.0.0"
    },
    "devDependencies": {
-      "jtf": "^1.5.0"
+      "jtf": "^1.5.1"
    },
    "keywords": [
-      "check",
+      "typea",
       "schema",
       "validator",
       "validation"

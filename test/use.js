@@ -1,9 +1,9 @@
 "use strict"
 
 const test = require('jtf')
-const Check = require('..')
+const typea = require('..')
 
-Check.use('int', {
+typea.use('int', {
    type(data) {
       if (Number.isInteger(data)) {
          return { data }
@@ -28,7 +28,7 @@ Check.use('int', {
    }
 })
 
-let { mongoId, email, mobilePhone, int } = Check.types
+let { mongoId, email, mobilePhone, int } = typea.types
 
 test('extend', t => {
 
@@ -48,7 +48,7 @@ test('extend', t => {
       "v": 6
    }
 
-   let { error, data } = Check(sample, {
+   let { error, data } = typea(sample, {
       "id": {
          "type": mongoId,
          "allowNull": false

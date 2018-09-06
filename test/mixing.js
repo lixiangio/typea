@@ -1,7 +1,7 @@
 "use strict"
 
 const test = require('jtf')
-const Check = require('..')
+const typea = require('..')
 
 let sample = {
    "name": "测试",
@@ -52,9 +52,9 @@ let sample = {
    "arr": ['jjsd', 'ddd']
 }
 
-let { mongoId, email, mobilePhone } = Check.types
+let { mongoId, email, mobilePhone } = typea.types
 
-let { error, data } = Check(sample,
+let { error, data } = typea(sample,
    {
       "name": {
          "type": String,

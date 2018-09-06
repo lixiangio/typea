@@ -1,7 +1,7 @@
 "use strict"
 
 const test = require('jtf')
-const Check = require('..')
+const typea = require('..')
 
 test("strict", t => {
 
@@ -14,7 +14,7 @@ test("strict", t => {
       }
    }
 
-   let { error, data } = Check.strict(sample, {
+   let { error, data } = typea.strict(sample, {
       a: {
          type: String,
          allowNull: false,
@@ -46,7 +46,7 @@ test("loose", t => {
       }
    }
 
-   let { error, data } = Check.loose(sample, {
+   let { error, data } = typea.loose(sample, {
       a: {
          type: String,
          allowNull: false,

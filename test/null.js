@@ -1,7 +1,7 @@
 "use strict"
 
 const test = require('jtf')
-const Check = require('..')
+const typea = require('..')
 
 let sample = {
    a: undefined,
@@ -9,7 +9,7 @@ let sample = {
    c: "666"
 }
 
-let { error, data } = Check(sample,
+let { error, data } = typea(sample,
    {
       a: {
          type: String,

@@ -1,7 +1,7 @@
 "use strict"
 
 const test = require('jtf')
-const Check = require('..')
+const typea = require('..')
 
 test('array', t => {
 
@@ -30,7 +30,7 @@ test('array', t => {
       e: [1, 2, 3],
    }
 
-   let { error, data } = Check(sample, {
+   let { error, data } = typea(sample, {
       a: [{ "type": String }],
       b: [{
          "type": Number,

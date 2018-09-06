@@ -1,11 +1,11 @@
 "use strict"
 
 const test = require('jtf')
-const Check = require('..')
+const typea = require('..')
 
 test('boolean', t => {
 
-   let { error, data } = Check(true, Boolean)
+   let { error, data } = typea(true, Boolean)
 
    // console.log(data);
 
@@ -25,7 +25,7 @@ test('inline', t => {
       c: [true, false, true, true]
    }
 
-   let { error, data } = Check(sample, {
+   let { error, data } = typea(sample, {
       a: Boolean,
       b: {
          b1: {

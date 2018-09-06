@@ -1,8 +1,8 @@
-# check-data
+# typea
 
-功能强大的JS数据模型验证与处理工具，借鉴于mongoose的数据模型表达式，采用全镜像数据结构设计，相比非镜像的验证器拥有更好的数据结构表现能力。
+功能强大的JS数据模型验证与处理工具，借鉴于mongoose的数据模型表达式，采用全镜像数据结构设计，相比非镜像的验证器拥有更好的数据结构表现力。
 
-通常，经过验证后的数据需要经过二次处理后才能被使用，因此我们为模型上的每个节点都提供了数据处理函数，这样可以直接在数据节点上合成新数据，实现关联代码高度聚合。
+通常经过验证后的数据还需要经过二次处理后才能被正式使用，因此我们为模型上的每个节点都提供了数据处理函数，这样可以直接在数据节点上合成新数据，实现关联代码高度聚合。
 
 ### 特性
 
@@ -21,15 +21,15 @@
 ### Install
 
 ```
-npm install check-data
+npm install typea
 ```
 
 ### 示例
 
 ```js
-let Check = require('check-data')
+let typea = require('typea')
 
-let { mongoId, email } = Check.types
+let { mongoId, email } = typea.types
 
 let sample = {
    "name": "test",
@@ -48,7 +48,7 @@ let sample = {
    "money": "2"
 }
 
-let { error, data } = Check(sample, {
+let { error, data } = typea(sample, {
    "name": String,
    "num": Number,
    "email": email,
@@ -69,7 +69,7 @@ let { error, data } = Check(sample, {
 
 ### 验证模式
 
-check-data支持常规、严格、宽松三种验证模式，多数情况下只需要使用常规模式即可。
+typea支持常规、严格、宽松三种验证模式，多数情况下只需要使用常规模式即可。
 
 > 引入严格模式和宽松模式的主要原因是为了弥补js对象结构对自身的表达分歧，在数组、对象结构中包含子表达式时没有额外的结构来定义空值。
 
@@ -78,9 +78,9 @@ check-data支持常规、严格、宽松三种验证模式，多数情况下只�
 常规模式下默认只对allowNull为false的节点强制执行非空验证，默认对包含子表达式的数组、对象结构体执行强制非空验证。
 
 ```js
-let Check = require('check-data')
+let typea = require('typea')
 
-let { error, data } = Check(data, options, extend)
+let { error, data } = typea(data, options, extend)
 ```
 
 #### 严格模式
@@ -88,9 +88,9 @@ let { error, data } = Check(data, options, extend)
 严格模式下默认会为所有节点强制执行非空验证，除非明确声明allowNull为true。
 
 ```js
-let Check = require('check-data')
+let typea = require('typea')
 
-let { error, data } = Check.strict(data, options, extend)
+let { error, data } = typea.strict(data, options, extend)
 ```
 
 #### 宽松模式
@@ -98,9 +98,9 @@ let { error, data } = Check.strict(data, options, extend)
 宽松模式下不会对包含子表达式的数组、对象结构体进行强制非空验证。
 
 ```js
-let Check = require('check-data')
+let typea = require('typea')
 
-let { error, data } = Check.loose(data, options, extend)
+let { error, data } = typea.loose(data, options, extend)
 ```
 
 ### 输入参数
@@ -161,11 +161,11 @@ options中支持值表达式，可以对表达式节点直接赋值，实现输�
 
 ##### String
 
-* `minLength` *Number* - 限制字符串最小长度
+* `min` *Number* - 限制字符串最小长度
 
-* `maxLength` *Number* - 限制字符串最大长度
+* `max` *Number* - 限制字符串最大长度
 
-* `reg` *RegExp* - 正则表达式验证
+* `reg` *RegExp* - 正则表达式
 
 * `in` *Array* - 匹配多个可选值中的一个
 
@@ -181,9 +181,9 @@ options中支持值表达式，可以对表达式节点直接赋值，实现输�
 
 ##### Array
 
-* `minLength` *Number* - 限制数组最小长度
+* `min` *Number* - 限制数组最小长度
 
-* `maxLength` *Number* - 限制数组最大长度
+* `max` *Number* - 限制数组最大长度
 
 ##### Object、Date、Boolean、Function
 
@@ -192,7 +192,7 @@ options中支持值表达式，可以对表达式节点直接赋值，实现输�
 
 #### 其它数据类型
 
-其它类型通过Check.types获取，types中内置了以下常见类型
+其它类型通过typea.types获取，types中内置了以下常见类型
 
 ##### email
 
@@ -209,14 +209,14 @@ options中支持值表达式，可以对表达式节点直接赋值，实现输�
 
 ### 扩展自定义数据类型
 
-验证器中仅内置了一部分常用的数据类型，如果不能满足你的需求，可以通过Check.use()自行扩展。
+验证器中仅内置了一部分常用的数据类型，如果不能满足你的需求，可以通过typea.use()自行扩展。
 
-check-data依赖validator库，你可以使用Check.use()搭配validator来定制自己的数据类型。
+typea依赖validator库，你可以使用typea.use()搭配validator来定制自己的数据类型。
 
 
 > 当定义的数据类型不存在时则创建，已存在时则合并，新的验证函数会覆盖内置的同名验证函数。
 
-#### Check.use(name, options)
+#### typea.use(name, options)
 
 * `name` *Function, Symbol, String* - 类型Key（必填）
 
@@ -234,7 +234,7 @@ check-data依赖validator库，你可以使用Check.use()搭配validator来定�
 
 
 ```js
-Check.use('int', {
+typea.use('int', {
    type(data) {
       if (Number.isInteger(data)) {
          return { data }
@@ -258,14 +258,14 @@ schema用于创建可复用的验证器，相比每次都将验证表达式作�
 
 > schema的定义应该在应用启动时被执行，而不是运行时。目的是通过预先缓存一部分静态数据，从而减少运行时的内存和计算开销。
 
-#### Check.schema(options, extend)
+#### typea.schema(options, extend)
 
 * `options` * - 验证表达式，参考[验证表达式](#模型验证表达式)
 
 * `extend` *Object* - 数据扩展选项，参考[输入参数](#输入参数)
 
 ```js
-let schema = Check.schema({
+let schema = typea.schema({
    a: {
       a1: String,
       a2: String
@@ -316,7 +316,7 @@ let sample = {
    e: [1, 2, 3],
 }
 
-let { error, data } = Check(sample, {
+let { error, data } = typea(sample, {
    a: [String],
    b: [{
       "type": Number,
@@ -358,7 +358,7 @@ let sample = {
    },
 }
 
-let { error, data } = Check(sample,
+let { error, data } = typea(sample,
    {
       a: {
          a1: {
@@ -381,7 +381,7 @@ let { error, data } = Check(sample,
 #### and依赖验证
 
 ```js
-let { error, data } = Check({
+let { error, data } = typea({
    "username": "莉莉",
    "addressee": "嘟嘟",
 }, {
@@ -410,7 +410,7 @@ let { error, data } = Check({
 #### or依赖验证
 
 ```js
-let { error, data } = Check({
+let { error, data } = typea({
    "username": "莉莉",
    "addressee": "嘟嘟",
 }, {
@@ -432,7 +432,7 @@ let { error, data } = Check({
 #### 扩展类型验证
 
 ```js
-Check.use('int', {
+typea.use('int', {
    type(data) {
       if (Number.isInteger(data)) {
          return { data }
@@ -442,9 +442,9 @@ Check.use('int', {
    },
 })
 
-let { mongoId, email, mobilePhone, int } = Check.types
+let { mongoId, email, mobilePhone, int } = typea.types
 
-let { error, data } = Check(
+let { error, data } = typea(
    {
       "id": "5968d3b4956fe04299ea5c18",
       "mobilePhone": "18555555555",
@@ -510,9 +510,9 @@ let sample = {
    "arr": ['jjsd', 'ddd']
 }
 
-let { mongoId, email, mobilePhone } = Check.types
+let { mongoId, email, mobilePhone } = typea.types
 
-let { error, data } = Check(sample,
+let { error, data } = typea(sample,
    {
       "name": {
          "type": String,

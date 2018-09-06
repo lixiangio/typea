@@ -1,13 +1,12 @@
 "use strict"
 
 const test = require('jtf')
-const Check = require('..')
-
+const typea = require('..')
 
 
 test('常规', t => {
 
-   let schema = Check.schema({
+   let schema = typea.schema({
       a: {
          a1: {
             type: Number,
@@ -40,7 +39,7 @@ test('常规', t => {
 
 test('strict', t => {
 
-   let schema = Check.schema({
+   let schema = typea.schema({
       a: {
          a1: {
             type: Number
@@ -72,7 +71,7 @@ test('strict', t => {
 
 test('loose', t => {
 
-   let schema = Check.schema({
+   let schema = typea.schema({
       a: {
          a1: {
             type: Number,

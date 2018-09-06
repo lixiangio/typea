@@ -1,11 +1,11 @@
 "use strict"
 
 const test = require('jtf')
-const Check = require('..')
+const typea = require('..')
 
 test('extend', t => {
 
-   let { mongoId, email, mobilePhone } = Check.types
+   let { mongoId, email, mobilePhone } = typea.types
 
    let sample = {
       "id": "5687862c08d67e29cd000001",
@@ -13,7 +13,7 @@ test('extend', t => {
       "mobile": "15855555547",
    }
 
-   let { error, data } = Check(sample,
+   let { error, data } = typea(sample,
       {
          "id": {
             "type": mongoId,

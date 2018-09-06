@@ -1,7 +1,7 @@
 "use strict"
 
 const test = require('jtf')
-const Check = require('..')
+const typea = require('..')
 
 test('common', t => {
 
@@ -16,9 +16,9 @@ test('common', t => {
       "email": "xxx@xx.xx",
    }
 
-   let { email } = Check.types
+   let { email } = typea.types
 
-   let { error, data } = Check(sample,
+   let { error, data } = typea(sample,
       {
          "name": {
             "type": String,

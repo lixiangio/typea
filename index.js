@@ -131,16 +131,16 @@ class Parser {
 
       }
 
-      let checks = Types[options.type]
+      let typeas = Types[options.type]
 
       // type为内置数据类型
-      if (checks) {
+      if (typeas) {
 
          for (let name in options) {
-            let check = checks[name]
-            if (check) {
+            let typea = typeas[name]
+            if (typea) {
                let option = options[name]
-               let { error, data: subData } = check(data, option, this.origin)
+               let { error, data: subData } = typea(data, option, this.origin)
                if (error) {
                   return {
                      error: `${error}`
@@ -200,25 +200,23 @@ class Parser {
 
          let dataObj = {}
 
-         for (let subKey in options) {
+         for (const sKey in options) {
 
-            let itemData = data[subKey]
-            let itemOptions = options[subKey]
-            let { error, data: subData } = this.recursion(itemData, itemOptions, subKey)
+            let { error, data: subData } = this.recursion(data[sKey], options[sKey], sKey)
 
             if (error) {
                // 非根节点
                if (key) {
                   return {
-                     error: `.${subKey}${error}`
+                     error: `.${sKey}${error}`
                   }
                } else {
                   return {
-                     error: `${subKey}${error}`
+                     error: `${sKey}${error}`
                   }
                }
             } else {
-               dataObj[subKey] = subData
+               dataObj[sKey] = subData
             }
 
          }
@@ -310,7 +308,7 @@ class Parser {
  * @param {Object} extend 导出数据扩展函数集合
  * @param {String} mode 验证模式（仅供内部使用）
  */
-function Check(data, options, extend = {}, mode) {
+function typea(data, options, extend = {}, mode) {
 
    let parser = new Parser(options, mode)
 
@@ -337,16 +335,16 @@ function Check(data, options, extend = {}, mode) {
 }
 
 // 严格模式
-Check.strict = function (data, options, extend = {}) {
-   return Check(data, options, extend, 'strict')
+typea.strict = function (data, options, extend = {}) {
+   return typea(data, options, extend, 'strict')
 }
 
 // 宽松模式
-Check.loose = function (data, options, extend = {}) {
-   return Check(data, options, extend, 'loose')
+typea.loose = function (data, options, extend = {}) {
+   return typea(data, options, extend, 'loose')
 }
 
-Check.types = symbols
+typea.types = symbols
 
 
 /**
@@ -355,7 +353,7 @@ Check.types = symbols
  * @param {Object} options 扩展选项
  * @param {Object.Function} options 扩展方法
  */
-Check.use = function (type, options = {}) {
+typea.use = function (type, options = {}) {
 
    if (!type) return
 
@@ -394,10 +392,10 @@ Check.use = function (type, options = {}) {
  * @param {*} options 验证表达式
  * @param {Object} extend 数据扩展选项
  */
-Check.schema = function (options, extend) {
+typea.schema = function (options, extend) {
 
    let schema = function (data) {
-      return Check(data, options, extend)
+      return typea(data, options, extend)
    }
 
    /**
@@ -405,7 +403,7 @@ Check.schema = function (options, extend) {
     * 禁止所有空值，有值验证，无值报错
     */
    schema.strict = function (data) {
-      return Check(data, options, extend, 'strict')
+      return typea(data, options, extend, 'strict')
    }
 
    /**
@@ -413,11 +411,11 @@ Check.schema = function (options, extend) {
     * 忽略所有空值，有值验证，无值跳过，即使allowNull值为true
     */
    schema.loose = function (data) {
-      return Check(data, options, extend, 'loose')
+      return typea(data, options, extend, 'loose')
    }
 
    return schema
 
 }
 
-module.exports = Check
+module.exports = typea

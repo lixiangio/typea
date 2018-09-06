@@ -1,13 +1,13 @@
 "use strict"
 
 const test = require('jtf')
-const Check = require('..')
+const typea = require('..')
 
 test('function', t => {
 
    function func() { }
 
-   let { error, data } = Check(func, Function)
+   let { error, data } = typea(func, Function)
 
    // console.log(data);
 
@@ -27,7 +27,7 @@ test('inline', t => {
       },
    }
 
-   let { error, data } = Check(sample,
+   let { error, data } = typea(sample,
       {
          a: Function,
          b: {

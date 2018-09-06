@@ -1,11 +1,11 @@
 "use strict"
 
 const test = require('jtf')
-const Check = require('..')
+const typea = require('..')
 
 test('number', t => {
 
-   let { error, data } = Check(1212, Number)
+   let { error, data } = typea(1212, Number)
 
    // console.log(data);
 
