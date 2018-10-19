@@ -68,7 +68,7 @@ test('common', t => {
       num: 666,
       coupon: { '$gt': 'uuuu' },
       integral: { kaka: 6 },
-      email: ['xxx@xx.xx', null, 666]
+      email: ['xxx@xx.xx', , null, , undefined, 666]
    }, data, error)
 
 });

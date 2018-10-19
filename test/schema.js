@@ -64,7 +64,7 @@ test('strict', t => {
 
    // console.log(data)
 
-   t.deepEqual(sample, data, error);
+   t.deepEqual(sample, data, error)
 
 });
 

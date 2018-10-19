@@ -1,8 +1,9 @@
 "use strict"
 
-let Types = require('./lib/type')
-let symbols = require('./lib/symbol')
-let common = require('./lib/common')
+const Types = require('./lib/type')
+const symbols = require('./lib/symbol')
+const common = require('./lib/common')
+const ignore = [undefined, null, '']
 
 class Parser {
 
@@ -30,7 +31,7 @@ class Parser {
     * 默认值在大多数场景下适用，在出现例外时，可以在指定字段上使用ignore属性，重置对默认空值的定义
     * @param {*} data 需要校验空值的数据
     */
-   isNull(data, ignore = [undefined, null, '']) {
+   isNull(data, ignore) {
 
       if (ignore.indexOf(data) > -1) {
          return true
@@ -56,7 +57,7 @@ class Parser {
       // 选项值为数据类型（值为构造函数或字符串，字符串表示自定义类型）
       else if (Types[options]) {
 
-         if (this.isNull(data)) {
+         if (this.isNull(data, ignore)) {
             // 严格模式下，禁止空值
             if (this.mode === 'strict') {
                return { error: "值不允许为空" }
@@ -99,10 +100,10 @@ class Parser {
    expression(data, options, key) {
 
       // 优先使用别名
-      let field = options.name || key
+      const field = options.name || key
 
       // 空值处理
-      if (this.isNull(data, options.ignore)) {
+      if (this.isNull(data, options.ignore || ignore)) {
 
          // 默认值
          if (options.default) {
@@ -130,16 +131,16 @@ class Parser {
 
       }
 
-      let typeas = Types[options.type]
+      const type = Types[options.type]
 
       // type为内置数据类型
-      if (typeas) {
+      if (type) {
 
          for (let name in options) {
-            let typea = typeas[name]
-            if (typea) {
+            let method = type[name]
+            if (method) {
                let option = options[name]
-               let { error, data: subData } = typea(data, option, this.origin)
+               let { error, data: subData } = method(data, option, this.origin)
                if (error) {
                   return {
                      error: `${error}`
@@ -170,27 +171,27 @@ class Parser {
     */
    object(data, options, key) {
 
-      // 选项值为验证表达式
+      // options为验证表达式
       if (options.type) {
 
          return this.expression(data, options, key)
 
       }
 
-      // 选项值为数组结构
+      // options为数组结构
       else if (Array.isArray(options)) {
 
          return this.array(data, options, key)
 
       }
 
-      // 选项值为对象结构
+      // options为对象结构
       else {
 
          if (typeof data !== 'object') {
             // 宽松模式下，跳过空值
             if (this.mode === 'loose') {
-               if (this.isNull(data)) return {}
+               if (this.isNull(data, ignore)) return {}
             }
             return {
                error: `值必须为Object类型`
@@ -214,7 +215,7 @@ class Parser {
                      error: `${sKey}${error}`
                   }
                }
-            } else {
+            } else if (subData !== undefined) {
                dataObj[sKey] = subData
             }
 
@@ -237,12 +238,11 @@ class Parser {
       if (!Array.isArray(data)) {
          // 宽松模式下，跳过空值
          if (this.mode === 'loose') {
-            if (this.isNull(data)) return {}
+            if (this.isNull(data, ignore)) return {}
          }
          return {
             error: `${key}必须为数组类型`
          }
-
       }
 
       let itemKey = 0
@@ -262,12 +262,14 @@ class Parser {
                return {
                   error: `[${itemKey}]${error}`
                }
-            } else {
+            } else if (subData !== undefined) {
                dataArray.push(subData)
             }
 
             itemKey++
+
          }
+
       }
 
       // options为复数时采用精确匹配
@@ -284,7 +286,7 @@ class Parser {
                return {
                   error: `[${itemKey}]${error}`
                }
-            } else {
+            } else if (subData !== undefined) {
                dataArray.push(subData)
             }
 
@@ -341,7 +343,7 @@ typea.strict = function (data, options, extend = {}) {
 typea.loose = function (data, options, extend = {}) {
 
    return typea(data, options, extend, 'loose')
-   
+
 }
 
 typea.types = symbols
