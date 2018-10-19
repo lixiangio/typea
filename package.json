@@ -1,6 +1,6 @@
 {
    "name": "typea",
-   "version": "4.2.0",
+   "version": "4.3.0",
    "description": "JS数据验证、转换递归器",
    "main": "index.js",
    "scripts": {
@@ -9,7 +9,6 @@
    "author": "https://github.com/xiangle/verify.git",
    "license": "ISC",
    "dependencies": {
-      "filter-null": "^2.0.0",
       "validator": "^8.0.0"
    },
    "devDependencies": {

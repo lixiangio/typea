@@ -1,6 +1,5 @@
 "use strict"
 
-let filterNull = require('filter-null')
 let Types = require('./lib/type')
 let symbols = require('./lib/symbol')
 let common = require('./lib/common')
@@ -327,21 +326,22 @@ function typea(data, options, extend = {}, mode) {
       result.data[name] = item
    }
 
-   // 对象空值过滤
-   filterNull(result.data)
-
    return result
 
 }
 
 // 严格模式
 typea.strict = function (data, options, extend = {}) {
+
    return typea(data, options, extend, 'strict')
+
 }
 
 // 宽松模式
 typea.loose = function (data, options, extend = {}) {
+
    return typea(data, options, extend, 'loose')
+   
 }
 
 typea.types = symbols
