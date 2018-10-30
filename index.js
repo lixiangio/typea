@@ -99,9 +99,6 @@ class Parser {
     */
    expression(data, options, key) {
 
-      // 优先使用别名
-      const field = options.name || key
-
       // 空值处理
       if (this.isNull(data, options.ignore || ignore)) {
 
@@ -142,9 +139,7 @@ class Parser {
                let option = options[name]
                let { error, data: subData } = method(data, option, this.origin)
                if (error) {
-                  return {
-                     error: `${error}`
-                  }
+                  return { error: `${error}` }
                }
                data = subData
             }
@@ -157,7 +152,7 @@ class Parser {
       // 不支持的数据类型
       else {
          return {
-            error: `${field}参数配置错误，不支持${options.type}类型`
+            error: `${key}参数配置错误，不支持${options.type}类型`
          }
       }
 
