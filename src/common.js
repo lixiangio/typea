@@ -1,8 +1,10 @@
+"use strict"
+
 /**
  * 通用验证方法
  */
 
-module.exports = {
+export default {
    // 参数自定义转换方法
    set(data, func, origin) {
       return { data: func.call(origin, data) }

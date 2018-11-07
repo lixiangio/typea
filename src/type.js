@@ -1,16 +1,16 @@
 "use strict"
 
-const symbols = require('./symbol')
-const common = require('./common')
+import symbols from './symbol'
+import common from './common'
 
-const toDate = require('validator/lib/toDate')
-const isMongoId = require('validator/lib/isMongoId')
-const isMobilePhone = require('validator/lib/isMobilePhone')
-const isEmail = require('validator/lib/isEmail')
+import toDate from 'validator/lib/toDate'
+import isMongoId from 'validator/lib/isMongoId'
+import isMobilePhone from 'validator/lib/isMobilePhone'
+import isEmail from 'validator/lib/isEmail'
 
 
 // 数据类型验证方法
-module.exports = {
+export default {
    [String]: {
       ...common,
       // 数据类型验证

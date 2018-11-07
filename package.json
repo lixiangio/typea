@@ -1,10 +1,10 @@
 {
    "name": "typea",
-   "version": "4.4.2",
+   "version": "4.4.3",
    "description": "JS数据验证、转换递归器",
-   "main": "index.js",
+   "main": "bundle.js",
    "scripts": {
-      "build": "rollup index.js --file bundle.js --format iife",
+      "build": "rollup -c --watch",
       "test": "jtf -w"
    },
    "author": "https://github.com/xiangle/verify.git",
