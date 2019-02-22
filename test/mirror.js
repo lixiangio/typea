@@ -117,7 +117,7 @@ test('结构、值镜像', t => {
 
    let { error, data } = typea(sample, sample)
 
-   // console.log(data)
+   // console.log(data);
 
    t.ok(data, error);
 

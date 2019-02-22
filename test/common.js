@@ -43,32 +43,23 @@ test('common', t => {
          },
          "integral": {
             "kaka": {
-               "type": Number,
-               and() {
-                  return ["coupon", "email"]
-               }
+               "type": Number
             }
          },
          "email": {
-            "type": email,
-            set(value) {
-               return [value, , null, , undefined, 666]
-            },
-            and() {
-               return ["coupon", "email"]
-            }
+            "type": email
          }
       }
    )
 
    // console.log(data)
 
-   t.deepEqual({
+   t.deepEqual(data, {
       name: '测试',
       num: 666,
       coupon: { '$gt': 'uuuu' },
       integral: { kaka: 6 },
-      email: ['xxx@xx.xx', , null, , undefined, 666]
-   }, data, error)
+      email: 'xxx@xx.xx'
+   }, error)
 
 });

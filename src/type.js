@@ -8,7 +8,6 @@ import isMongoId from 'validator/lib/isMongoId'
 import isMobilePhone from 'validator/lib/isMobilePhone'
 import isEmail from 'validator/lib/isEmail'
 
-
 // 数据类型验证方法
 export default {
    [String]: {

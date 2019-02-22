@@ -23,7 +23,7 @@ var common = {
       return { data: func.call(origin, data) }
    },
    // 直接赋值（覆盖原来的值）
-   value(undefined, data) {
+   value(undefined$1, data) {
       return { data }
    },
    // 与
@@ -241,7 +241,6 @@ var Types = {
 const ignore = [undefined, null, ''];
 
 class Parser {
-
    /**
     * 
     * @param {*} options 验证表达式
@@ -268,7 +267,7 @@ class Parser {
     */
    isNull(data, ignore) {
 
-      if (ignore.indexOf(data) > -1) {
+      if (ignore.includes(data)) {
          return true
       }
 
@@ -289,7 +288,7 @@ class Parser {
 
       }
 
-      // 选项值为数据类型（值为构造函数或字符串，字符串表示自定义类型）
+      // 选项值为数据类型（值为构造函数或Symbol，Symbol表示自定义类型）
       else if (Types[options]) {
 
          if (this.isNull(data, ignore)) {
@@ -322,73 +321,6 @@ class Parser {
 
          return { error: `值必须为${options}` }
 
-      }
-
-   }
-
-   /**
-    * 验证表达式
-    * @param {*} data 
-    * @param {*} options 
-    * @param {*} key 
-    */
-   expression(data, options, key) {
-
-      // 空值处理
-      if (this.isNull(data, options.ignore || ignore)) {
-
-         // 默认值
-         if (options.default) {
-            data = options.default;
-         }
-
-         // 禁止空值
-         else if (options.allowNull === false) {
-            return { error: `值不允许为空` }
-         }
-
-         // 允许空值
-         else if (options.allowNull === true) {
-            return {}
-         }
-
-         // 严格模式下，禁止空值
-         else if (this.mode === 'strict') {
-            return { error: `值不允许为空` }
-         }
-
-         else {
-            return {}
-         }
-
-      }
-
-      const type = Types[options.type];
-
-      // type为内置数据类型
-      if (type) {
-
-         for (let name in options) {
-            let method = type[name];
-            if (method) {
-               let option = options[name];
-               let { error, data: subData } = method(data, option, this.origin);
-               if (error) {
-                  return { error: `${error}` }
-               }
-               data = subData;
-            }
-         }
-
-         return { data }
-
-      }
-
-      // 不支持的数据类型
-      else {
-         return {
-            error: `${key}参数配置错误，不支持${options.type}类型`
-         }
       }
 
    }
@@ -453,6 +385,73 @@ class Parser {
 
          return { data: dataObj }
 
+      }
+
+   }
+
+   /**
+    * 验证表达式
+    * @param {*} data 
+    * @param {*} options 
+    * @param {*} key 
+    */
+   expression(data, options, key) {
+
+      // 空值处理
+      if (this.isNull(data, options.ignore || ignore)) {
+
+         // 默认值
+         if (options.default) {
+            data = options.default;
+         }
+
+         // 禁止空值
+         else if (options.allowNull === false) {
+            return { error: `值不允许为空` }
+         }
+
+         // 允许空值
+         else if (options.allowNull === true) {
+            return { data }
+         }
+
+         // 严格模式下，禁止空值
+         else if (this.mode === 'strict') {
+            return { error: `值不允许为空` }
+         }
+
+         else {
+            return { data }
+         }
+
+      }
+
+      const type = Types[options.type];
+
+      // type为内置数据类型
+      if (type) {
+
+         for (let name in options) {
+            let method = type[name];
+            if (method) {
+               let option = options[name];
+               let { error, data: subData } = method(data, option, this.origin);
+               if (error) {
+                  return { error: `${error}` }
+               }
+               data = subData;
+            }
+         }
+
+         return { data }
+
+      }
+
+      // 不支持的数据类型
+      else {
+         return {
+            error: `${key}参数配置错误，不支持${options.type}类型`
+         }
       }
 
    }
@@ -589,7 +588,7 @@ typea.use = function (type, options = {}) {
 
    if (!type) return
 
-   // 通过Function、Symbol定位，扩展已有数据类型
+   // 通过Symbol定位，扩展已有数据类型
    if (Types[type]) {
 
       Object.assign(Types[type], options);
@@ -607,7 +606,7 @@ typea.use = function (type, options = {}) {
 
       // 创建新类型
       else {
-         let symbol = Symbol(type);
+         const symbol = Symbol(type);
          symbols[type] = symbol;
          Types[symbol] = options;
          Object.assign(Types[symbol], common);
@@ -626,8 +625,8 @@ typea.use = function (type, options = {}) {
  */
 typea.schema = function (options, extend) {
 
-   let schema = function (data) {
-      return typea(data, options, extend)
+   const schema = function (data) {
+      return typea(data, options, extend, undefined);
    };
 
    /**

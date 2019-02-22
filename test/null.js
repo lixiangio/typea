@@ -6,7 +6,8 @@ const typea = require('..')
 let sample = {
    a: undefined,
    b: ["kkk", "xxx"],
-   c: "666"
+   c: '',
+   d: null,
 }
 
 let { error, data } = typea(sample,
@@ -18,19 +19,25 @@ let { error, data } = typea(sample,
       },
       b: [String],
       c: {
-         type: String
+         type: String,
+         allowNull: true,
+      },
+      d: {
+         type: Number,
+         allowNull: true,
       }
    }
 )
 
-// console.log(data);
+console.log(data);
 
 test('null', t => {
 
-   t.deepEqual({
+   t.deepEqual(data, {
       a: 'xxx',
       b: ["kkk", "xxx"],
-      c: "666"
-   }, data, error);
+      c: '',
+      d: null
+   }, error);
 
 });

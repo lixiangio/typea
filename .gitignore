@@ -1,2 +1,5 @@
 npm-debug.log
+rollup.config.js
 node_modules/
+src/
+test/
