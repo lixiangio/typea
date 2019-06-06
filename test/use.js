@@ -1,7 +1,7 @@
-"use strict"
+"use strict";
 
-const test = require('jtf')
-const typea = require('..')
+const test = require('jtf');
+const typea = require('..');
 
 typea.use('int', {
    type(data) {

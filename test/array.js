@@ -5,6 +5,25 @@ const typea = require('..')
 
 test('array', t => {
 
+   let schema = typea.schema([
+      {
+         'state': {
+            type: Boolean,
+            defaultValue: false,
+         }
+      }
+   ])
+
+   let sample = [{ state: true }]
+
+   let { error, data } = schema(sample)
+
+   t.deepEqual(sample, data, error);
+
+});
+
+test('array', t => {
+
    let sample = {
       a: ['xx', 'kk'],
       b: [666, 999, 88,],

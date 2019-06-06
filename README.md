@@ -27,11 +27,11 @@ npm install typea
 ### 使用示例
 
 ```js
-let typea = require('typea')
+const typea = require('typea')
 
-let { mongoId, email } = typea.types
+const { mongoId, email } = typea.types
 
-let sample = {
+const sample = {
    "name": "test",
    "num": 12345,
    "email": "gmail@gmail.com",
@@ -48,7 +48,7 @@ let sample = {
    "money": "2"
 }
 
-let { error, data } = typea(sample, {
+const { error, data } = typea(sample, {
    "name": String,
    "num": Number,
    "email": email,
@@ -78,9 +78,9 @@ typea支持常规、严格、宽松三种验证模式，多数情况下只需要
 常规模式下默认只对allowNull为false的节点强制执行非空验证，默认对包含子表达式的数组、对象结构体执行强制非空验证。
 
 ```js
-let typea = require('typea')
+const typea = require('typea')
 
-let { error, data } = typea(data, options, extend)
+const { error, data } = typea(data, options, extend)
 ```
 
 #### 严格模式
@@ -88,9 +88,9 @@ let { error, data } = typea(data, options, extend)
 严格模式下默认会为所有节点强制执行非空验证，除非明确声明allowNull为true。
 
 ```js
-let typea = require('typea')
+const typea = require('typea')
 
-let { error, data } = typea.strict(data, options, extend)
+const { error, data } = typea.strict(data, options, extend)
 ```
 
 #### 宽松模式
@@ -98,9 +98,9 @@ let { error, data } = typea.strict(data, options, extend)
 宽松模式下不会对包含子表达式的数组、对象结构体进行强制非空验证。
 
 ```js
-let typea = require('typea')
+const typea = require('typea')
 
-let { error, data } = typea.loose(data, options, extend)
+const { error, data } = typea.loose(data, options, extend)
 ```
 
 ### 输入参数
@@ -265,7 +265,7 @@ schema用于创建可复用的验证器，相比每次都将验证表达式作�
 * `extend` *Object* - 数据扩展选项，参考[输入参数](#输入参数)
 
 ```js
-let schema = typea.schema({
+const schema = typea.schema({
    a: {
       a1: String,
       a2: String
@@ -274,7 +274,7 @@ let schema = typea.schema({
    c: Number,
 })
 
-let sample = {
+const sample = {
    a: {
       a1: "jj",
       a2: "12",
@@ -283,7 +283,7 @@ let sample = {
    c: 888,
 }
 
-let { error, data } = schema(sample)
+const { error, data } = schema(sample)
 ```
 
 ### 参考示例
@@ -291,7 +291,7 @@ let { error, data } = schema(sample)
 #### 数组验证
 
 ```js
-let sample = {
+const sample = {
    a: ['xx', 'kk'],
    b: [666, 999, 88,],
    c: [{ a: 1 }, { a: 2 }, { b: '3' }],
@@ -316,7 +316,7 @@ let sample = {
    e: [1, 2, 3],
 }
 
-let { error, data } = typea(sample, {
+const { error, data } = typea(sample, {
    a: [String],
    b: [{
       "type": Number,
@@ -347,7 +347,7 @@ let { error, data } = typea(sample, {
 #### 对象验证
 
 ```js
-let sample = {
+const sample = {
    a: {
       a1: 1,
       a2: 12,
@@ -358,7 +358,7 @@ let sample = {
    },
 }
 
-let { error, data } = typea(sample,
+const { error, data } = typea(sample,
    {
       a: {
          a1: {
@@ -381,7 +381,7 @@ let { error, data } = typea(sample,
 #### and依赖验证
 
 ```js
-let { error, data } = typea({
+const { error, data } = typea({
    "username": "莉莉",
    "addressee": "嘟嘟",
 }, {
@@ -410,7 +410,7 @@ let { error, data } = typea({
 #### or依赖验证
 
 ```js
-let { error, data } = typea({
+const { error, data } = typea({
    "username": "莉莉",
    "addressee": "嘟嘟",
 }, {
@@ -442,9 +442,9 @@ typea.use('int', {
    },
 })
 
-let { mongoId, email, mobilePhone, int } = typea.types
+const { mongoId, email, mobilePhone, int } = typea.types
 
-let { error, data } = typea(
+const { error, data } = typea(
    {
       "id": "5968d3b4956fe04299ea5c18",
       "mobilePhone": "18555555555",
@@ -461,7 +461,7 @@ let { error, data } = typea(
 #### 综合示例
 
 ```js
-let sample = {
+const sample = {
    "name": "测试",
    "num": "123456789987",
    "ObjectId": "59c8aea808deec3fc8da56b6",
@@ -510,9 +510,9 @@ let sample = {
    "arr": ['jjsd', 'ddd']
 }
 
-let { mongoId, email, mobilePhone } = typea.types
+const { mongoId, email, mobilePhone } = typea.types
 
-let { error, data } = typea(sample,
+const { error, data } = typea(sample,
    {
       "name": {
          "type": String,

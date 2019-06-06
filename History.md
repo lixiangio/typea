@@ -60,3 +60,7 @@
 ### 4.4.3
 
 * 将代码从CommonJS切换到ES6模块，通过rollup转码
+
+### 4.4.5
+
+* 将types由Object替换为Map类型

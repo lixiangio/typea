@@ -20,11 +20,11 @@ var symbols = {
 var common = {
    // 参数自定义转换方法
    set(data, func, origin) {
-      return { data: func.call(origin, data) }
+      return { data: func.call(origin, data) };
    },
    // 直接赋值（覆盖原来的值）
    value(undefined$1, data) {
-      return { data }
+      return { data };
    },
    // 与
    and(data, option, origin) {
@@ -34,7 +34,7 @@ var common = {
       }
       // 数组表达式
       if (option instanceof Array) {
-         for (let name of option) {
+         for (const name of option) {
             if (origin[name] === undefined || origin[name] === '') {
                return { error: `必须与${name}参数同时存在` }
             }
@@ -50,193 +50,201 @@ var common = {
       }
       if (option instanceof Array) {
          let status = true;
-         for (let name of option) {
+         for (const name of option) {
             if (origin[name] !== undefined && origin[name] !== '') {
                status = false;
             }
          }
          if (status) {
-            return { error: `必须至少与[${option}]参数中的一个同时存在` }
+            return { error: `必须至少与[${option}]参数中的一个同时存在` };
          }
       }
-      return { data }
+      return { data };
    },
 };
 
-// 数据类型验证方法
-var Types = {
-   [String]: {
-      ...common,
-      // 数据类型验证
-      type(data) {
-         if (typeof data === 'string') {
-            return { data: data.trim() }
-         } else {
-            return { error: '必须为String类型' }
-         }
-      },
-      // 限制最小长度
-      min(data, min) {
-         if (data.length < min) {
-            return { error: `长度不能小于${min}个字符` }
-         } else {
-            return { data }
-         }
-      },
-      // 限制最大长度
-      max(data, max) {
-         if (data.length > max) {
-            return { error: `长度不能大于${max}个字符` }
-         } else {
-            return { data }
-         }
-      },
-      // 正则
-      reg(data, reg) {
-         if (data.search(reg) === -1) {
-            return { error: '格式错误' }
-         } else {
-            return { data }
-         }
-      },
-      // 包含
-      in(data, array) {
-         let result = array.indexOf(data);
-         if (result === -1) {
-            return { error: `值必须为[${array}]选项其中之一` }
-         } else {
-            return { data }
-         }
-      },
-   },
-   [Number]: {
-      ...common,
-      type(data) {
-         if (isNaN(data)) {
-            return { error: '必须为Number类型' }
-         } else {
-            return { data: Number(data) }
-         }
-      },
-      min(data, min) {
-         if (data < min) {
-            return { error: `不能小于${min}` }
-         } else {
-            return { data }
-         }
-      },
-      max(data, max) {
-         if (data > max) {
-            return { error: `不能大于${max}` }
-         } else {
-            return { data }
-         }
-      },
-      // 包含
-      in(data, array) {
-         let result = array.indexOf(data);
-         if (result === -1) {
-            return { error: `值必须为${array}中的一个` }
-         } else {
-            return { data }
-         }
+const types = new Map();
+
+types.set(String, {
+   ...common,
+   // 数据类型验证
+   type(data) {
+      if (typeof data === 'string') {
+         return { data: data.trim() }
+      } else {
+         return { error: '必须为String类型' }
       }
    },
-   [Array]: {
-      ...common,
-      type(data) {
-         if (Array.isArray(data)) {
-            return { data }
-         } else {
-            return { error: '必须为Array类型' }
-         }
-      },
-      min(data, min) {
-         if (data.length < min) {
-            return { error: `长度不能小于${min}个字符` }
-         } else {
-            return { data }
-         }
-      },
-      max(data, max) {
-         if (data.length > max) {
-            return { error: `长度不能大于${max}个字符` }
-         } else {
-            return { data }
-         }
-      },
+   // 限制最小长度
+   min(data, min) {
+      if (data.length < min) {
+         return { error: `长度不能小于${min}个字符` }
+      } else {
+         return { data }
+      }
    },
-   [Object]: {
-      ...common,
-      type(data) {
-         if (typeof data === 'object') {
-            return { data }
-         } else {
-            return { error: '必须为Object类型' }
-         }
-      },
+   // 限制最大长度
+   max(data, max) {
+      if (data.length > max) {
+         return { error: `长度不能大于${max}个字符` }
+      } else {
+         return { data }
+      }
    },
-   [Boolean]: {
-      ...common,
-      type(data) {
-         if (typeof data === 'boolean') {
-            return { data }
-         } else {
-            return { error: '必须为Boolean类型' }
-         }
-      },
+   // 正则
+   reg(data, reg) {
+      if (data.search(reg) === -1) {
+         return { error: '格式错误' }
+      } else {
+         return { data }
+      }
    },
-   [Date]: {
-      ...common,
-      type(data) {
-         if (toDate(data + '')) {
-            return { data }
-         } else {
-            return { error: '必须为Date类型' }
-         }
-      },
+   // 包含
+   in(data, array) {
+      const result = array.indexOf(data);
+      if (result === -1) {
+         return { error: `值必须为[${array}]选项其中之一` }
+      } else {
+         return { data }
+      }
    },
-   [Function]: {
-      ...common,
-      type(data) {
-         if (typeof data === 'function') {
-            return { data }
-         } else {
-            return { error: '必须为Function类型' }
-         }
-      },
+});
+
+types.set(Number, {
+   ...common,
+   type(data) {
+      if (isNaN(data)) {
+         return { error: '必须为Number类型' }
+      } else {
+         return { data: Number(data) }
+      }
    },
-   [symbols.mongoId]: {
-      ...common,
-      type(data) {
-         if (isMongoId(String(data))) {
-            return { data }
-         } else {
-            return { error: '必须为MongoId' }
-         }
-      },
+   min(data, min) {
+      if (data < min) {
+         return { error: `不能小于${min}` }
+      } else {
+         return { data }
+      }
    },
-   [symbols.mobilePhone]: {
-      ...common,
-      type(data) {
-         if (isMobilePhone(String(data), 'zh-CN')) {
-            return { data }
-         } else {
-            return { error: '必须为手机号' }
-         }
-      },
+   max(data, max) {
+      if (data > max) {
+         return { error: `不能大于${max}` }
+      } else {
+         return { data }
+      }
    },
-   [symbols.email]: {
-      ...common,
-      type(data) {
-         if (isEmail(String(data))) {
-            return { data }
-         } else {
-            return { error: '必须为Email格式' }
-         }
-      },
+   // 包含
+   in(data, array) {
+      const result = array.indexOf(data);
+      if (result === -1) {
+         return { error: `值必须为${array}中的一个` }
+      } else {
+         return { data }
+      }
+   }
+});
+
+types.set(Array, {
+   ...common,
+   type(data) {
+      if (Array.isArray(data)) {
+         return { data }
+      } else {
+         return { error: '必须为Array类型' }
+      }
    },
-};
+   min(data, min) {
+      if (data.length < min) {
+         return { error: `长度不能小于${min}个字符` }
+      } else {
+         return { data }
+      }
+   },
+   max(data, max) {
+      if (data.length > max) {
+         return { error: `长度不能大于${max}个字符` }
+      } else {
+         return { data }
+      }
+   },
+});
+
+types.set(Object, {
+   ...common,
+   type(data) {
+      if (typeof data === 'object') {
+         return { data }
+      } else {
+         return { error: '必须为Object类型' }
+      }
+   },
+});
+
+types.set(Boolean, {
+   ...common,
+   type(data) {
+      if (typeof data === 'boolean') {
+         return { data }
+      } else {
+         return { error: '必须为Boolean类型' }
+      }
+   },
+});
+
+types.set(Date, {
+   ...common,
+   type(data) {
+      if (toDate(data + '')) {
+         return { data }
+      } else {
+         return { error: '必须为Date类型' }
+      }
+   },
+});
+
+types.set(Function, {
+   ...common,
+   type(data) {
+      if (typeof data === 'function') {
+         return { data }
+      } else {
+         return { error: '必须为Function类型' }
+      }
+   },
+});
+
+types.set(symbols.mongoId, {
+   ...common,
+   type(data) {
+      if (isMongoId(String(data))) {
+         return { data }
+      } else {
+         return { error: '必须为MongoId' }
+      }
+   },
+});
+
+types.set(symbols.mobilePhone, {
+   ...common,
+   type(data) {
+      if (isMobilePhone(String(data), 'zh-CN')) {
+         return { data }
+      } else {
+         return { error: '必须为手机号' }
+      }
+   },
+});
+
+types.set(symbols.email, {
+   ...common,
+   type(data) {
+      if (isEmail(String(data))) {
+         return { data }
+      } else {
+         return { error: '必须为Email格式' }
+      }
+   },
+});
 
 const ignore = [undefined, null, ''];
 
@@ -257,7 +265,7 @@ class Parser {
     */
    run(origin) {
       this.origin = origin;
-      return this.recursion(origin, this.options, '')
+      return this.recursion(origin, this.options, '');
    }
 
    /**
@@ -288,8 +296,8 @@ class Parser {
 
       }
 
-      // 选项值为数据类型（值为构造函数或Symbol，Symbol表示自定义类型）
-      else if (Types[options]) {
+      // 选项值为构造函数或Symbol，Symbol表示自定义类型
+      else if (types.get(options)) {
 
          if (this.isNull(data, ignore)) {
             // 严格模式下，禁止空值
@@ -299,7 +307,7 @@ class Parser {
             return {}
          }
 
-         let { error, data: subData } = Types[options].type(data);
+         const { error, data: subData } = types.get(options).type(data);
 
          if (error) {
             return { error: `值${error}` }
@@ -360,11 +368,11 @@ class Parser {
             }
          }
 
-         let dataObj = {};
+         const dataObj = {};
 
          for (const sKey in options) {
 
-            let { error, data: subData } = this.recursion(data[sKey], options[sKey], sKey);
+            const { error, data: subData } = this.recursion(data[sKey], options[sKey], sKey);
 
             if (error) {
                // 非根节点
@@ -426,16 +434,16 @@ class Parser {
 
       }
 
-      const type = Types[options.type];
+      const type = types.get(options.type);
 
       // type为内置数据类型
       if (type) {
 
-         for (let name in options) {
-            let method = type[name];
+         for (const name in options) {
+            const method = type[name];
             if (method) {
-               let option = options[name];
-               let { error, data: subData } = method(data, option, this.origin);
+               const option = options[name];
+               const { error, data: subData } = method(data, option, this.origin);
                if (error) {
                   return { error: `${error}` }
                }
@@ -475,17 +483,17 @@ class Parser {
       }
 
       let itemKey = 0;
-      let dataArray = [];
+      const dataArray = [];
 
       // options为单数时采用通用匹配
       if (options.length === 1) {
 
-         let [option] = options;
+         const [option] = options;
 
-         for (let itemData of data) {
+         for (const itemData of data) {
 
             // 子集递归验证
-            let { error, data: subData } = this.recursion(itemData, option, itemKey);
+            const { error, data: subData } = this.recursion(itemData, option, itemKey);
 
             if (error) {
                return {
@@ -504,12 +512,12 @@ class Parser {
       // options为复数时采用精确匹配
       else {
 
-         for (let option of options) {
+         for (const option of options) {
 
-            let itemData = data[itemKey];
+            const itemData = data[itemKey];
 
             // 子集递归验证
-            let { error, data: subData } = this.recursion(itemData, option, itemKey);
+            const { error, data: subData } = this.recursion(itemData, option, itemKey);
 
             if (error) {
                return {
@@ -540,16 +548,16 @@ class Parser {
  */
 function typea(data, options, extend = {}, mode) {
 
-   let parser = new Parser(options, mode);
+   const parser = new Parser(options, mode);
 
-   let result = parser.run(data);
+   const result = parser.run(data);
 
    if (result.error) {
-      return result
+      return result;
    }
 
    // 数据扩展函数，基于已验证的数据构建新的数据结构
-   for (let name in extend) {
+   for (const name in extend) {
       let item = extend[name];
       if (typeof item === 'function') {
          item = item.call(result.data, result.data);
@@ -557,7 +565,7 @@ function typea(data, options, extend = {}, mode) {
       result.data[name] = item;
    }
 
-   return result
+   return result;
 
 }
 
@@ -571,7 +579,7 @@ typea.strict = function (data, options, extend = {}) {
 // 宽松模式
 typea.loose = function (data, options, extend = {}) {
 
-   return typea(data, options, extend, 'loose')
+   return typea(data, options, extend, 'loose');
 
 };
 
@@ -586,12 +594,14 @@ typea.types = symbols;
  */
 typea.use = function (type, options = {}) {
 
-   if (!type) return
+   if (!type) return;
+
+   const value = types.get(type);
 
    // 通过Symbol定位，扩展已有数据类型
-   if (Types[type]) {
+   if (value) {
 
-      Object.assign(Types[type], options);
+      Object.assign(value, options);
 
    }
 
@@ -600,16 +610,21 @@ typea.use = function (type, options = {}) {
 
       // 扩展已有Symbol类型
       if (symbols[type]) {
-         let symbol = symbols[type];
-         Object.assign(Types[symbol], options);
+
+         const symbol = symbols[type];
+         const value = types.get(symbol);
+         Object.assign(value, options);
+
       }
 
       // 创建新类型
       else {
+
+         Object.assign(options, common);
          const symbol = Symbol(type);
          symbols[type] = symbol;
-         Types[symbol] = options;
-         Object.assign(Types[symbol], common);
+         types.set(symbol, options);
+
       }
 
    }
@@ -634,7 +649,7 @@ typea.schema = function (options, extend) {
     * 禁止所有空值，有值验证，无值报错
     */
    schema.strict = function (data) {
-      return typea(data, options, extend, 'strict')
+      return typea(data, options, extend, 'strict');
    };
 
    /**
@@ -642,10 +657,10 @@ typea.schema = function (options, extend) {
     * 忽略所有空值，有值验证，无值跳过，即使allowNull值为true
     */
    schema.loose = function (data) {
-      return typea(data, options, extend, 'loose')
+      return typea(data, options, extend, 'loose');
    };
 
-   return schema
+   return schema;
 
 };
 

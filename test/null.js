@@ -10,24 +10,22 @@ let sample = {
    d: null,
 }
 
-let { error, data } = typea(sample,
-   {
-      a: {
-         type: String,
-         allowNull: false,
-         default: 'xxx',
-      },
-      b: [String],
-      c: {
-         type: String,
-         allowNull: true,
-      },
-      d: {
-         type: Number,
-         allowNull: true,
-      }
+let { error, data } = typea.strict(sample, {
+   a: {
+      type: String,
+      allowNull: false,
+      default: 'xxx',
+   },
+   b: [String],
+   c: {
+      type: String,
+      allowNull: true,
+   },
+   d: {
+      type: String,
+      allowNull: true,
    }
-)
+})
 
 console.log(data);
 
