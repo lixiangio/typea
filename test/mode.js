@@ -5,7 +5,7 @@ const typea = require('..')
 
 test("strict", t => {
 
-   let sample = {
+   const sample = {
       a: "888",
       b: ["kkk", "xxx"],
       c: "666",
@@ -14,7 +14,7 @@ test("strict", t => {
       }
    }
 
-   let { error, data } = typea.strict(sample, {
+   const { error, data } = typea.strict(sample, {
       a: {
          type: String,
          allowNull: false,
@@ -37,7 +37,7 @@ test("strict", t => {
 
 test("loose", t => {
 
-   let sample = {
+   const sample = {
       a: "888",
       b: ["kkk", "xxx"],
       c: "666",
@@ -46,7 +46,7 @@ test("loose", t => {
       }
    }
 
-   let { error, data } = typea.loose(sample, {
+   const { error, data } = typea.loose(sample, {
       a: {
          type: String,
          allowNull: false,

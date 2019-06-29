@@ -6,7 +6,7 @@ const typea = require('..')
 
 test('常规', t => {
 
-   let schema = typea.schema({
+   const schema = typea.schema({
       a: {
          a1: {
             type: Number,
@@ -20,7 +20,7 @@ test('常规', t => {
       b: Boolean,
    })
 
-   let sample = {
+   const sample = {
       a: {
          a1: 4545,
          a2: 888,
@@ -28,7 +28,7 @@ test('常规', t => {
       b: false
    }
 
-   let { error, data } = schema(sample)
+   const { error, data } = schema(sample)
 
    // console.log(data)
 
@@ -39,7 +39,7 @@ test('常规', t => {
 
 test('strict', t => {
 
-   let schema = typea.schema({
+   const schema = typea.schema({
       a: {
          a1: {
             type: Number
@@ -52,7 +52,7 @@ test('strict', t => {
       b: Boolean,
    })
 
-   let sample = {
+   const sample = {
       a: {
          a1: 4545,
          // a2: 888,
@@ -60,7 +60,7 @@ test('strict', t => {
       b: false
    }
 
-   let { error, data } = schema.strict(sample)
+   const { error, data } = schema.strict(sample)
 
    // console.log(data)
 
@@ -71,7 +71,7 @@ test('strict', t => {
 
 test('loose', t => {
 
-   let schema = typea.schema({
+   const schema = typea.schema({
       a: {
          a1: {
             type: Number,
@@ -84,7 +84,7 @@ test('loose', t => {
       b: Boolean,
    })
 
-   let sample = {
+   const sample = {
       a: {
          a1: 4545,
          a2: 888,
@@ -92,7 +92,7 @@ test('loose', t => {
       b: false
    }
 
-   let { error, data } = schema.loose(sample)
+   const { error, data } = schema.loose(sample)
 
    // console.log(data)
 

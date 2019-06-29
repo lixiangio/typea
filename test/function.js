@@ -7,7 +7,7 @@ test('function', t => {
 
    function func() { }
 
-   let { error, data } = typea(func, Function)
+   const { error, data } = typea(func, Function)
 
    // console.log(data);
 
@@ -18,7 +18,7 @@ test('function', t => {
 
 test('inline', t => {
 
-   let sample = {
+   const sample = {
       a(x, y) {
          return [x, y]
       },
@@ -27,7 +27,7 @@ test('inline', t => {
       },
    }
 
-   let { error, data } = typea(sample,
+   const { error, data } = typea(sample,
       {
          a: Function,
          b: {

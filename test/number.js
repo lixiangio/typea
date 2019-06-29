@@ -5,7 +5,7 @@ const typea = require('..')
 
 test('number', t => {
 
-   let { error, data } = typea(1212, Number)
+   const { error, data } = typea(1212, Number)
 
    // console.log(data);
 

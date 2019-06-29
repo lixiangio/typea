@@ -19,7 +19,7 @@ typea.use('int', {
       }
    },
    in(data, array) {
-      let result = array.indexOf(data)
+      const result = array.indexOf(data)
       if (result === -1) {
          return { error: `值必须为${array}中的一个` }
       } else {
@@ -28,11 +28,11 @@ typea.use('int', {
    }
 })
 
-let { mongoId, email, mobilePhone, int } = typea.types
+const { mongoId, email, mobilePhone, int } = typea.types
 
 test('extend', t => {
 
-   let sample = {
+   const sample = {
       "id": "5687862c08d67e29cd000001",
       "age": 28,
       "email": "erer@gmail.com",
@@ -48,7 +48,7 @@ test('extend', t => {
       "v": 6
    }
 
-   let { error, data } = typea(sample, {
+   const { error, data } = typea(sample, {
       "id": {
          "type": mongoId,
          "allowNull": false

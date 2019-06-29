@@ -3,14 +3,14 @@
 const test = require('jtf')
 const typea = require('..')
 
-let sample = {
+const sample = {
    a: undefined,
    b: ["kkk", "xxx"],
    c: '',
    d: null,
 }
 
-let { error, data } = typea.strict(sample, {
+const { error, data } = typea.strict(sample, {
    a: {
       type: String,
       allowNull: false,

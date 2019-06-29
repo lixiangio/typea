@@ -6,7 +6,7 @@ const typea = require('..')
 
 test('object', t => {
 
-   let sample = {
+   const sample = {
       a: {
          a1: 1,
          a2: 12,
@@ -17,7 +17,7 @@ test('object', t => {
       },
    }
 
-   let { error, data } = typea(sample,
+   const { error, data } = typea(sample,
       {
          a: {
             a1: {

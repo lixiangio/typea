@@ -3,7 +3,7 @@
 const test = require('jtf')
 const typea = require('..')
 
-let sample = {
+const sample = {
    "name": "测试",
    "num": "123456789987",
    "ObjectId": "59c8aea808deec3fc8da56b6",
@@ -52,12 +52,12 @@ let sample = {
    "arr": ['jjsd', 'ddd']
 }
 
-let { mongoId, email, mobilePhone } = typea.types
+const { mongoId, email, mobilePhone } = typea.types
 
 
 test('结构镜像', t => {
 
-   let { error, data } = typea(sample, {
+   const { error, data } = typea(sample, {
       "name": String,
       "num": String,
       "ObjectId": mongoId,
@@ -115,7 +115,7 @@ test('结构镜像', t => {
 
 test('结构、值镜像', t => {
 
-   let { error, data } = typea(sample, sample)
+   const { error, data } = typea(sample, sample)
 
    // console.log(data);
 

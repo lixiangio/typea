@@ -5,15 +5,15 @@ const typea = require('..')
 
 test('extend', t => {
 
-   let { mongoId, email, mobilePhone } = typea.types
+   const { mongoId, email, mobilePhone } = typea.types;
 
-   let sample = {
+   const sample = {
       "id": "5687862c08d67e29cd000001",
       "email": "erer@gmail.com",
       "mobile": "15855555547",
    }
 
-   let { error, data } = typea(sample,
+   const { error, data } = typea(sample,
       {
          "id": {
             "type": mongoId,
@@ -28,7 +28,7 @@ test('extend', t => {
       },
       {
          xxx({ id, email }) {
-            return [id, email]
+            return [id, email];
          },
          sss({ mobile }) {
             return {

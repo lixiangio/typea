@@ -5,7 +5,7 @@ const typea = require('..')
 
 test('boolean', t => {
 
-   let { error, data } = typea(true, Boolean)
+   const { error, data } = typea(true, Boolean)
 
    // console.log(data);
 
@@ -16,7 +16,7 @@ test('boolean', t => {
 
 test('inline', t => {
 
-   let sample = {
+   const sample = {
       a: true,
       b: {
          b1: true,
@@ -25,7 +25,7 @@ test('inline', t => {
       c: [true, false, true, true]
    }
 
-   let { error, data } = typea(sample, {
+   const { error, data } = typea(sample, {
       a: Boolean,
       b: {
          b1: {

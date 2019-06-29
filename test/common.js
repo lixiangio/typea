@@ -5,7 +5,7 @@ const typea = require('..')
 
 test('common', t => {
 
-   let sample = {
+   const sample = {
       "name": "测试",
       "num": "123456789987",
       "coupon": "uuuu",
@@ -16,9 +16,9 @@ test('common', t => {
       "email": "xxx@xx.xx",
    }
 
-   let { email } = typea.types
+   const { email } = typea.types
 
-   let { error, data } = typea(sample,
+   const { error, data } = typea(sample,
       {
          "name": {
             "type": String,

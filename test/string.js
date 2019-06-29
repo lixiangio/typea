@@ -6,7 +6,7 @@ const typea = require('..')
 
 test('string', t => {
 
-   let { error, data } = typea("xxx", String)
+   const { error, data } = typea("xxx", String)
 
    // console.log(data);
 

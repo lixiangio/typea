@@ -2,9 +2,10 @@
    "name": "typea",
    "version": "4.4.5",
    "description": "JS数据验证、转换递归器",
-   "main": "index.js",
+   "main": "lib",
    "scripts": {
-      "build": "rollup --config --watch",
+      "dev": "tsc --watch",
+      "build": "tsc",
       "test": "jtf -w"
    },
    "author": "https://github.com/xiangle/verify.git",
@@ -12,7 +13,9 @@
    "dependencies": {
       "validator": "^8.2.0"
    },
-   "devDependencies": {},
+   "devDependencies": {
+      "@types/validator": "^10.11.1"
+   },
    "keywords": [
       "typea",
       "schema",

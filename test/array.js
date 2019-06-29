@@ -1,11 +1,11 @@
 "use strict"
 
-const test = require('jtf')
-const typea = require('..')
+const test = require('jtf');
+const typea = require('..');
 
 test('array', t => {
 
-   let schema = typea.schema([
+   const schema = typea.schema([
       {
          'state': {
             type: Boolean,
@@ -14,9 +14,9 @@ test('array', t => {
       }
    ])
 
-   let sample = [{ state: true }]
+   const sample = [{ state: true }]
 
-   let { error, data } = schema(sample)
+   const { error, data } = schema(sample)
 
    t.deepEqual(sample, data, error);
 
@@ -24,7 +24,7 @@ test('array', t => {
 
 test('array', t => {
 
-   let sample = {
+   const sample = {
       a: ['xx', 'kk'],
       b: [666, 999, 88,],
       c: [{ a: 1 }, { a: 2 }, { b: 3 }],
@@ -49,7 +49,7 @@ test('array', t => {
       e: [1, 2, 3],
    }
 
-   let { error, data } = typea(sample, {
+   const { error, data } = typea(sample, {
       a: [{ "type": String }],
       b: [{
          "type": Number,
