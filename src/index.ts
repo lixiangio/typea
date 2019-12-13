@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 import types = require('./type.js');
 import symbols = require('./symbol.js');
@@ -73,12 +73,12 @@ class Parser {
             return {};
          }
 
-         const { error, data: subData } = types.get(options).type(data);
+         const { data: subData, error } = types.get(options).type(data);
 
-         if (error) {
-            return { error: `值${error}` }
-         } else {
+         if (subData) {
             return { data: subData }
+         } else {
+            return { error: `值${error}` }
          }
 
       }

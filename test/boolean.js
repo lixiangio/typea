@@ -22,7 +22,7 @@ test('inline', t => {
          b1: true,
          b2: false
       },
-      c: [true, false, true, true]
+      c: [true, true, true]
    }
 
    const { error, data } = typea(sample, {
@@ -40,7 +40,7 @@ test('inline', t => {
       c: [Boolean]
    })
 
-   // console.log(data)
+   console.log(error);
 
    t.deepEqual(sample, data, error);
 

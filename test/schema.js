@@ -1,12 +1,13 @@
 "use strict"
 
-const test = require('jtf')
-const typea = require('..')
+const test = require('jtf');
+const typea = require('..');
 
+return
 
 test('常规', t => {
 
-   const schema = typea.schema({
+   const schema = typea({
       a: {
          a1: {
             type: Number,
@@ -28,7 +29,7 @@ test('常规', t => {
       b: false
    }
 
-   const { error, data } = schema(sample)
+   const { data, error } = schema.verify(sample);
 
    // console.log(data)
 
@@ -39,7 +40,7 @@ test('常规', t => {
 
 test('strict', t => {
 
-   const schema = typea.schema({
+   const schema = typea({
       a: {
          a1: {
             type: Number
@@ -60,7 +61,7 @@ test('strict', t => {
       b: false
    }
 
-   const { error, data } = schema.strict(sample)
+   const { data, error } = schema.strictVerify(sample)
 
    // console.log(data)
 
@@ -71,7 +72,7 @@ test('strict', t => {
 
 test('loose', t => {
 
-   const schema = typea.schema({
+   const schema = typea({
       a: {
          a1: {
             type: Number,
@@ -92,7 +93,7 @@ test('loose', t => {
       b: false
    }
 
-   const { error, data } = schema.loose(sample)
+   const { error, data } = schema.looseVerify(sample)
 
    // console.log(data)
 

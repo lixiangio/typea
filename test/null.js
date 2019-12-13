@@ -27,7 +27,7 @@ const { error, data } = typea.strict(sample, {
    }
 })
 
-console.log(data);
+// console.log(data);
 
 test('null', t => {
 
