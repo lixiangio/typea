@@ -17,7 +17,7 @@ test('object', t => {
       },
    }
 
-   const { error, data } = typea(sample,
+   const { error, data } = typea(
       {
          a: {
             a1: {
@@ -46,8 +46,7 @@ test('object', t => {
          },
          ss: 999
       }
-   )
-
+   ).verify(sample);
 
    t.deepEqual({
       a: { a1: 1, a2: 12 },

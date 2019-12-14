@@ -10,7 +10,7 @@ const sample = {
    d: null,
 }
 
-const { error, data } = typea.strict(sample, {
+const { error, data } = typea({
    a: {
       type: String,
       allowNull: false,
@@ -25,7 +25,7 @@ const { error, data } = typea.strict(sample, {
       type: String,
       allowNull: true,
    }
-})
+}).strictVerify(sample);
 
 // console.log(data);
 

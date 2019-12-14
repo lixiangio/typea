@@ -5,7 +5,7 @@ const typea = require('..')
 
 test('number', t => {
 
-   const { error, data } = typea(1212, Number)
+   const { error, data } = typea(Number).verify(1212);
 
    // console.log(data);
 

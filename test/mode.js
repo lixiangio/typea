@@ -10,23 +10,23 @@ test("strict", t => {
       b: ["kkk", "xxx"],
       c: "666",
       d: {
-         s: 88
+         s: 0
       }
    }
 
-   const { error, data } = typea.strict(sample, {
+   const { error, data } = typea({
       a: {
          type: String,
          allowNull: false,
       },
-      b: [String],
+      b: [String, String],
       c: {
          type: String
       },
       d: {
          s: Number
       }
-   })
+   }).strictVerify(sample);
 
    // console.log(data);
 
@@ -46,7 +46,7 @@ test("loose", t => {
       }
    }
 
-   const { error, data } = typea.loose(sample, {
+   const { error, data } = typea({
       a: {
          type: String,
          allowNull: false,
@@ -59,7 +59,7 @@ test("loose", t => {
       d: {
          s: String
       }
-   })
+   }).looseVerify(sample);
 
    // console.log(data);
 

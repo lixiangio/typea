@@ -5,7 +5,7 @@ const typea = require('..');
 
 test('array', t => {
 
-   const schema = typea.schema([
+   const schema = typea([
       {
          'state': {
             type: Boolean,
@@ -16,11 +16,12 @@ test('array', t => {
 
    const sample = [{ state: true }]
 
-   const { error, data } = schema(sample)
+   const { error, data } = schema.verify(sample);
 
    t.deepEqual(sample, data, error);
 
 });
+
 
 test('array', t => {
 
@@ -49,7 +50,7 @@ test('array', t => {
       e: [1, 2, 3],
    }
 
-   const { error, data } = typea(sample, {
+   const schema = typea({
       a: [{ "type": String }],
       b: [{
          "type": Number,
@@ -74,7 +75,9 @@ test('array', t => {
          String
       ],
       e: Array
-   })
+   });
+
+   const { error, data } = schema.verify(sample);
 
    // console.log(data);
 

@@ -48,7 +48,7 @@ test('extend', t => {
       "v": 6
    }
 
-   const { error, data } = typea(sample, {
+   const { error, data } = typea({
       "id": {
          "type": mongoId,
          "allowNull": false
@@ -78,7 +78,7 @@ test('extend', t => {
          "type": int,
          "in": [3, 5, 7, 6]
       }
-   })
+   }).verify(sample);
 
    t.deepEqual({
       id: '5687862c08d67e29cd000001',

@@ -6,18 +6,31 @@ import common = require('./common.js');
 
 const ignore = [undefined, null, ''];
 
+/**
+ * 判断是否允许为空值，默认将undefined、 null、空字符串视为空值
+ * 默认值在大多数场景下适用，在出现例外时，可以在指定字段上使用ignore属性，重置对默认空值的定义
+ * @param {*} data 需要校验空值的数据
+ */
+function isNull(data: any, ignore: string[]) {
+
+   if (ignore.includes(data)) {
+      return true;
+   }
+
+}
+
 class Parser {
    origin: any;
-   options: any;
+   express: any;
    mode: string;
    /**
     * 
-    * @param {*} options 验证表达式
+    * @param {*} express 验证表达式
     * @param {String} mode 验证模式
     */
-   constructor(options: any, mode: string) {
+   constructor(express: any, mode: string) {
 
-      this.options = options;
+      this.express = express;
       this.mode = mode;
 
    }
@@ -30,42 +43,29 @@ class Parser {
 
       this.origin = origin;
 
-      return this.recursion(origin, this.options, '');
-
-   }
-
-   /**
-    * 判断是否允许为空值，默认将undefined、 null、空字符串视为空值
-    * 默认值在大多数场景下适用，在出现例外时，可以在指定字段上使用ignore属性，重置对默认空值的定义
-    * @param {*} data 需要校验空值的数据
-    */
-   isNull(data: any, ignore: string[]) {
-
-      if (ignore.includes(data)) {
-         return true;
-      }
+      return this.recursion(this.express, origin, '');
 
    }
 
    /**
     * 递归验证器
+    * @param {*} express 验证表达式
     * @param {*} data 待验证数据
-    * @param {*} options 验证表达式
     * @param {String,Number} key 数据索引
     */
-   recursion(data: any, options: any, key: string | number) {
+   recursion(express: any, data: any, key: any) {
 
       // 选项值为对象
-      if (typeof options === 'object') {
+      if (typeof express === 'object') {
 
-         return this.object(data, options, key);
+         return this.object(express, data, key);
 
       }
 
-      // 选项值为构造函数或Symbol，Symbol表示自定义类型
-      else if (types.get(options)) {
+      // 选项值为内置构造函数或Symbol，Symbol表示自定义类型
+      else if (types.get(express)) {
 
-         if (this.isNull(data, ignore)) {
+         if (isNull(data, ignore)) {
             // 严格模式下，禁止空值
             if (this.mode === 'strict') {
                return { error: "值不允许为空" };
@@ -73,18 +73,18 @@ class Parser {
             return {};
          }
 
-         const { data: subData, error } = types.get(options).type(data);
+         const { error, data: subData } = types.get(express).type(data);
 
-         if (subData) {
-            return { data: subData }
-         } else {
+         if (error) {
             return { error: `值${error}` }
+         } else {
+            return { data: subData }
          }
 
       }
 
       // 选项值为严格匹配的精确值类型
-      else if (data === options) {
+      else if (data === express) {
 
          return { data }
 
@@ -93,7 +93,7 @@ class Parser {
       // 精确值匹配失败
       else {
 
-         return { error: `值必须为${options}` }
+         return { error: `值必须为${express}` }
 
       }
 
@@ -101,44 +101,42 @@ class Parser {
 
    /**
     * 对象结构
+    * @param {*} express 
     * @param {object} data 
-    * @param {*} options 
     * @param {*} key 
     */
-   object(data: object, options: any, key: any) {
+   object(express: any, data: object, key: any) {
 
-      // options为验证表达式
-      if (options.type) {
+      // express为验证表达式
+      if (express.type) {
 
-         return this.expression(data, options, key)
-
-      }
-
-      // options为数组结构
-      else if (Array.isArray(options)) {
-
-         return this.array(data, options, key)
+         return this.expression(express, data, key);
 
       }
 
-      // options为对象结构
+      // express为数组结构
+      else if (Array.isArray(express)) {
+
+         return this.array(express, data, key);
+
+      }
+
+      // express为对象结构
       else {
 
          if (typeof data !== 'object') {
             // 宽松模式下，跳过空值
             if (this.mode === 'loose') {
-               if (this.isNull(data, ignore)) return {}
+               if (isNull(data, ignore)) return {}
             }
-            return {
-               error: `值必须为Object类型`
-            }
+            return { error: `值必须为Object类型` }
          }
 
          const dataObj = {}
 
-         for (const sKey in options) {
+         for (const sKey in express) {
 
-            const { error, data: subData } = this.recursion(data[sKey], options[sKey], sKey);
+            const { error, data: subData } = this.recursion(express[sKey], data[sKey], sKey);
 
             if (error) {
                // 非根节点
@@ -147,7 +145,9 @@ class Parser {
                } else {
                   return { error: `${sKey}${error}` };
                }
-            } else if (subData !== undefined) {
+            }
+            
+            else if (subData !== undefined) {
                dataObj[sKey] = subData;
             }
 
@@ -160,100 +160,33 @@ class Parser {
    }
 
    /**
-    * 验证表达式
-    * @param {*} data 
-    * @param {*} options 
-    * @param {*} key 
-    */
-   expression(data: object, options, key: any) {
-
-      // 空值处理
-      if (this.isNull(data, options.ignore || ignore)) {
-
-         // 默认值
-         if (options.default) {
-            data = options.default
-         }
-
-         // 禁止空值
-         else if (options.allowNull === false) {
-            return { error: `值不允许为空` };
-         }
-
-         // 允许空值
-         else if (options.allowNull === true) {
-            return { data };
-         }
-
-         // 严格模式下，禁止空值
-         else if (this.mode === 'strict') {
-            return { error: `值不允许为空` };
-         }
-
-         else {
-            return { data };
-         }
-
-      }
-
-      const type: object = types.get(options.type);
-
-      // type为内置数据类型
-      if (type) {
-
-         for (const name in options) {
-            const method = type[name];
-            if (method) {
-               const option = options[name];
-               const { error, data: subData } = method(data, option, this.origin)
-               if (error) {
-                  return { error: `${error}` }
-               }
-               data = subData
-            }
-         }
-
-         return { data }
-
-      }
-
-      // 不支持的数据类型
-      else {
-         return { error: `${key}参数配置错误，不支持${options.type}类型` }
-      }
-
-   }
-
-   /**
     * 数组结构
+    * @param {*} express 
     * @param {*} data 
-    * @param {*} options 
     * @param {*} key 
     */
-   array(data, options: any[], key: any) {
+   array(express: any[], data, key: number) {
 
       if (!Array.isArray(data)) {
          // 宽松模式下，跳过空值
          if (this.mode === 'loose') {
-            if (this.isNull(data, ignore)) return {};
+            if (isNull(data, ignore)) return {};
          }
-         return {
-            error: `${key}必须为数组类型`
-         }
+         return { error: `${key}必须为数组类型` }
       }
 
       let itemKey = 0;
       const dataArray = [];
 
-      // options为单数时采用通用匹配
-      if (options.length === 1) {
+      // express为单数时采用通用匹配
+      if (express.length === 1) {
 
-         const [option] = options;
+         const [option] = express;
 
          for (const itemData of data) {
 
             // 子集递归验证
-            const { error, data: subData } = this.recursion(itemData, option, itemKey);
+            const { error, data: subData } = this.recursion(option, itemData, itemKey);
 
             if (error) {
                return { "error": `[${itemKey}]${error}` };
@@ -267,15 +200,15 @@ class Parser {
 
       }
 
-      // options为复数时采用精确匹配
+      // express为复数时采用精确匹配
       else {
 
-         for (const option of options) {
+         for (const option of express) {
 
             const itemData = data[itemKey];
 
             // 子集递归验证
-            const { error, data: subData } = this.recursion(itemData, option, itemKey);
+            const { error, data: subData } = this.recursion(option, itemData, itemKey);
 
             if (error) {
                return { "error": `[${itemKey}]${error}` };
@@ -293,25 +226,90 @@ class Parser {
 
    }
 
+   /**
+    * 验证表达式
+    * @param {*} express 
+    * @param {*} data 
+    * @param {*} key 
+    */
+   expression(express: any, data: object, key: string) {
+
+      // 空值处理
+      if (isNull(data, express.ignore || ignore)) {
+
+         // 默认值
+         if (express.default) {
+            data = express.default
+         }
+
+         // 禁止空值
+         else if (express.allowNull === false) {
+            return { error: `值不允许为空` };
+         }
+
+         // 允许空值
+         else if (express.allowNull === true) {
+            return { data };
+         }
+
+         // 严格模式下，禁止空值
+         else if (this.mode === 'strict') {
+            return { error: `值不允许为空` };
+         }
+
+         else {
+            return { data };
+         }
+
+      }
+
+      const type: object = types.get(express.type);
+
+      // type为内置数据类型
+      if (type) {
+
+         for (const name in express) {
+            const method = type[name];
+            if (method) {
+               const option = express[name];
+               const { error, data: subData } = method(data, option, this.origin)
+               if (error) {
+                  return { error: `${error}` }
+               }
+               data = subData
+            }
+         }
+
+         return { data }
+
+      }
+
+      // 不支持的数据类型
+      else {
+         return { error: `${key}参数配置错误，不支持${express.type}类型` }
+      }
+
+   }
+
 }
 
 /**
  * 验证器
+ * @param {*} express 验证表达式
  * @param {*} data 数据源
- * @param {*} options 验证表达式
  * @param {Object} extend 导出数据扩展函数集合
  * @param {String} mode 验证模式（仅供内部使用）
  */
-function typea(data: any, options: any, extend = {}, mode: string) {
+function validator(express: any, data: any, extend = {}, mode: string) {
 
-   const parser = new Parser(options, mode);
+   const parser = new Parser(express, mode);
    const result = parser.run(data);
 
    if (result.error) {
       return result;
    }
 
-   // 数据扩展函数，基于已验证的数据构建新的数据结构
+   // 后置数据扩展函数，基于已验证的数据构建新的数据结构
    for (const name in extend) {
       let item = extend[name];
       if (typeof item === 'function') {
@@ -324,17 +322,36 @@ function typea(data: any, options: any, extend = {}, mode: string) {
 
 }
 
-// 严格模式
-typea.strict = function (data: any, options: any, extend = {}) {
+/**
+ * @param {*} express 验证表达式
+ * @param {Object} extend 数据扩展选项
+ */
+function typea(express: any, extend: {}) {
 
-   return typea(data, options, extend, 'strict');
+   return {
+      /**
+       * 常规验证摸索
+       */
+      verify(data: any) {
+         return validator(express, data, extend, undefined);
+      },
 
-}
+      /**
+       * 严格模式
+       * 禁止所有空值，有值验证，无值报错
+       */
+      strictVerify(data: any) {
+         return validator(express, data, extend, 'strict');
+      },
 
-// 宽松模式
-typea.loose = function (data: any, options: any, extend = {}) {
-
-   return typea(data, options, extend, 'loose');
+      /**
+       * 宽松模式
+       * 忽略所有空值，有值验证，无值跳过，即使allowNull值为true
+       */
+      looseVerify(data: any) {
+         return validator(express, data, extend, 'loose');
+      }
+   };
 
 }
 
@@ -383,39 +400,6 @@ typea.use = function (type: string | number, options = {}) {
       }
 
    }
-
-}
-
-
-/**
- * 通过预处理方式，将提前处理好的静态options持久化驻留在内存中
- * 避免同一个对象被多次重复的创建和销毁，实现options跨接口复用，在节省资源的同时，也增加了代码复用率
- * @param {*} options 验证表达式
- * @param {Object} extend 数据扩展选项
- */
-typea.schema = function (options: any, extend: {}) {
-
-   const schema = function (data: any) {
-      return typea(data, options, extend, undefined);
-   }
-
-   /**
-    * 严格模式
-    * 禁止所有空值，有值验证，无值报错
-    */
-   schema.strict = function (data: any) {
-      return typea(data, options, extend, 'strict');
-   }
-
-   /**
-    * 宽松模式
-    * 忽略所有空值，有值验证，无值跳过，即使allowNull值为true
-    */
-   schema.loose = function (data: any) {
-      return typea(data, options, extend, 'loose');
-   }
-
-   return schema;
 
 }
 

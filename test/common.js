@@ -18,39 +18,37 @@ test('common', t => {
 
    const { email } = typea.types
 
-   const { error, data } = typea(sample,
-      {
-         "name": {
-            "type": String,
-            "name": "名称",
-            "default": "默认值",
-            "allowNull": false,
-            "and": ["num"]
+   const { error, data } = typea({
+      "name": {
+         "type": String,
+         "name": "名称",
+         "default": "默认值",
+         "allowNull": false,
+         "and": ["num"]
+      },
+      "num": {
+         "type": Number,
+         "value": 666,
+         "or": ["name", 'xxx']
+      },
+      "coupon": {
+         "type": String,
+         set(value) {
+            return { "$gt": value }
          },
-         "num": {
-            "type": Number,
-            "value": 666,
-            "or": ["name", 'xxx']
-         },
-         "coupon": {
-            "type": String,
-            set(value) {
-               return { "$gt": value }
-            },
-            or() {
-               return ["integral-", "email"]
-            }
-         },
-         "integral": {
-            "kaka": {
-               "type": Number
-            }
-         },
-         "email": {
-            "type": email
+         or() {
+            return ["integral-", "email"]
          }
+      },
+      "integral": {
+         "kaka": {
+            "type": Number
+         }
+      },
+      "email": {
+         "type": email
       }
-   )
+   }).verify(sample);
 
    // console.log(data)
 

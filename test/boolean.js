@@ -5,7 +5,7 @@ const typea = require('..')
 
 test('boolean', t => {
 
-   const { error, data } = typea(true, Boolean)
+   const { error, data } = typea(Boolean).verify(true);
 
    // console.log(data);
 
@@ -22,10 +22,10 @@ test('inline', t => {
          b1: true,
          b2: false
       },
-      c: [true, true, true]
+      c: [true, true, false, true]
    }
 
-   const { error, data } = typea(sample, {
+   const schema = typea({
       a: Boolean,
       b: {
          b1: {
@@ -40,7 +40,7 @@ test('inline', t => {
       c: [Boolean]
    })
 
-   console.log(error);
+   const { error, data } = schema.verify(sample);
 
    t.deepEqual(sample, data, error);
 

@@ -3,8 +3,6 @@
 const test = require('jtf');
 const typea = require('..');
 
-return
-
 test('常规', t => {
 
    const schema = typea({
@@ -26,7 +24,7 @@ test('常规', t => {
          a1: 4545,
          a2: 888,
       },
-      b: false
+      b: true
    }
 
    const { data, error } = schema.verify(sample);
@@ -58,7 +56,7 @@ test('strict', t => {
          a1: 4545,
          // a2: 888,
       },
-      b: false
+      b: true
    }
 
    const { data, error } = schema.strictVerify(sample)
@@ -90,7 +88,7 @@ test('loose', t => {
          a1: 4545,
          a2: 888,
       },
-      b: false
+      b: true
    }
 
    const { error, data } = schema.looseVerify(sample)

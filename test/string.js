@@ -6,7 +6,7 @@ const typea = require('..')
 
 test('string', t => {
 
-   const { error, data } = typea("xxx", String)
+   const { error, data } = typea(String).verify("xxx");
 
    // console.log(data);
 

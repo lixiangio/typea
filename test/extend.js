@@ -13,8 +13,7 @@ test('extend', t => {
       "mobile": "15855555547",
    }
 
-   const { error, data } = typea(sample,
-      {
+   const { error, data } = typea({
          "id": {
             "type": mongoId,
             "allowNull": false
@@ -38,7 +37,7 @@ test('extend', t => {
          },
          ccc: 666
       }
-   )
+   ).verify(sample);
 
    // console.log(data)
 

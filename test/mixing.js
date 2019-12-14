@@ -54,88 +54,87 @@ const sample = {
 
 test('mixing', t => {
 
-   const { mongoId, email, mobilePhone } = typea.types
+   const { mongoId, email, mobilePhone } = typea.types;
 
-   const { error, data } = typea(sample,
-      {
-         "name": {
-            "type": String,
-            "name": "名称",
-            "allowNull": false,
-            "default": "默认值"
-         },
-         "num": {
-            "type": Number,
-            "value": 666,
-         },
-         "ObjectId": mongoId,
-         "user": {
-            "username": "莉莉",
-            "age": Number,
-            "address": [
-               {
-                  "city": String,
-               },
-               {
-                  "city": "北京",
-               }
-            ],
-         },
-         "list": [
+   const schema = typea({
+      "name": {
+         "type": String,
+         "name": "名称",
+         "allowNull": false,
+         "default": "默认值"
+      },
+      "num": {
+         "type": Number,
+         "value": 666,
+      },
+      "ObjectId": mongoId,
+      "user": {
+         "username": "莉莉",
+         "age": Number,
+         "address": [
             {
-               "username": String,
-               "age": {
-                  "kk": [{ kkk: Number }]
-               },
+               "city": String,
+            },
+            {
+               "city": "北京",
             }
          ],
-         "money": {
-            "type": Number,
-            "min": 1,
-            "in": [1, 2],
-         },
-         "files": [{
-            "type": String,
-            "allowNull": false,
-         }],
-         "guaranteeFormat": {
-            "type": Number,
-            "to": Boolean,
-         },
-         "addressee": String,
-         "search": "深圳",
-         "phone": {
-            "type": mobilePhone
-         },
-         "coupon": {
-            "type": String,
-            set(value) {
-               return { "$gt": value }
-            }
-         },
-         "integral": {
-            "lala": {
-               "type": Number,
-            },
-            "kaka": {
-               "type": Number,
-               "allowNull": false,
-               "in": [1, 3, 8, 6],
-            }
-         },
-         "email": {
-            "type": email,
-            set(value) {
-               return [value, , null, , undefined, 666]
-            }
-         },
-         "arr": [String],
       },
+      "list": [
+         {
+            "username": String,
+            "age": {
+               "kk": [{ kkk: Number }]
+            },
+         }
+      ],
+      "money": {
+         "type": Number,
+         "min": 1,
+         "in": [1, 2],
+      },
+      "files": [{
+         "type": String,
+         "allowNull": false,
+      }],
+      "guaranteeFormat": {
+         "type": Number,
+         "to": Boolean,
+      },
+      "addressee": String,
+      "search": "深圳",
+      "phone": {
+         "type": mobilePhone
+      },
+      "coupon": {
+         "type": String,
+         set(value) {
+            return { "$gt": value }
+         }
+      },
+      "integral": {
+         "lala": {
+            "type": Number,
+         },
+         "kaka": {
+            "type": Number,
+            "allowNull": false,
+            "in": [1, 3, 8, 6],
+         }
+      },
+      "email": {
+         "type": email,
+         set(value) {
+            return [value, , null, , undefined, 666]
+         }
+      },
+      "arr": [String],
+   },
       {
          filter({ email, integral }) {
             return {
-               "email": email,
-               "integral": integral,
+               email,
+               integral,
                "test": {
                   v1: 1,
                   v2: undefined,
@@ -148,8 +147,8 @@ test('mixing', t => {
          },
          where({ email, integral }) {
             return {
-               "email": email,
-               "integral": integral,
+               email,
+               integral,
                "test": {
                   v1: 1,
                   v2: undefined,
@@ -162,6 +161,8 @@ test('mixing', t => {
          }
       }
    )
+
+   const { error, data } = schema.verify(sample);
 
    // console.log(data)
 

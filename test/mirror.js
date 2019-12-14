@@ -38,7 +38,7 @@ const sample = {
       }
    ],
    "money": "2",
-   "guaranteeFormat": 0,
+   "guaranteeFormat": 1,
    "addressee": "嘟嘟",
    "phone": "18565799072",
    "coupon": "uuuu",
@@ -57,7 +57,7 @@ const { mongoId, email, mobilePhone } = typea.types
 
 test('结构镜像', t => {
 
-   const { error, data } = typea(sample, {
+   const { error, data } = typea({
       "name": String,
       "num": String,
       "ObjectId": mongoId,
@@ -104,7 +104,7 @@ test('结构镜像', t => {
       "searchField": String,
       "email": email,
       "arr": [String]
-   })
+   }).verify(sample);
 
    // console.log(data)
    
@@ -115,7 +115,7 @@ test('结构镜像', t => {
 
 test('结构、值镜像', t => {
 
-   const { error, data } = typea(sample, sample)
+   const { error, data } = typea(sample).verify(sample);
 
    // console.log(data);
 
