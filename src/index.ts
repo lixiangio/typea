@@ -146,7 +146,7 @@ class Parser {
                   return { error: `${sKey}${error}` };
                }
             }
-            
+
             else if (subData !== undefined) {
                dataObj[sKey] = subData;
             }

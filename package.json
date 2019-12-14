@@ -1,6 +1,6 @@
 {
    "name": "typea",
-   "version": "5.0.0",
+   "version": "5.0.1",
    "description": "JS数据验证、转换递归器",
    "main": "lib",
    "scripts": {
@@ -29,5 +29,6 @@
    "bugs": {
       "url": "https://github.com/xiangle/verify/issues"
    },
-   "homepage": "https://github.com/xiangle/verify#readme"
+   "homepage": "https://github.com/xiangle/verify#readme",
+   "files": ["lib"]
 }
