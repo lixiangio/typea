@@ -27,28 +27,11 @@ npm install typea
 ### 使用示例
 
 ```js
-const typea = require('typea')
+const typea = require('typea');
 
-const { mongoId, email } = typea.types
+const { email, mongoId } = typea.types;
 
-const sample = {
-   "name": "test",
-   "num": 12345,
-   "email": "gmail@gmail.com",
-   "id": "59c8aea808deec3fc8da56b6",
-   "files": ["abc.js", "null", "edb.js"],
-   "user": {
-      "username": "莉莉",
-      "age": 18,
-      "address": [
-         { "city": "深圳" },
-         { "city": "北京" }
-      ],
-   },
-   "money": "2"
-}
-
-const { error, data } = typea(sample, {
+const schema = typea({
    "name": String,
    "num": Number,
    "email": email,
@@ -64,6 +47,29 @@ const { error, data } = typea(sample, {
    },
    "money": "2"
 })
+
+const { error, data } = schema.verify({
+   "name": "test",
+   "num": 12345,
+   "email": "gmail@gmail.com",
+   "id": "59c8aea808deec3fc8da56b6",
+   "files": ["abc.js", "null", "edb.js"],
+   "user": {
+      "username": "莉莉",
+      "age": 18,
+      "address": [
+         { "city": "深圳" },
+         { "city": "北京" }
+      ],
+   },
+   "money": "2"
+})
+
+if (error) {
+   console.error(error);
+} else {
+   console.log(data)
+}
 ```
 
 
@@ -78,9 +84,9 @@ typea支持常规、严格、宽松三种验证模式，多数情况下只需要
 常规模式下默认只对allowNull为false的节点强制执行非空验证，默认对包含子表达式的数组、对象结构体执行强制非空验证。
 
 ```js
-const typea = require('typea')
+const schema = typea(express[, extend]);
 
-const { error, data } = typea(data, options, extend)
+const { error, data } = schema.verify(data)
 ```
 
 #### 严格模式
@@ -88,9 +94,9 @@ const { error, data } = typea(data, options, extend)
 严格模式下默认会为所有节点强制执行非空验证，除非明确声明allowNull为true。
 
 ```js
-const typea = require('typea')
+const schema = typea(express[, extend]);
 
-const { error, data } = typea.strict(data, options, extend)
+const { error, data } = schema.strictVerify(data)
 ```
 
 #### 宽松模式
@@ -98,22 +104,22 @@ const { error, data } = typea.strict(data, options, extend)
 宽松模式下不会对包含子表达式的数组、对象结构体进行强制非空验证。
 
 ```js
-const typea = require('typea')
+const schema = typea(express[, extend]);
 
-const { error, data } = typea.loose(data, options, extend)
+const { error, data } = schema.looseVerify(data)
 ```
 
 ### 输入参数
 
-*  `data` * - 待验证数据，允许任意数据类型
+*  `express` * - 待验证数据的结构镜像验证表达式，参考[验证表达式](#模型验证表达式)。
 
-*  `options` * - 待验证数据的结构镜像验证表达式，参考[验证表达式](#模型验证表达式)。
-
-*  `extend` *Objcte* - 数据扩展选项，根据输入数据生成新的数据结构（可选）
+*  `extend` *Objcte* - 数据结构扩展选项，根据输入数据生成新的数据结构（可选）
 
    *  `$name` *Function* - 数据扩展函数，基于已验证的数据构建新的数据结构，输出结果将以函数名作为key保存到返回值的data中。函数中this和第一个入参指向data（已存在的同名属性值会被函数返回值覆盖）
 
    *  `$name` * - 除函数外的其它任意数据类型，在已验证的数据结构上添加新的属性或覆盖已存在的同名属性
+
+*  `data` * - 验证数据，支持任意数据类型
 
 ### 返回值
 
@@ -250,40 +256,6 @@ typea.use('int', {
       }
    }
 })
-```
-
-### 可复用验证器
-
-schema用于创建可复用的验证器，相比每次都将验证表达式作为一次性消耗品，schema是更好的选择，在环境允许的情况下应优先使用schema模式。
-
-> schema的定义应该在应用启动时被执行，而不是运行时。目的是通过预先缓存一部分静态数据，从而减少运行时的内存和计算开销。
-
-#### typea.schema(options, extend)
-
-* `options` * - 验证表达式，参考[验证表达式](#模型验证表达式)
-
-* `extend` *Object* - 数据扩展选项，参考[输入参数](#输入参数)
-
-```js
-const schema = typea.schema({
-   a: {
-      a1: String,
-      a2: String
-   },
-   b: 2,
-   c: Number,
-})
-
-const sample = {
-   a: {
-      a1: "jj",
-      a2: "12",
-   },
-   b: 2,
-   c: 888,
-}
-
-const { error, data } = schema(sample)
 ```
 
 ### 参考示例

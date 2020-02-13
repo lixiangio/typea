@@ -9,7 +9,7 @@ test('array', t => {
       {
          'state': {
             type: Boolean,
-            defaultValue: false,
+            default: true,
          }
       }
    ])
@@ -17,6 +17,8 @@ test('array', t => {
    const sample = [{ state: true }]
 
    const { error, data } = schema.verify(sample);
+
+   console.log(data)
 
    t.deepEqual(sample, data, error);
 
