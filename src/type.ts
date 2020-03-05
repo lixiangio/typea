@@ -1,12 +1,12 @@
 "use strict";
 
-import symbols = require('./symbol.js');
-import common = require('./common.js');
+import common from './common.js';
+import symbols from './symbol.js';
 
-import toDate = require('validator/lib/toDate.js');
-import isMongoId = require('validator/lib/isMongoId.js');
-import isMobilePhone = require('validator/lib/isMobilePhone.js');
-import isEmail = require('validator/lib/isEmail.js');
+import toDate from 'validator/lib/toDate.js';
+import isMongoId from 'validator/lib/isMongoId.js';
+import isMobilePhone from 'validator/lib/isMobilePhone.js';
+import isEmail from 'validator/lib/isEmail.js';
 
 const types = new Map();
 
@@ -192,4 +192,4 @@ types.set(symbols.email, {
 })
 
 // 数据类型验证方法
-export = types;
+export default types;

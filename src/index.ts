@@ -1,8 +1,8 @@
 "use strict";
 
-import types = require('./type.js');
-import symbols = require('./symbol.js');
-import common = require('./common.js');
+import types from './type.js';
+import symbols from './symbol.js';
+import common from './common.js';
 
 const ignore = [undefined, null, ''];
 
@@ -403,4 +403,4 @@ typea.use = function (type: string | number, options = {}) {
 
 }
 
-export = typea;
+export default typea;

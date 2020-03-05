@@ -1,7 +1,7 @@
 "use strict"
 
 const test = require('jtf')
-const typea = require('..')
+const typea = require('..').default
 
 test('common', t => {
 
@@ -32,7 +32,7 @@ test('common', t => {
          "or": ["name", 'xxx']
       },
       "coupon": {
-         "type": String,
+         type: String,
          set(value) {
             return { "$gt": value }
          },

@@ -1,7 +1,7 @@
 "use strict"
 
 const test = require('jtf');
-const typea = require('..');
+const typea = require('..').default;
 
 test('array', t => {
 
@@ -18,7 +18,7 @@ test('array', t => {
 
    const { error, data } = schema.verify(sample);
 
-   console.log(data)
+   // console.log(data)
 
    t.deepEqual(sample, data, error);
 

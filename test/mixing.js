@@ -1,7 +1,7 @@
 "use strict"
 
 const test = require('jtf')
-const typea = require('..')
+const typea = require('..').default
 
 const sample = {
    "name": "测试",
