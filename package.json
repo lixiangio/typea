@@ -8,7 +8,7 @@
       "build": "tsc",
       "test": "jtf -w"
    },
-   "author": "https://github.com/xiangle/verify.git",
+   "author": "https://github.com/xiangle/typea.git",
    "license": "ISC",
    "dependencies": {
       "validator": "^12.2.0"
@@ -24,12 +24,12 @@
    ],
    "repository": {
       "type": "git",
-      "url": "git+https://github.com/xiangle/verify.git"
+      "url": "git+https://github.com/xiangle/typea.git"
    },
    "bugs": {
-      "url": "https://github.com/xiangle/verify/issues"
+      "url": "https://github.com/xiangle/typea/issues"
    },
-   "homepage": "https://github.com/xiangle/verify#readme",
+   "homepage": "https://github.com/xiangle/typea#readme",
    "files": [
       "lib"
    ]
