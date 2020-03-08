@@ -1,8 +1,8 @@
 {
    "name": "typea",
-   "version": "5.0.3",
+   "version": "5.0.4",
    "description": "JS数据验证、转换递归器",
-   "main": "lib",
+   "main": "index.js",
    "scripts": {
       "watch": "tsc --watch",
       "build": "tsc",

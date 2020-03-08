@@ -1,7 +1,7 @@
 "use strict"
 
 const test = require('jtf');
-const typea = require('..').default;
+const typea = require('..');
 
 test('array', t => {
 
