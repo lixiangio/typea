@@ -25,20 +25,19 @@ test('extend', t => {
       "mobile": {
         "type": mobilePhone,
       },
-    },
-    {
-      xxx({ id, email }) {
-        return [id, email];
-      },
-      sss({ mobile }) {
-        return {
-          kkk: 1212,
-          mobile
-        }
-      },
-      ccc: 666
     }
-  ).verify(sample);
+  ).verify(sample, {
+    xxx({ id, email }) {
+      return [id, email];
+    },
+    sss({ mobile }) {
+      return {
+        kkk: 1212,
+        mobile
+      }
+    },
+    ccc: 666
+  });
 
   // console.log(data)
 

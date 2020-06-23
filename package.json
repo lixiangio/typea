@@ -1,6 +1,6 @@
 {
    "name": "typea",
-   "version": "5.0.4",
+   "version": "5.2.0",
    "description": "JS数据验证、转换递归器",
    "main": "index.js",
    "scripts": {

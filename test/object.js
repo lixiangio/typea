@@ -1,13 +1,13 @@
 "use strict"
 
-const test = require('jtf')
-const typea = require('..')
+const test = require('jtf');
+const typea = require('..');
 
 
 test('object', t => {
 
   const sample = {
-    a: {
+    type: {
       a1: 1,
       a2: 12,
     },
@@ -17,39 +17,36 @@ test('object', t => {
     },
   }
 
-  const { error, data } = typea(
-    {
-      a: {
-        a1: {
-          type: Number,
-          allowNull: false
-        },
-        a2: Number
-      },
-      b: {
+  const { error, data } = typea({
+    type: {
+      a1: {
         type: Number,
-        name: "拉拉",
-        set(data) {
-          return data * 2
-        }
+        allowNull: false
       },
-      f: {
-        type: Function,
-        set(func) {
-          return func(1, 1)
-        }
-      },
+      a2: Number
     },
-    {
-      test() {
-        return 888
-      },
-      ss: 999
-    }
-  ).verify(sample);
+    b: {
+      type: Number,
+      name: "拉拉",
+      set(data) {
+        return data * 2
+      }
+    },
+    f: {
+      type: Function,
+      set(func) {
+        return func(1, 1)
+      }
+    },
+  }).verify(sample, {
+    test(data) {
+      return 888;
+    },
+    ss: 999
+  });
 
   t.deepEqual({
-    a: { a1: 1, a2: 12 },
+    type: { a1: 1, a2: 12 },
     b: 198,
     f: 2,
     test: 888,
