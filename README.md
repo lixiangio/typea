@@ -84,9 +84,9 @@ typea支持常规、严格、宽松三种验证模式，多数情况下只需要
 常规模式下默认只对allowNull为false的节点强制执行非空验证，默认对包含子表达式的数组、对象结构体执行强制非空验证。
 
 ```js
-const schema = typea(express[, extend]);
+const schema = typea(express);
 
-const { error, data } = schema.verify(data)
+const { error, data } = schema.verify(data[, extend])
 ```
 
 #### 严格模式
@@ -94,9 +94,9 @@ const { error, data } = schema.verify(data)
 严格模式下默认会为所有节点强制执行非空验证，除非明确声明allowNull为true。
 
 ```js
-const schema = typea(express[, extend]);
+const schema = typea(express);
 
-const { error, data } = schema.strictVerify(data)
+const { error, data } = schema.strictVerify(data[, extend])
 ```
 
 #### 宽松模式
@@ -104,9 +104,9 @@ const { error, data } = schema.strictVerify(data)
 宽松模式下不会对包含子表达式的数组、对象结构体进行强制非空验证。
 
 ```js
-const schema = typea(express[, extend]);
+const schema = typea(express);
 
-const { error, data } = schema.looseVerify(data)
+const { error, data } = schema.looseVerify(data[, extend])
 ```
 
 ### 输入参数

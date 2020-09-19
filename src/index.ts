@@ -1,5 +1,3 @@
-"use strict";
-
 import types from './type.js';
 import symbols from './symbol.js';
 import common from './common.js';

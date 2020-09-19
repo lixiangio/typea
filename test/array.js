@@ -1,9 +1,10 @@
 "use strict"
 
-const test = require('jtf');
-const typea = require('..');
+const test = require('jmr');
 
-test('array', t => {
+const { typea } = test;
+
+test('array1', t => {
 
    const schema = typea([
       {
@@ -25,7 +26,7 @@ test('array', t => {
 });
 
 
-test('array', t => {
+test('array2', t => {
 
    const sample = {
       a: ['xx', 'kk'],

@@ -1,7 +1,7 @@
 "use strict"
 
-const test = require('jtf');
-const typea = require('..');
+const test = require('jmr');
+const { typea } = test;
 
 const sample = {
    a: undefined,
@@ -29,7 +29,7 @@ const { error, data } = typea({
 
 // console.log(data);
 
-test('null', t => {
+test('null',async t => {
 
    t.deepEqual(data, {
       a: 'xxx',

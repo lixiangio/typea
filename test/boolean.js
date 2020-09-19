@@ -1,6 +1,6 @@
 "use strict"
 
-const test = require('jtf')
+const test = require('jmr')
 const typea = require('..')
 
 test('boolean', t => {

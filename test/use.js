@@ -1,7 +1,8 @@
 "use strict";
 
-const test = require('jtf');
-const typea = require('..');
+const test = require('jmr');
+
+const { typea } = test;
 
 typea.use('int', {
    type(data) {
