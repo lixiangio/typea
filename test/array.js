@@ -4,7 +4,7 @@ const test = require('jmr');
 
 const { typea } = test;
 
-test('array1', t => {
+test('array 匹配单项或多项', t => {
 
    const schema = typea([
       {
@@ -26,7 +26,32 @@ test('array1', t => {
 });
 
 
-test('array2', t => {
+test('array 匹配指定多项', t => {
+
+   const item = {
+      'state': {
+         type: Boolean,
+         default: true,
+      }
+   };
+
+   const schema = typea([
+      item,
+      item
+   ])
+
+   const sample = [{ state: true }, { state: false }]
+
+   const { error, data } = schema.verify(sample);
+
+   // console.log(data)
+
+   t.deepEqual(sample, data, error);
+
+});
+
+
+test('array 综合', t => {
 
    const sample = {
       a: ['xx', 'kk'],
