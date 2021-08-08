@@ -1,21 +1,16 @@
 {
    "name": "typea",
-   "version": "5.2.0",
+   "version": "5.3.0",
+   "type": "module",
    "description": "JS数据验证、转换递归器",
-   "main": "index.js",
+   "main": "./lib/index.js",
    "scripts": {
       "watch": "tsc --watch",
       "build": "tsc",
-      "test": "jtf -w"
+      "test": "jtm -w"
    },
    "author": "https://github.com/xiangle/typea.git",
    "license": "ISC",
-   "dependencies": {
-      "validator": "^12.2.0"
-   },
-   "devDependencies": {
-      "@types/validator": "^12.0.1"
-   },
    "keywords": [
       "typea",
       "schema",

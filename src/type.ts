@@ -1,10 +1,10 @@
 import common from './common.js';
 import symbols from './symbol.js';
 
-import toDate from 'validator/lib/toDate.js';
-import isMongoId from 'validator/lib/isMongoId.js';
-import isMobilePhone from 'validator/lib/isMobilePhone.js';
-import isEmail from 'validator/lib/isEmail.js';
+import toDate from '../validator/toDate.js';
+import isMongoId from '../validator/isMongoId.js';
+import isMobilePhone from '../validator/isMobilePhone.js';
+import isEmail from '../validator/isEmail.js';
 
 const types = new Map();
 

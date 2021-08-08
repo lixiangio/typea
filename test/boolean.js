@@ -1,7 +1,6 @@
-"use strict"
+import test from 'jtm';
 
-const test = require('jmr')
-const typea = require('..')
+const { typea } = test;
 
 test('boolean', t => {
 

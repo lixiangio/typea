@@ -3,8 +3,9 @@
     "./src/**/*"
   ],
   "compilerOptions": {
-    "target": "es2018",
-    "module": "commonjs",
+    "target": "ES2020",
+    "module": "ES2020",
     "outDir": "lib",
-  }
+  },
+  "moduleResolution": "node",
 }

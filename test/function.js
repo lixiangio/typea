@@ -1,6 +1,4 @@
-"use strict"
-
-const test = require('jmr')
+import test from 'jtm'
 const { typea } = test;
 
 test('function', t => {

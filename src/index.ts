@@ -4,7 +4,6 @@ import common from './common.js';
 
 const { toString } = Object.prototype;
 
-
 const ignore = [undefined, null, ''];
 
 class Parser {
