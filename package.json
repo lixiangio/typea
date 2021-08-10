@@ -2,7 +2,7 @@
    "name": "typea",
    "version": "5.3.3",
    "type": "module",
-   "description": "JS数据验证、转换递归器",
+   "description": "JS数据结构验证、转换器",
    "main": "./build/index.js",
    "scripts": {
       "dev": "tsc --watch",
