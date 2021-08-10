@@ -1,4 +1,4 @@
 import test from 'jtm';
-import typea from './lib/index.js';
+import typea from './build/index.js';
 
 test.typea = typea;

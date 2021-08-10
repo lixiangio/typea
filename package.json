@@ -1,11 +1,11 @@
 {
    "name": "typea",
-   "version": "5.3.1",
+   "version": "5.3.3",
    "type": "module",
    "description": "JS数据验证、转换递归器",
-   "main": "./lib/index.js",
+   "main": "./build/index.js",
    "scripts": {
-      "watch": "tsc --watch",
+      "dev": "tsc --watch",
       "build": "tsc",
       "test": "jtm -w"
    },
@@ -26,7 +26,7 @@
    },
    "homepage": "https://github.com/xiangle/typea#readme",
    "files": [
-      "lib",
+      "build",
       "validator"
    ]
 }

@@ -11,7 +11,7 @@ const types = new Map();
 types.set(String, {
   ...common,
   // 数据类型验证
-  type(data) {
+  type(data: string | number) {
     if (typeof data === 'string') {
       return { data: data.trim() }
     } else if (typeof data === 'number') {
@@ -21,7 +21,7 @@ types.set(String, {
     }
   },
   // 限制最小长度
-  min(data, min) {
+  min(data: string, min: number) {
     if (data.length < min) {
       return { error: `长度不能小于${min}个字符` }
     } else {
@@ -29,7 +29,7 @@ types.set(String, {
     }
   },
   // 限制最大长度
-  max(data, max) {
+  max(data: string, max) {
     if (data.length > max) {
       return { error: `长度不能大于${max}个字符` }
     } else {
@@ -37,7 +37,7 @@ types.set(String, {
     }
   },
   // 正则
-  reg(data, reg) {
+  reg(data: string, reg: RegExp) {
     if (data.search(reg) === -1) {
       return { error: '格式错误' }
     } else {
@@ -45,7 +45,7 @@ types.set(String, {
     }
   },
   // 包含
-  in(data, array) {
+  in(data: string, array: [string]) {
     const result = array.indexOf(data);
     if (result === -1) {
       return { error: `值必须为[${array}]选项其中之一` }
@@ -57,32 +57,32 @@ types.set(String, {
 
 types.set(Number, {
   ...common,
-  type(data) {
+  type(data: number) {
     if (isNaN(data)) {
       return { error: '必须为Number类型' }
     } else {
       return { data: Number(data) }
     }
   },
-  min(data, min) {
+  min(data: number, min) {
     if (data < min) {
       return { error: `不能小于${min}` }
     } else {
       return { data }
     }
   },
-  max(data, max) {
+  max(data: number, max) {
     if (data > max) {
-      return { error: `不能大于${max}` }
+      return { error: `不能大于${max}` };
     } else {
       return { data }
     }
   },
   // 包含
-  in(data, array) {
+  in(data: number, array: [number]) {
     const result = array.indexOf(data);
     if (result === -1) {
-      return { error: `值必须为${array}中的一个` }
+      return { error: `值必须为${array}中的一个` };
     } else {
       return { data }
     }
@@ -91,43 +91,43 @@ types.set(Number, {
 
 types.set(Array, {
   ...common,
-  type(data) {
+  type(data: []) {
     if (Array.isArray(data)) {
-      return { data }
+      return { data };
     } else {
-      return { error: '必须为Array类型' }
+      return { error: '必须为Array类型' };
     }
   },
-  min(data, min) {
+  min(data: [], min: number) {
     if (data.length < min) {
-      return { error: `长度不能小于${min}个字符` }
+      return { error: `长度不能小于${min}个字符` };
     } else {
-      return { data }
+      return { data };
     }
   },
-  max(data, max) {
+  max(data: [], max: number) {
     if (data.length > max) {
-      return { error: `长度不能大于${max}个字符` }
+      return { error: `长度不能大于${max}个字符` };
     } else {
-      return { data }
+      return { data };
     }
   },
 })
 
 types.set(Object, {
   ...common,
-  type(data) {
+  type(data: object) {
     if (typeof data === 'object') {
-      return { data }
+      return { data };
     } else {
-      return { error: '必须为Object类型' }
+      return { error: '必须为Object类型' };
     }
   },
 })
 
 types.set(Boolean, {
   ...common,
-  type(data) {
+  type(data: boolean) {
     if (typeof data === 'boolean') {
       return { data }
     } else {
@@ -138,7 +138,7 @@ types.set(Boolean, {
 
 types.set(Date, {
   ...common,
-  type(data) {
+  type(data: Date) {
     if (toDate(data + '')) {
       return { data }
     } else {
@@ -149,7 +149,7 @@ types.set(Date, {
 
 types.set(Function, {
   ...common,
-  type(data) {
+  type(data: Function) {
     if (typeof data === 'function') {
       return { data }
     } else {

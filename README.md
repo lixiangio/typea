@@ -29,7 +29,7 @@ npm install typea
 ### 使用示例
 
 ```js
-const typea = require("typea");
+import typea from 'typea';
 
 const { email, mongoId } = typea.types;
 

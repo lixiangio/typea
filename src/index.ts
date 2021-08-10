@@ -358,14 +358,13 @@ function typea(express: any) {
 
 typea.types = symbols;
 
-
 /**
  * 自定义数据类型扩展方法
  * @param {Function, Symbol, String} type 数据类型
  * @param {Object} options 扩展选项
  * @param {Object.Function} options 扩展方法
  */
-typea.use = function (type: string | number, options = {}) {
+typea.use = function (type: string | number, options: object = {}) {
 
   if (!type) return;
 
