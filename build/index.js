@@ -264,9 +264,9 @@ function typea(express) {
 typea.types = symbols;
 /**
  * 自定义数据类型扩展方法
- * @param {Function, Symbol, String} type 数据类型
- * @param {Object} options 扩展选项
- * @param {Object.Function} options 扩展方法
+ * @param {function, symbol, string} type 数据类型
+ * @param {object} options 扩展选项
+ * @param {object.function} options 扩展方法
  */
 typea.use = function (type, options = {}) {
     if (!type)

@@ -4,6 +4,7 @@
    "type": "module",
    "description": "JS数据结构验证、转换器",
    "main": "./build/index.js",
+   "types": "./types/index.d.ts",
    "scripts": {
       "dev": "tsc --watch",
       "build": "tsc",
