@@ -1,5 +1,6 @@
 import test from 'jtm'
-const { typea } = test;
+
+const { types } = test;
 
 test('common', t => {
 
@@ -14,9 +15,9 @@ test('common', t => {
       "email": "xxx@xx.xx",
    }
 
-   const { email } = typea.types
+   const { email } = types;
 
-   const { error, data } = typea({
+   const { error, data } = types({
       "name": {
          "type": String,
          "name": "名称",

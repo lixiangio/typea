@@ -1,10 +1,8 @@
-"use strict";
-
 import test from 'jtm';
 
-const { typea } = test;
+const { types } = test;
 
-typea.use('int', {
+types.use('int', {
    type(data) {
       if (Number.isInteger(data)) {
          return { data }
@@ -29,9 +27,7 @@ typea.use('int', {
    }
 })
 
-const { mongoId, email, mobilePhone, int } = typea.types
-
-test('extend', t => {
+test('extend int', t => {
 
    const sample = {
       "id": "5687862c08d67e29cd000001",
@@ -47,9 +43,11 @@ test('extend', t => {
          "18655655512"
       ],
       "v": 6
-   }
+   };
 
-   const { error, data } = typea({
+   const { mongoId, email, mobilePhone, int } = types;
+   
+   const { error, data } = types({
       "id": {
          "type": mongoId,
          "allowNull": false

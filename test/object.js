@@ -1,11 +1,11 @@
 import test from 'jtm';
-const { typea } = test;
 
+const { types } = test;
 
 test('object', t => {
 
   const sample = {
-    type: {
+    a: {
       a1: 1,
       a2: 12,
     },
@@ -15,8 +15,8 @@ test('object', t => {
     },
   }
 
-  const { error, data } = typea({
-    type: {
+  const type = {
+    a: {
       a1: {
         type: Number,
         allowNull: false
@@ -36,19 +36,56 @@ test('object', t => {
         return func(1, 1)
       }
     },
-  }).verify(sample, {
-    test(data) {
-      return 888;
-    },
+  };
+
+  const { error, data } = types(type).verify(sample, {
+    test() { return 888; },
     ss: 999
   });
 
   t.deepEqual({
-    type: { a1: 1, a2: 12 },
+    a: { a1: 1, a2: 12 },
     b: 198,
     f: 2,
     test: 888,
     ss: 999
+  }, data, error);
+
+});
+
+
+test('object null', async t => {
+
+  const sample = {
+    a: undefined,
+    b: ["kkk", "xxx"],
+    c: '',
+    d: null
+  };
+
+  const { error, data } = types({
+    a: {
+      type: String,
+      allowNull: false,
+      default: 'xxx',
+    },
+    b: [String],
+    c: {
+      type: String,
+      allowNull: true,
+    },
+    d: {
+      type: String,
+      allowNull: true,
+    }
+  }).strictVerify(sample);
+
+
+  t.deepEqual({
+    a: 'xxx',
+    b: ["kkk", "xxx"],
+    c: '',
+    d: null
   }, data, error);
 
 });

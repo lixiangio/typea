@@ -1,10 +1,10 @@
 import test from 'jtm';
 
-const { typea } = test;
+const { types } = test;
 
 test('boolean', t => {
 
-   const { error, data } = typea(Boolean).verify(true);
+   const { error, data } = types(Boolean).verify(true);
 
    // console.log(data);
 
@@ -24,7 +24,7 @@ test('inline', t => {
       c: [true, true, false, true]
    }
 
-   const schema = typea({
+   const schema = types({
       a: Boolean,
       b: {
          b1: {

@@ -1,4 +1,4 @@
-import types from './type.js';
+import types from './types.js';
 import symbols from './symbol.js';
 import common from './common.js';
 
@@ -11,7 +11,6 @@ class Parser {
   express: any;
   mode: string;
   /**
-   * 
    * @param {*} express 验证表达式
    * @param {String} mode 验证模式
    */
@@ -356,48 +355,36 @@ function typea(express: any) {
 
 }
 
-typea.types = symbols;
+Object.assign(typea, symbols);
 
 /**
  * 自定义数据类型扩展方法
- * @param {Function, Symbol, String} type 数据类型
- * @param {Object} options 扩展选项
- * @param {Object.Function} options 扩展方法
+ * @param {function, symbol, string} type 数据类型
+ * @param {object} options 扩展选项
+ * @param {object.function} options 扩展方法
  */
 typea.use = function (type: string | number, options: object = {}) {
 
-  if (!type) return;
+  // 通过String定位，扩展已有数据类型或创建新类型
+  if (typeof type !== 'string') return;
 
-  const value = types.get(type);
+  const symbol = typea[type];
 
-  // 通过Symbol定位，扩展已有数据类型
-  if (value) {
+  // 扩展已有 Symbol 类型
+  if (symbol) {
 
+    const value = types.get(symbol);
     Object.assign(value, options);
 
   }
 
-  // 通过String定位，扩展已有数据类型或创建新类型
-  else if (typeof type === 'string') {
+  // 创建新类型
+  else {
 
-    // 扩展已有Symbol类型
-    if (symbols[type]) {
-
-      const symbol = symbols[type];
-      const value = types.get(symbol);
-      Object.assign(value, options);
-
-    }
-
-    // 创建新类型
-    else {
-
-      Object.assign(options, common);
-      const symbol = Symbol(type);
-      symbols[type] = symbol;
-      types.set(symbol, options);
-
-    }
+    Object.assign(options, common);
+    const symbol = Symbol(type);
+    typea[type] = symbol;
+    types.set(symbol, options);
 
   }
 

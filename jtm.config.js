@@ -1,4 +1,10 @@
 import test from 'jtm';
-import typea from './build/index.js';
+import types from './dist/index.js';
+import toDate from './validator/toDate.js';
+import isMongoId from './validator/isMongoId.js';
+import isMobilePhone from './validator/isMobilePhone.js';
+import isEmail from './validator/isEmail.js';
 
-test.typea = typea;
+
+
+test.types = types;

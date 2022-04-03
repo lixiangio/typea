@@ -1,5 +1,5 @@
 import test from 'jtm'
-const { typea } = test;
+const { types } = test;
 
 test("strict", t => {
 
@@ -12,7 +12,7 @@ test("strict", t => {
       }
    }
 
-   const { error, data } = typea({
+   const { error, data } = types({
       a: {
          type: String,
          allowNull: false,
@@ -44,7 +44,7 @@ test("loose", t => {
       }
    }
 
-   const { error, data } = typea({
+   const { error, data } = types({
       a: {
          type: String,
          allowNull: false,

@@ -1,7 +1,6 @@
 /**
  * 通用验证方法
  */
-
 export default {
   // 参数自定义转换方法
   set(data, func, origin) {

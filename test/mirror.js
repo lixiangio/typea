@@ -1,5 +1,6 @@
 import test from 'jtm';
-const { typea } = test;
+
+const { types } = test;
 
 const sample = {
    "name": "测试",
@@ -50,12 +51,12 @@ const sample = {
    "arr": ['jjsd', 'ddd']
 }
 
-const { mongoId, email, mobilePhone } = typea.types
+const { mongoId, email, mobilePhone } = types;
 
 
 test('结构镜像', t => {
 
-   const { error, data } = typea({
+   const { error, data } = types({
       "name": String,
       "num": String,
       "ObjectId": mongoId,
@@ -113,7 +114,7 @@ test('结构镜像', t => {
 
 test('结构、值镜像', t => {
 
-   const { error, data } = typea(sample).verify(sample);
+   const { error, data } = types(sample).verify(sample);
 
    // console.log(data);
 

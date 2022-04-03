@@ -1,10 +1,10 @@
 import test from 'jtm';
 
-const { typea } = test;
+const { types } = test;
 
 test('array 匹配单项或多项', t => {
 
-   const schema = typea([
+   const schema = types([
       {
          'state': {
             type: Boolean,
@@ -33,12 +33,9 @@ test('array 匹配指定多项', t => {
       }
    };
 
-   const schema = typea([
-      item,
-      item
-   ])
+   const schema = types([item, item])
 
-   const sample = [{ state: true }, { state: false }]
+   const sample = [{ state: true }, { state: false }];
 
    const { error, data } = schema.verify(sample);
 
@@ -51,32 +48,7 @@ test('array 匹配指定多项', t => {
 
 test('array 综合', t => {
 
-   const sample = {
-      a: ['xx', 'kk'],
-      b: [666, 999, 88,],
-      c: [{ a: 1 }, { a: 2 }, { b: 3 }],
-      d: [
-         {
-            d1: 666,
-            d2: "888"
-         },
-         999,
-         [
-            {
-               xa: 1,
-               xb: [1, 2, 3],
-            },
-            {
-               xa: 9,
-               xb: [2, 4, 3],
-            }
-         ],
-         "hello"
-      ],
-      e: [1, 2, 3],
-   }
-
-   const schema = typea({
+   const schema = types({
       a: [{ "type": String }],
       b: [{
          "type": Number,
@@ -103,9 +75,32 @@ test('array 综合', t => {
       e: Array
    });
 
-   const { error, data } = schema.verify(sample);
+   const sample = {
+      a: ['xx', 'kk'],
+      b: [666, 999, 88,],
+      c: [{ a: 1 }, { a: 2 }, { b: 3 }],
+      d: [
+         {
+            d1: 666,
+            d2: "888"
+         },
+         999,
+         [
+            {
+               xa: 1,
+               xb: [1, 2, 3],
+            },
+            {
+               xa: 9,
+               xb: [2, 4, 3],
+            }
+         ],
+         "hello"
+      ],
+      e: [1, 2, 3],
+   };
 
-   // console.log(data);
+   const { error, data } = schema.verify(sample);
 
    t.deepEqual(sample, data, error);
 

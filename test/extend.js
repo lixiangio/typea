@@ -1,9 +1,10 @@
 import test from 'jtm'
-const { typea } = test;
+
+const { types } = test;
 
 test('extend', t => {
 
-  const { mongoId, email, mobilePhone } = typea.types;
+  const { mongoId, email, mobilePhone } = types;
 
   const sample = {
     "id": "5687862c08d67e29cd000001",
@@ -11,7 +12,7 @@ test('extend', t => {
     "mobile": "15855555547",
   }
 
-  const { error, data } = typea(
+  const { error, data } = types(
     {
       "id": {
         "type": mongoId,

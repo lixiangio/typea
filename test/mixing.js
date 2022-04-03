@@ -1,5 +1,6 @@
 import test from 'jtm'
-const { typea } = test;
+
+const { types } = test;
 
 const sample = {
   "name": "测试",
@@ -52,9 +53,9 @@ const sample = {
 
 test('mixing', t => {
 
-  const { mongoId, email, mobilePhone } = typea.types;
+  const { mongoId, email, mobilePhone } = types;
 
-  const schema = typea({
+  const schema = types({
     "name": {
       "type": String,
       "name": "名称",
@@ -123,7 +124,7 @@ test('mixing', t => {
     "email": {
       "type": email,
       set(value) {
-        return [value, , null, , undefined, 666]
+        return [value, undefined, null, undefined, undefined, 666]
       }
     },
     "arr": [String],

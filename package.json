@@ -1,14 +1,17 @@
 {
    "name": "typea",
-   "version": "5.3.3",
+   "version": "6.0.0",
    "type": "module",
    "description": "JS数据结构验证、转换器",
    "main": "./build/index.js",
    "types": "./types/index.d.ts",
    "scripts": {
-      "dev": "tsc --watch",
-      "build": "tsc",
-      "test": "jtm -w"
+      "start": "swc ./src/* -d ./dist && node ./dist/index.js",
+      "dev": "swc ./src/* -d ./dist --watch",
+      "build": "swc ./src/* -d ./dist",
+      "tsc:watch": "tsc --watch",
+      "tsc": "tsc",
+      "test": "jtm"
    },
    "author": "https://github.com/xiangle/typea.git",
    "license": "ISC",
@@ -29,5 +32,8 @@
    "files": [
       "build",
       "validator"
-   ]
+   ],
+   "devDependencies": {
+      "jtm": "^1.0.4"
+   }
 }

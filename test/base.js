@@ -1,12 +1,12 @@
 import test from 'jtm';
-const { typea } = test;
 
+const { types } = test;
 
 test('String in Array', t => {
 
    const sample = ['a', 'b', 'c']
 
-   const { error, data } = typea([String]).verify(sample);
+   const { error, data } = types([String]).verify(sample);
 
    t.deepEqual(sample, data, error);
 
@@ -17,7 +17,7 @@ test('[Number]', t => {
 
    const sample = [1, 2, 3]
 
-   const { error, data } = typea([Number]).verify(sample);
+   const { error, data } = types([Number]).verify(sample);
 
    t.deepEqual(sample, data, error);
 
@@ -31,7 +31,7 @@ test('{Number}', t => {
       y: 2
    }
 
-   const { error, data } = typea({
+   const { error, data } = types({
       x: Number,
       y: Number
    }).verify(sample);
@@ -48,7 +48,7 @@ test('{String}', t => {
       y: "word"
    }
 
-   const { error, data } = typea({
+   const { error, data } = types({
       x: String,
       y: String
    }).verify(sample);

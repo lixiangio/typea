@@ -1,9 +1,9 @@
 import test from 'jtm';
-const { typea } = test;
+const { types } = test;
 
 test('常规', t => {
 
-   const schema = typea({
+   const schema = types({
       a: {
          a1: {
             type: Number,
@@ -36,7 +36,7 @@ test('常规', t => {
 
 test('strict', t => {
 
-   const schema = typea({
+   const schema = types({
       a: {
          a1: {
             type: Number
@@ -68,7 +68,7 @@ test('strict', t => {
 
 test('loose', t => {
 
-   const schema = typea({
+   const schema = types({
       a: {
          a1: {
             type: Number,

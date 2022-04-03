@@ -1,11 +1,12 @@
 import test from 'jtm'
-const { typea } = test;
+
+const { types } = test;
 
 test('function', t => {
 
    function func() { }
 
-   const { error, data } = typea(Function).verify(func);
+   const { error, data } = types(Function).verify(func);
 
    // console.log(data);
 
@@ -25,7 +26,7 @@ test('inline', t => {
       },
    }
 
-   const { error, data } = typea({
+   const { error, data } = types({
       a: Function,
       b: {
          type: Function,

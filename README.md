@@ -6,17 +6,13 @@
 
 ### 特性
 
-- 不仅仅提供数据验证，同时还拥有很好的数据处理能力，通过分布在节点上的 set 方法合成新的数据结构。
+- 支持类型或值匹配，满足模糊匹配和精准匹配的双重需求；
 
-- 支持对象和数组的无限嵌套，只需要按数据结构建模即可，不必担心数据层级深度、复杂度的问题。
+- 支持对象和数组的无限嵌套，只需要按数据结构建模即可，不必担心数据层级深度、复杂度的问题；
 
-- 可以直接复制数据进行快速建模，只需要将值替换为类型后就得到了基础验证模型。
+- 数据集中处理，通过分布在节点上的 set 方法可合成新的数据结构，减少碎片化代码；
 
-- 支持指定值匹配或类型匹配，满足精准匹配和模糊匹配的双重需求。
-
-- 基于 js 对象的树状结构让代码看起来高度类聚，大大降低了碎片化率。
-
-- 拥有足够的容错能力，在验证期间你几乎不需要使用 try/catch 来捕获异常，返回值中的 path 错误定位信息可以帮助快速追踪错误来源。
+- 拥有足够的容错能力，在验证期间几乎不需要使用 try/catch 来捕获异常，返回的 path 路径可快速定位错误节点；
 
 - 当内置数据类型无法满足需求时，可以通过扩展的方式创建新的数据类型。
 
@@ -29,34 +25,40 @@ npm install typea
 ### 使用示例
 
 ```js
-import typea from 'typea';
+import types from 'typea';
 
-const { email, mongoId } = typea.types;
+const { email, mongoId } = types;
 
-const schema = typea({
-  name: String,
-  num: Number,
-  email: email,
+const schema = types({
   id: mongoId,
+  name: String,
+  email: email,
+  num: Number,
   files: [String],
   user: {
     username: "莉莉",
     age: Number,
-    address: [{ city: String }, { city: "北京" }],
+    address: [
+      { city: String },
+      { city: "北京" }
+    ],
   },
   money: "2",
 });
 
 const { error, data } = schema.verify({
-  name: "test",
-  num: 12345,
-  email: "gmail@gmail.com",
   id: "59c8aea808deec3fc8da56b6",
+  name: "test",
+  email: "gmail@gmail.com",
+  num: 12345,
   files: ["abc.js", "null", "edb.js"],
   user: {
     username: "莉莉",
     age: 18,
-    address: [{ city: "深圳" }, { city: "北京" }],
+    address: [
+      { city: "深圳" },
+      { city: "北京" }
+    ],
   },
   money: "2",
 });
@@ -79,7 +81,7 @@ typea 支持常规、严格、宽松三种验证模式，多数情况下只需�
 常规模式下默认只对 allowNull 为 false 的节点强制执行非空验证，默认对包含子表达式的数组、对象结构体执行强制非空验证。
 
 ```js
-const schema = typea(express);
+const schema = types(express);
 
 const { error, data } = schema.verify(data[, extend])
 ```
@@ -89,7 +91,7 @@ const { error, data } = schema.verify(data[, extend])
 严格模式下默认会为所有节点强制执行非空验证，除非明确声明 allowNull 为 true。
 
 ```js
-const schema = typea(express);
+const schema = types(express);
 
 const { error, data } = schema.strictVerify(data[, extend])
 ```
@@ -99,7 +101,7 @@ const { error, data } = schema.strictVerify(data[, extend])
 宽松模式下不会对包含子表达式的数组、对象结构体进行强制非空验证。
 
 ```js
-const schema = typea(express);
+const schema = types(express);
 
 const { error, data } = schema.looseVerify(data[, extend])
 ```
@@ -192,7 +194,7 @@ options 中支持值表达式，可以对表达式节点直接赋值，实现输
 
 #### 其它数据类型
 
-其它类型通过 typea.types 获取，types 中内置了以下常见类型
+其它类型通过 types 静态属性获取，types 中内置了以下常见类型
 
 ##### email
 
@@ -208,13 +210,13 @@ options 中支持值表达式，可以对表达式节点直接赋值，实现输
 
 ### 扩展自定义数据类型
 
-验证器中仅内置了一部分常用的数据类型，如果不能满足你的需求，可以通过 typea.use()自行扩展。
+验证器中仅内置了一部分常用的数据类型，如果不能满足你的需求，可以通过 types.use()自行扩展。
 
-typea 依赖 validator 库，你可以使用 typea.use()搭配 validator 来定制自己的数据类型。
+typea 依赖 validator 库，你可以使用 types.use()搭配 validator 来定制自己的数据类型。
 
 > 当定义的数据类型不存在时则创建，已存在时则合并，新的验证函数会覆盖内置的同名验证函数。
 
-#### typea.use(name, options)
+#### types.use(name, options)
 
 - `name` _Function, Symbol, String_ - 类型 Key（必填）
 
@@ -231,7 +233,7 @@ typea 依赖 validator 库，你可以使用 typea.use()搭配 validator 来定�
   - `$name(data, options, origin)` _Function_ - 自定义验证函数（可选）
 
 ```js
-typea.use("int", {
+types.use("int", {
   type(data) {
     if (Number.isInteger(data)) {
       return { data };
@@ -279,7 +281,7 @@ const sample = {
   e: [1, 2, 3],
 };
 
-const { error, data } = typea(sample).verify({
+const { error, data } = types(sample).verify({
   a: [String],
   b: [
     {
@@ -325,7 +327,7 @@ const sample = {
   },
 };
 
-const { error, data } = typea(sample).verify({
+const { error, data } = types(sample).verify({
   a: {
     a1: {
       type: Number,
@@ -346,7 +348,7 @@ const { error, data } = typea(sample).verify({
 #### and 依赖验证
 
 ```js
-const { error, data } = typea({
+const { error, data } = types({
   username: "莉莉",
   addressee: "嘟嘟",
 }).verify({
@@ -375,7 +377,7 @@ const { error, data } = typea({
 #### or 依赖验证
 
 ```js
-const { error, data } = typea({
+const { error, data } = types({
   username: "莉莉",
   addressee: "嘟嘟",
 }).verify({
@@ -397,7 +399,7 @@ const { error, data } = typea({
 #### 扩展类型验证
 
 ```js
-typea.use("int", {
+types.use("int", {
   type(data) {
     if (Number.isInteger(data)) {
       return { data };
@@ -407,9 +409,9 @@ typea.use("int", {
   },
 });
 
-const { mongoId, email, mobilePhone, int } = typea.types;
+const { mongoId, email, mobilePhone, int } = types;
 
-const { error, data } = typea({
+const { error, data } = types({
   id: "5968d3b4956fe04299ea5c18",
   mobilePhone: "18555555555",
   age: 20,
@@ -469,9 +471,9 @@ const sample = {
   arr: ["jjsd", "ddd"],
 };
 
-const { mongoId, email, mobilePhone } = typea.types;
+const { mongoId, email, mobilePhone } = types;
 
-const { error, data } = typea(sample).verify(
+const { error, data } = types(sample).verify(
   {
     name: {
       type: String,
