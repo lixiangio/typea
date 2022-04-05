@@ -78,7 +78,7 @@ const schema = types({
       { city: "母鸡" }
     ],
   },
-  methods：{
+  methods: {
     open() {},
     close() {},
   },
@@ -101,7 +101,7 @@ const { error, data } = schema.verify({
       { city: "母鸡" }
     ],
   },
-  methods：{
+  methods: {
     open(v) { return v + 1; },
     close(v) { return v - 1; },
   },
