@@ -6,7 +6,7 @@
    "main": "./build/index.js",
    "exports": {
       ".": "./dist/index.js",
-      "./*": "./dist/index.js",
+      "./*": "./dist/*",
       "./types/*": "./types/*"
    },
    "types": "./types.d.ts",
@@ -38,8 +38,7 @@
       "validator"
    ],
    "devDependencies": {
-      "jtm": "^1.0.4",
-      "typea": "./dist/index.js"
+      "jtm": "^1.0.4"
    },
    "directories": {
       "test": "test"
