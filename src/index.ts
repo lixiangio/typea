@@ -1,43 +1,49 @@
-import types from './types.js';
-import symbols from './symbol.js';
-import common from './common.js';
+import types, { base } from './types.js';
+
+interface ExpressType {
+  type?: Function | symbol
+  allowNull?: boolean
+  default?: any
+  ignore?: any[]
+  [name: string]: any
+}
+
+interface Object { [name: string]: any }
 
 const { toString } = Object.prototype;
 
 const ignore = [undefined, null, ''];
 
 class Parser {
-  origin: any;
-  express: any;
   mode: string;
+  express: any;
   /**
-   * @param {*} express 验证表达式
-   * @param {String} mode 验证模式
+   * @param express 验证表达式
+   * @param mode 验证模式
    */
-  constructor(express: any, origin: any, mode: string) {
+  constructor(express: any, mode: string) {
 
     this.express = express;
-    this.origin = origin;
     this.mode = mode;
 
   }
 
   /**
    * 递归验证器
-   * @param {*} express 验证表达式
-   * @param {*} data 待验证数据
-   * @param {String, Number} key 数据索引
+   * @param key 数据索引
+   * @param express 验证表达式
+   * @param data 待验证数据
    */
-  recursion(express: any, data: any, key: any) {
+  recursion(key: string | number, express: any, data: any) {
 
-    // 选项值为对象
+    // 选项值为对象或数组
     if (typeof express === 'object') {
 
-      return this.object(express, data, key);
+      return this.object(key, express, data);
 
     }
 
-    // 选项值为JS基础类型构造函数或symbol，symbol表示自定义类型
+    // 选项值为 JS 基础数据类型构造函数，或自定义 symbol 类型
     else if (types.get(express)) {
 
       if (ignore.includes(data)) {
@@ -58,7 +64,18 @@ class Parser {
 
     }
 
-    // 选项值为严格匹配的精确值类型
+    else if (typeof express === 'function') {
+
+      if (typeof data === 'function') {
+        express(data, (value: any) => data = value);
+        return { data };
+      } else {
+        return { error: `值必须为 function 类型` };
+      }
+
+    }
+
+    // 选项值为精确赋值匹配
     else if (data === express) {
 
       return { data };
@@ -68,31 +85,31 @@ class Parser {
     // 精确值匹配失败
     else {
 
-      return { error: `值必须为${express}` };
+      return { error: `值必须为 ${express}` };
 
     }
 
   }
 
   /**
-   * 对象结构
-   * @param {*} express 
-   * @param {object} data 
-   * @param {*} key 
+   * 对象类型节点
+   * @param key 属性名
+   * @param express 验证表达式
+   * @param data 待验证数据
    */
-  object(express: any, data: object, key: any) {
+  object(key: string | number, express: Object, data: any) {
 
-    // express为验证表达式
+    // express 为验证表达式
     if (express.type) {
 
-      return this.expression(express, data, key);
+      return this.expression(key, express, data);
 
     }
 
-    // express为数组结构
+    // express 为数组结构
     else if (Array.isArray(express)) {
 
-      return this.array(express, data, key);
+      return this.array(key, express, data);
 
     }
 
@@ -104,21 +121,21 @@ class Parser {
         if (this.mode === 'loose') {
           if (ignore.includes(data)) return {};
         }
-        return { error: `值必须为Object类型` };
+        return { error: `值必须为 Object 类型` };
       }
 
       const dataObj = {}
 
       for (const sKey in express) {
 
-        const { error, data: subData } = this.recursion(express[sKey], data[sKey], sKey);
+        const { error, data: subData } = this.recursion(sKey, express[sKey], data[sKey]);
 
         if (error) {
           // 非根节点
           if (key) {
-            return { error: `.${sKey}${error}` };
+            return { error: `.${sKey} ${error}` };
           } else {
-            return { error: `${sKey}${error}` };
+            return { error: `${sKey} ${error}` };
           }
         }
 
@@ -135,36 +152,37 @@ class Parser {
   }
 
   /**
-   * 数组结构
-   * @param {*} express 
-   * @param {*} data 
-   * @param {*} key 
+   * 数组类型节点
+   * @param key 
+   * @param express 
+   * @param data 
    */
-  array(express: any[], data, key: number) {
+  array(key: number | string, express: any[], data: any[]) {
 
     if (!Array.isArray(data)) {
       // 宽松模式下，跳过空值
       if (this.mode === 'loose') {
         if (ignore.includes(data)) return {};
       }
-      return { error: `${key}必须为数组类型` }
+      return { error: `${key}必须为 Array 类型` }
     }
 
     let itemKey = 0;
     const dataArray = [];
 
-    // express为单数时采用通用匹配
+    // 只有一个子表达式，可以表示一对一的精确匹配，也可以表示一对多泛匹配
+    // 当有多个子表达式时，每个子表达示的占位与值之间一对一精确匹配，概念等同于 Typescript 中的元组类型
     if (express.length === 1) {
 
-      const [option] = express;
+      const [options] = express;
 
       for (const itemData of data) {
 
         // 子集递归验证
-        const { error, data: subData } = this.recursion(option, itemData, itemKey);
+        const { error, data: subData } = this.recursion(itemKey, options, itemData);
 
         if (error) {
-          return { "error": `[${itemKey}]${error}` };
+          return { "error": `[${itemKey}] ${error}` };
         } else if (subData !== undefined) {
           dataArray.push(subData);
         }
@@ -175,18 +193,18 @@ class Parser {
 
     }
 
-    // express为复数时采用精确匹配
+    // express 为复数时采用精确匹配
     else {
 
-      for (const option of express) {
+      for (const options of express) {
 
         const itemData = data[itemKey];
 
         // 子集递归验证
-        const { error, data: subData } = this.recursion(option, itemData, itemKey);
+        const { error, data: subData } = this.recursion(itemKey, options, itemData);
 
         if (error) {
-          return { "error": `[${itemKey}]${error}` };
+          return { "error": `[${itemKey}] ${error}` };
         } else if (subData !== undefined) {
           dataArray.push(subData);
         }
@@ -202,12 +220,12 @@ class Parser {
   }
 
   /**
-   * 验证表达式
-   * @param {*} express 
-   * @param {*} data 
-   * @param {*} key 
+   * 验证表达式节点
+   * @param key 
+   * @param express 
+   * @param data 
    */
-  expression(express: any, data: object, key: string) {
+  expression(key: string | number, express: ExpressType, data: object) {
 
     // 空值处理
     if ((express.ignore || ignore).includes(data)) {
@@ -238,30 +256,31 @@ class Parser {
 
     }
 
-    const type: object = types.get(express.type);
+    const methods: object = types.get(express.type);
 
-    // type为内置数据类型
-    if (type) {
+    if (methods) {
 
       for (const name in express) {
-        const method = type[name];
+        const method = methods[name]; // 每个有效的 express.name 都有对应的 methods[name]() 处理函数
         if (method) {
-          const option = express[name];
-          const { error, data: subData } = method(data, option, this.origin)
+          const options = express[name];
+          const { error, data: subData } = method(data, options);
           if (error) {
             return { error: `${error}` }
           }
-          data = subData
+          data = subData;
         }
       }
 
-      return { data }
+      return { data };
 
     }
 
     // 不支持的数据类型
     else {
-      return { error: `${key}参数配置错误，不支持${express.type}类型` }
+
+      return { error: `${key} 定义的 "${String(express.type)}" 类型无效` };
+
     }
 
   }
@@ -270,29 +289,29 @@ class Parser {
 
 /**
  * 验证器
- * @param {*} express 验证表达式
- * @param {*} origin 数据源
- * @param {object} extend 导出数据扩展函数集合
- * @param {string} mode 验证模式（仅供内部使用）
+ * @param mode 验证模式
+ * @param schema 验证表达式
+ * @param originData 原始数据
+ * @param extend 已验证数据的后置扩展函数集合
  */
-function validator(express: any, origin: any, extend: object, mode: string) {
+function validator(mode: string, schema: any, originData: any, extend: object) {
 
-  const parser = new Parser(express, origin, mode);
+  const parser = new Parser(schema, mode);
 
-  if (toString.call(express) === '[object Object]') {
+  if (toString.call(schema) === '[object Object]') {
 
-    const root = {};
+    const data = {};
 
-    for (const name in express) {
+    for (const name in schema) {
 
-      const { error, data } = parser.recursion(express[name], origin[name], name);
+      const result = parser.recursion(name, schema[name], originData[name]);
 
-      if (error) {
-        return { error: `${name}${error}` };
+      if (result.error) {
+        return { error: `${name} ${result.error}` };
       }
 
-      else if (data !== undefined) {
-        root[name] = data;
+      else if (result.data !== undefined) {
+        data[name] = result.data;
       }
 
     }
@@ -301,37 +320,41 @@ function validator(express: any, origin: any, extend: object, mode: string) {
 
       // 后置数据扩展函数，基于已验证的数据构建新的数据结构
       for (const name in extend) {
-        let value = extend[name];
+        const value = extend[name];
         if (typeof value === 'function') {
-          value = value(root);
+          data[name] = value(data);
+        } else {
+          data[name] = value;
         }
-        root[name] = value;
       }
 
     }
 
-    return { data: root };
+    return { data };
 
   } else {
 
-    return parser.recursion(express, origin, '');
+    return parser.recursion('', schema, originData);
 
   }
 
 }
 
 /**
- * @param {*} express 验证表达式
+ * @param express 验证表达式
  */
-function typea(express: any) {
+function typea(schema: any) {
+
+  // schema 预处理
+
 
   return {
     /**
-     * 常规模式，allowNull值为true时强制验证
+     * 常规模式，allowNull值为 true 时强制验证
      * @param {object} extend 数据扩展选项
      */
     verify(data: any, extend: object) {
-      return validator(express, data, extend, undefined);
+      return validator(null, schema, data, extend);
     },
 
     /**
@@ -340,7 +363,7 @@ function typea(express: any) {
      * @param {object} extend 数据扩展选项
      */
     strictVerify(data: any, extend: object) {
-      return validator(express, data, extend, 'strict');
+      return validator('strict', schema, data, extend);
     },
 
     /**
@@ -349,42 +372,43 @@ function typea(express: any) {
      * @param {object} extend 数据扩展选项
      */
     looseVerify(data: any, extend: object) {
-      return validator(express, data, extend, 'loose');
+      return validator('loose', schema, data, extend);
     }
   };
 
 }
 
-Object.assign(typea, symbols);
 
 /**
  * 自定义数据类型扩展方法
- * @param {function, symbol, string} type 数据类型
- * @param {object} options 扩展选项
- * @param {object.function} options 扩展方法
+ * @param type 数据类型
+ * @param options 扩展选项
+ * @param options 扩展方法
  */
-typea.use = function (type: string | number, options: object = {}) {
+typea.type = function (type: string, options: object): void {
 
   // 通过String定位，扩展已有数据类型或创建新类型
   if (typeof type !== 'string') return;
 
   const symbol = typea[type];
 
-  // 扩展已有 Symbol 类型
+  // 扩展已有 symbol 类型
   if (symbol) {
 
-    const value = types.get(symbol);
-    Object.assign(value, options);
+    const methods = types.get(symbol);
+    Object.assign(methods, options);
 
   }
 
   // 创建新类型
   else {
 
-    Object.assign(options, common);
     const symbol = Symbol(type);
     typea[type] = symbol;
-    types.set(symbol, options);
+    types.set(symbol, {
+      ...options,
+      ...base,
+    });
 
   }
 

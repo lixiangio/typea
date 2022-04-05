@@ -1,31 +1,30 @@
 import test from 'jtm'
+import types from 'typea';
 
-const { types } = test;
-
-test('extend', t => {
+test('extend type', t => {
 
   const { mongoId, email, mobilePhone } = types;
 
+  const schema = types({
+    "id": {
+      "type": mongoId,
+      "allowNull": false
+    },
+    "email": {
+      "type": email,
+    },
+    "mobile": {
+      "type": mobilePhone,
+    },
+  })
+  
   const sample = {
     "id": "5687862c08d67e29cd000001",
     "email": "erer@gmail.com",
     "mobile": "15855555547",
   }
-
-  const { error, data } = types(
-    {
-      "id": {
-        "type": mongoId,
-        "allowNull": false
-      },
-      "email": {
-        "type": email,
-      },
-      "mobile": {
-        "type": mobilePhone,
-      },
-    }
-  ).verify(sample, {
+  
+  const { error, data } = schema.verify(sample, {
     xxx({ id, email }) {
       return [id, email];
     },

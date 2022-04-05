@@ -1,6 +1,5 @@
 import test from 'jtm'
-
-const { types } = test;
+import types from 'typea';
 
 const sample = {
   "name": "测试",
@@ -12,10 +11,10 @@ const sample = {
     "age": 18,
     "address": [
       {
-        "city": "深圳",
+        "city": "双鸭山",
       },
       {
-        "city": "北京",
+        "city": "萨克斯",
       }
     ],
   },
@@ -45,7 +44,7 @@ const sample = {
     "lala": "168",
     "kaka": 6,
   },
-  "search": "深圳",
+  "search": "双鸭山",
   "searchField": "userName",
   "email": "xxx@xx.xx",
   "arr": ['jjsd', 'ddd']
@@ -75,7 +74,7 @@ test('mixing', t => {
           "city": String,
         },
         {
-          "city": "北京",
+          "city": "萨克斯",
         }
       ],
     },
@@ -101,14 +100,14 @@ test('mixing', t => {
       "to": Boolean,
     },
     "addressee": String,
-    "search": "深圳",
+    "search": "双鸭山",
     "phone": {
       "type": mobilePhone
     },
     "coupon": {
       "type": String,
-      set(value) {
-        return { "$gt": value }
+      set($gt) {
+        return { $gt }
       }
     },
     "integral": {

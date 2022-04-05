@@ -1,15 +1,36 @@
-import common from './common.js';
-import symbols from './symbol.js';
+interface Return { data?: any, error?: string }
 
-import toDate from '../validator/toDate.js';
-import isMongoId from '../validator/isMongoId.js';
-import isMobilePhone from '../validator/isMobilePhone.js';
-import isEmail from '../validator/isEmail.js';
+/**
+ * 通用验证方法
+ */
+export const base = {
+  /**
+   * 参数自定义转换方法
+   * @param data 数据
+   * @param options 赋值函数
+   * @returns 
+   */
+  set<Data>(data: Data, options: (d: Data) => any): Return {
+
+    return { data: options(data) };
+
+  },
+  /**
+   * 直接赋值（覆盖原来的值）
+   * @param data 不使用，忽略赋值
+   * @param options 将选项作为值使用，覆盖之前的值
+   */
+  value(data: void, options: any): Return {
+
+    return { data: options };
+
+  }
+};
+
 
 const types = new Map();
 
 types.set(String, {
-  ...common,
   // 数据类型验证
   type(data: string | number) {
     if (typeof data === 'string') {
@@ -17,7 +38,7 @@ types.set(String, {
     } else if (typeof data === 'number') {
       return { data: data.toString() }
     } else {
-      return { error: '必须为String类型' }
+      return { error: '必须为 string 类型' }
     }
   },
   // 限制最小长度
@@ -29,9 +50,9 @@ types.set(String, {
     }
   },
   // 限制最大长度
-  max(data: string, max) {
+  max(data: string, max: number) {
     if (data.length > max) {
-      return { error: `长度不能大于${max}个字符` }
+      return { error: `长度不能大于"${max}"个字符` }
     } else {
       return { data }
     }
@@ -48,32 +69,32 @@ types.set(String, {
   in(data: string, array: [string]) {
     const result = array.indexOf(data);
     if (result === -1) {
-      return { error: `值必须为[${array}]选项其中之一` }
+      return { error: `值必须为 [${array}] 选项其中之一` }
     } else {
       return { data }
     }
   },
+  ...base
 })
 
 types.set(Number, {
-  ...common,
   type(data: number) {
     if (isNaN(data)) {
-      return { error: '必须为Number类型' }
+      return { error: '必须为 number 类型' }
     } else {
       return { data: Number(data) }
     }
   },
-  min(data: number, min) {
+  min(data: number, min: number) {
     if (data < min) {
-      return { error: `不能小于${min}` }
+      return { error: `不能小于"${min}"` }
     } else {
       return { data }
     }
   },
-  max(data: number, max) {
+  max(data: number, max: number) {
     if (data > max) {
-      return { error: `不能大于${max}` };
+      return { error: `不能大于"${max}"` };
     } else {
       return { data }
     }
@@ -82,20 +103,20 @@ types.set(Number, {
   in(data: number, array: [number]) {
     const result = array.indexOf(data);
     if (result === -1) {
-      return { error: `值必须为${array}中的一个` };
+      return { error: `值必须为"${array}"中的一个` };
     } else {
       return { data }
     }
-  }
+  },
+  ...base
 })
 
 types.set(Array, {
-  ...common,
   type(data: []) {
     if (Array.isArray(data)) {
       return { data };
     } else {
-      return { error: '必须为Array类型' };
+      return { error: '必须为 array 类型' };
     }
   },
   min(data: [], min: number) {
@@ -112,83 +133,40 @@ types.set(Array, {
       return { data };
     }
   },
+  ...base
 })
 
 types.set(Object, {
-  ...common,
   type(data: object) {
     if (typeof data === 'object') {
       return { data };
     } else {
-      return { error: '必须为Object类型' };
+      return { error: '必须为 object 类型' };
     }
   },
+  ...base
 })
 
 types.set(Boolean, {
-  ...common,
   type(data: boolean) {
     if (typeof data === 'boolean') {
       return { data }
     } else {
-      return { error: '必须为Boolean类型' }
+      return { error: '必须为 boolean 类型' }
     }
   },
-})
-
-types.set(Date, {
-  ...common,
-  type(data: Date) {
-    if (toDate(data + '')) {
-      return { data }
-    } else {
-      return { error: '必须为Date类型' }
-    }
-  },
+  ...base
 })
 
 types.set(Function, {
-  ...common,
   type(data: Function) {
     if (typeof data === 'function') {
       return { data }
     } else {
-      return { error: '必须为Function类型' }
+      return { error: '必须为 function 类型' }
     }
   },
-})
-
-types.set(symbols.mongoId, {
-  ...common,
-  type(data) {
-    if (isMongoId(String(data))) {
-      return { data }
-    } else {
-      return { error: '必须为MongoId' }
-    }
-  },
-})
-
-types.set(symbols.mobilePhone, {
-  ...common,
-  type(data) {
-    if (isMobilePhone(String(data), 'zh-CN')) {
-      return { data }
-    } else {
-      return { error: '必须为手机号' }
-    }
-  },
-})
-
-types.set(symbols.email, {
-  ...common,
-  type(data) {
-    if (isEmail(String(data))) {
-      return { data }
-    } else {
-      return { error: '必须为Email格式' }
-    }
-  },
+  ...base
 })
 
 // 数据类型验证方法

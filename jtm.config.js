@@ -1,10 +1,10 @@
-import test from 'jtm';
-import types from './dist/index.js';
-import toDate from './validator/toDate.js';
-import isMongoId from './validator/isMongoId.js';
-import isMobilePhone from './validator/isMobilePhone.js';
-import isEmail from './validator/isEmail.js';
+import types from 'typea';
+import date from 'typea/types/date.js';
+import mongoId from 'typea/types/mongoId.js';
+import mobilePhone from 'typea/types/mobilePhone.js';
+import email from 'typea/types/email.js';
 
-
-
-test.types = types;
+types.type(date.name, date);
+types.type(mongoId.name, mongoId);
+types.type(mobilePhone.name, mobilePhone);
+types.type(email.name, email);

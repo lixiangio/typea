@@ -1,6 +1,5 @@
 import test from 'jtm';
-
-const { types } = test;
+import types from 'typea';
 
 test('String in Array', t => {
 
@@ -13,7 +12,7 @@ test('String in Array', t => {
 })
 
 
-test('[Number]', t => {
+test('[number]', t => {
 
    const sample = [1, 2, 3]
 
@@ -24,34 +23,38 @@ test('[Number]', t => {
 })
 
 
-test('{Number}', t => {
+test('{number}', t => {
 
    const sample = {
       x: 1,
       y: 2
    }
 
-   const { error, data } = types({
+   const schema = types({
       x: Number,
       y: Number
-   }).verify(sample);
+   })
+   
+   const { error, data } = schema.verify(sample);
 
    t.deepEqual(sample, data, error);
 
 })
 
 
-test('{String}', t => {
+test('{string}', t => {
 
    const sample = {
       x: "hello",
       y: "word"
    }
 
-   const { error, data } = types({
+   const schema = types({
       x: String,
       y: String
-   }).verify(sample);
+   })
+   
+   const { error, data } = schema.verify(sample);
 
    t.deepEqual(sample, data, error);
 

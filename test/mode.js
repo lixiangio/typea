@@ -1,5 +1,5 @@
 import test from 'jtm'
-const { types } = test;
+import types from 'typea';
 
 test("strict", t => {
 

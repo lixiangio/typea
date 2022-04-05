@@ -1,8 +1,7 @@
 import test from 'jtm';
+import types from 'typea';
 
-const { types } = test;
-
-types.use('int', {
+types.type('int', {
    type(data) {
       if (Number.isInteger(data)) {
          return { data }
@@ -27,7 +26,7 @@ types.use('int', {
    }
 })
 
-test('extend int', t => {
+test(`type('int')`, t => {
 
    const sample = {
       "id": "5687862c08d67e29cd000001",

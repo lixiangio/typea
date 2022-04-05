@@ -4,22 +4,26 @@
    "type": "module",
    "description": "JS数据结构验证、转换器",
    "main": "./build/index.js",
-   "types": "./types/index.d.ts",
-   "scripts": {
-      "start": "swc ./src/* -d ./dist && node ./dist/index.js",
-      "dev": "swc ./src/* -d ./dist --watch",
-      "build": "swc ./src/* -d ./dist",
-      "tsc:watch": "tsc --watch",
-      "tsc": "tsc",
-      "test": "jtm"
+   "exports": {
+      ".": "./dist/index.js",
+      "./*": "./dist/index.js",
+      "./types/*": "./types/*"
    },
-   "author": "https://github.com/xiangle/typea.git",
-   "license": "ISC",
+   "types": "./types.d.ts",
+   "author": "lixiang",
+   "license": "MIT",
+   "scripts": {
+      "start": "tsc && node ./dist/index.js",
+      "dev": "tsc --watch",
+      "build": "tsc",
+      "swc": "swc ./src/* -d ./dist && node ./dist/index.js",
+      "test": "jtm",
+      "jtm": "jtm ./test/function.js"
+   },
    "keywords": [
       "typea",
       "schema",
-      "validator",
-      "validation"
+      "validator"
    ],
    "repository": {
       "type": "git",
@@ -34,6 +38,10 @@
       "validator"
    ],
    "devDependencies": {
-      "jtm": "^1.0.4"
+      "jtm": "^1.0.4",
+      "typea": "./dist/index.js"
+   },
+   "directories": {
+      "test": "test"
    }
 }

@@ -1,20 +1,19 @@
 # typea
 
-功能强大的 JS 数据模型验证与处理工具，借鉴于 mongoose 的数据模型表达式，采用全镜像数据结构设计，相比非镜像的验证器拥有更好的数据结构表现力。
-
-通常经过验证后的数据还需要经过二次处理后才能被正式使用，因此我们为模型上的每个节点都提供了数据处理函数，这样可以直接在数据节点上合成新数据，实现关联代码高度聚合。
+功能强大的轻量级 JS 运行时数据类型验证与转换器，使用全镜像数据结构设计，简单、直观、易于读写。
 
 ### 特性
 
-- 支持类型或值匹配，满足模糊匹配和精准匹配的双重需求；
+- 支持字符串、数值、对象、数组、元组、函数等常见基础类型；
 
-- 支持对象和数组的无限嵌套，只需要按数据结构建模即可，不必担心数据层级深度、复杂度的问题；
+- 支持赋值验证，满足模糊匹配与精准匹配的双重需求；
+- 支持对象、数组递归匹配，只需要按数据结构建模即可，不必担心数据层级深度、复杂度等问题；
 
-- 数据集中处理，通过分布在节点上的 set 方法可合成新的数据结构，减少碎片化代码；
+- 通过分布在节点上的 set 方法可合成新的数据结构，实现数据集中处理，减少碎片化代码；
 
-- 拥有足够的容错能力，在验证期间几乎不需要使用 try/catch 来捕获异常，返回的 path 路径可快速定位错误节点；
+- 拥有足够的容错能力，在验证阶段几乎不需要使用 try/catch 来捕获异常，返回的 path 路径信息可快速定位错误节点；
 
-- 当内置数据类型无法满足需求时，可以通过扩展的方式创建新的数据类型。
+- 支持按需扩展自定义数据类型，实现最小化集成。
 
 ### Install
 
@@ -22,45 +21,90 @@
 npm install typea
 ```
 
-### 使用示例
+### Examples
+
+```js
+// 根据需求，添加扩展数据类型，或创建自定义数据类型
+
+import types from "typea";
+import email from "typea/email.js";
+import mobilePhone from "typea/mobilePhone.js";
+
+types.type(email.name, email);
+types.type(mobilePhone.name, mobilePhone);
+
+// 自定义类型
+types.type("int", {
+  type(data) {
+    if (Number.isInteger(data)) {
+      return { data };
+    } else {
+      return { error: "必须为int类型" };
+    }
+  },
+  max(data, max) {
+    if (data > max) {
+      return { error: `不能大于${max}` };
+    } else {
+      return { data };
+    }
+  },
+});
+```
 
 ```js
 import types from 'typea';
 
-const { email, mongoId } = types;
+const { email, mobilePhone, int } = types; // 已注册的扩展类型
 
+// 创建数据模型（模型结构通常是可重复使用静态结构，只需要创建一次即可，每次都创建新的 schema 通常没有意义）
 const schema = types({
-  id: mongoId,
+  id: Number,
   name: String,
-  email: email,
+  email,
+  mobilePhone,
   num: Number,
-  files: [String],
+  array: [String],
+  tuple: [String, Number, ()=> {}, function() {}, { name: String }],
+  title: "hello",
   user: {
     username: "莉莉",
-    age: Number,
+    age: {
+      type: int,
+      max: 200
+    },
     address: [
       { city: String },
-      { city: "北京" }
+      { city: "母鸡" }
     ],
   },
-  money: "2",
+  methods：{
+    open() {},
+    close() {},
+  },
 });
 
 const { error, data } = schema.verify({
-  id: "59c8aea808deec3fc8da56b6",
+  id: 123,
   name: "test",
   email: "gmail@gmail.com",
+  mobilePhone: "18666666666",
   num: 12345,
-  files: ["abc.js", "null", "edb.js"],
+  array: ["a", "b", "c"],
+  tuple: ["hello", 123, ()=> {}, function(v) { return v++; }, { name: 'lili' }],
+  title: "hello",
   user: {
     username: "莉莉",
-    age: 18,
+    age: 99,
     address: [
-      { city: "深圳" },
-      { city: "北京" }
+      { city: "黑猫" },
+      { city: "母鸡" }
     ],
   },
-  money: "2",
+  methods：{
+    open(v) { return v + 1; },
+    close(v) { return v - 1; },
+  },
 });
 
 if (error) {
@@ -108,25 +152,25 @@ const { error, data } = schema.looseVerify(data[, extend])
 
 ### 输入参数
 
-- `express` \* - 待验证数据的结构镜像验证表达式，参考[验证表达式](#模型验证表达式)。
+- `express` _any_ - 待验证数据的结构镜像验证表达式，参考[验证表达式](#模型验证表达式)。
 
-- `extend` _Objcte_ - 数据结构扩展选项，根据输入数据生成新的数据结构（可选）
+- `extend` _objcte_ - 数据结构扩展选项，根据输入数据生成新的数据结构（可选）
 
-  - `$name` _Function_ - 数据扩展函数，基于已验证的数据构建新的数据结构，输出结果将以函数名作为 key 保存到返回值的 data 中。函数中 this 和第一个入参指向 data（已存在的同名属性值会被函数返回值覆盖）
+  - `$name` _function_ - 数据扩展函数，基于已验证的数据构建新的数据结构，输出结果将以函数名作为 key 保存到返回值的 data 中。函数中 this 和第一个入参指向 data（已存在的同名属性值会被函数返回值覆盖）
 
-  - `$name` \* - 除函数外的其它任意数据类型，在已验证的数据结构上添加新的属性或覆盖已存在的同名属性
+  - `$name`_any_ - 除函数外的其它任意数据类型，在已验证的数据结构上添加新的属性或覆盖已存在的同名属性
 
-- `data` \* - 验证数据，支持任意数据类型
+- `data`_any_ - 验证数据，支持任意数据类型
 
 ### 返回值
 
 > 返回值是基于约定的对象结构，error 和 data 属性不会同时存在，验证成功返回 data，验证失败返回 error 和 msg
 
-- `data` \* - 经过验证、处理后导出数据，仅保留 options 中定义的数据结构，未定义的部分会被忽略。内置空值过滤，自动剔除对象、数组中的空字符串、undefind 值。
+- `data`_any_ - 经过验证、处理后导出数据，仅保留 options 中定义的数据结构，未定义的部分会被忽略。内置空值过滤，自动剔除对象、数组中的空字符串、undefind 值。
 
-- `error` _String_ - 验证失败时返回的错误信息，包含错误的具体位置信息，仅供开发者调试使用
+- `error` _string_ - 验证失败时返回的错误信息，包含错误的具体位置信息，仅供开发者调试使用
 
-- `msg` _String_ - 验证失败后返回的错误信息，相对于 error 而言，msg 对用户更加友好，可直接在客户端显示
+- `msg` _string_ - 验证失败后返回的错误信息，相对于 error 而言，msg 对用户更加友好，可直接在客户端显示
 
 ### 模型验证表达式
 
@@ -142,19 +186,15 @@ options 中支持值表达式，可以对表达式节点直接赋值，实现输
 
 #### 通用选项
 
-- `type` \* - 数据类型
+- `type`_any_ - 数据类型
 
-- `default` \* - 空值时的默认赋值，优先级高于 allowNull
+- `default`_any_ - 空值时的默认赋值，优先级高于 allowNull
 
-- `allowNull` _Boolean_ - 是否允许为空，当值为 false 时强制进行非空验证。
+- `allowNull` _boolean_ - 是否允许为空，当值为 false 时强制进行非空验证。
 
-- `set` _Function_ - 赋值函数，用于对输入值处理后再输出赋值，函数中 this 指向原始数据 data，当值为空时不执行。
+- `set` _function_ - 赋值函数，用于对输入值处理后再输出赋值，函数中 this 指向原始数据 data，当值为空时不执行。
 
-- `ignore` _Array_ - 忽略指定的值，当存在匹配项时该字段不会被创建。如忽略空值，通过[null, ""]重新定义空值。
-
-- `and` _Array、Function_ - 声明节点的依赖关系，限制所有依赖的参数都不能为空。如参数 a 必须依赖参数 b 构成一个完整的数据，那么就要将参数名 b 加入到 and 数组中建立依赖关系。除了数组表达式外，还支持通过函数表达式动态生成依赖数组。
-
-- `or` _Array、Function_ - 与 and 相似，区别是只要满足任意一个依赖不为空即可。
+- `ignore` _nay[]_ - 忽略指定的值，当存在匹配项时该字段不会被创建。如忽略空值，通过 [null, ""] 重新定义空值。
 
 <!-- * `error` *String, Function* - 验证失败时的提示文本信息 -->
 
@@ -164,41 +204,54 @@ options 中支持值表达式，可以对表达式节点直接赋值，实现输
 
 ##### String
 
-- `min` _Number_ - 限制字符串最小长度
+- `min` _number_ - 限制字符串最小长度
 
-- `max` _Number_ - 限制字符串最大长度
+- `max` _number_ - 限制字符串最大长度
 
 - `reg` _RegExp_ - 正则表达式
 
-- `in` _Array_ - 匹配多个可选值中的一个
+- `in` _string[]_ - 匹配多个可选值中的一个
 
 ##### Number
 
 > 内置类型转换，允许字符串类型的纯数字
 
-- `min` _Number_ - 限制最小值
+- `min` _number_ - 限制最小值
 
-- `max` _Number_ - 限制最大值
+- `max` _number_ - 限制最大值
 
-- `in` _Array_ - 匹配多个可选值中的一个
+- `in` _number[]_ - 匹配多个可选值中的一个
 
 ##### Array
 
-- `min` _Number_ - 限制数组最小长度
+- `min` _number_ - 限制数组最小长度
 
-- `max` _Number_ - 限制数组最大长度
+- `max` _number_ - 限制数组最大长度
 
 ##### Object、Date、Boolean、Function
 
 > 无专用选项
 
-#### 其它数据类型
+#### 附加常见数据类型
 
-其它类型通过 types 静态属性获取，types 中内置了以下常见类型
+typea 仓库中提供了以下常见类型，默认不安装，推荐按需引用。
+
+```js
+import types from "typea";
+import date from "typea/date.js";
+import email from "typea/email.js";
+import mobilePhone from "typea/mobilePhone.js";
+import mongoId from "typea/mongoId.js";
+
+types.type(email.name, email);
+types.type(date.name, date);
+types.type(mobilePhone.name, mobilePhone);
+types.type(mongoId.name, mongoId);
+```
 
 ##### email
 
-验证 Email
+验证 email
 
 ##### mobilePhone
 
@@ -208,32 +261,28 @@ options 中支持值表达式，可以对表达式节点直接赋值，实现输
 
 验证 mongodb 中的 ObjectId
 
-### 扩展自定义数据类型
+### 自定义数据类型
 
-验证器中仅内置了一部分常用的数据类型，如果不能满足你的需求，可以通过 types.use()自行扩展。
+typea 中仅内置了少量常见的数据类型，如果不能满足需求，可以通过 types.type() 方法搭配 validator 等第三方库自行扩展。
 
-typea 依赖 validator 库，你可以使用 types.use()搭配 validator 来定制自己的数据类型。
+> 当定义的数据类型已存在时则合并，新的验证函数会覆盖内置的同名验证函数。
 
-> 当定义的数据类型不存在时则创建，已存在时则合并，新的验证函数会覆盖内置的同名验证函数。
+#### types.type(name, options)
 
-#### types.use(name, options)
+- `name` _function, symbol, string_ - 类型 Key（必填）
 
-- `name` _Function, Symbol, String_ - 类型 Key（必填）
+- `options` _object_ - 类型选项（必填）
 
-- `options` _Object_ - 类型选项（必填）
+  - `type(data, options)` _function_ - 数据类型验证函数（必填）
 
-  - `type(data, options, origin)` _Function_ - 数据类型验证函数（必填）
+    - `data` _any_ - 待验证数据
 
-    - `data` \* - 待验证数据
+    - `options` _any_ - 验证表达式或数据类型
 
-    - `options` \* - 验证表达式或数据类型
-
-    - `origin` \* - 原始数据
-
-  - `$name(data, options, origin)` _Function_ - 自定义验证函数（可选）
+  - `[$name](data, options)` _function_ - 自定义验证函数（可选）
 
 ```js
-types.use("int", {
+types.type("int", {
   type(data) {
     if (Number.isInteger(data)) {
       return { data };
@@ -253,12 +302,12 @@ types.use("int", {
 
 ### 参考示例
 
-#### 数组验证
-
 ```js
+// 数组验证
+
 const sample = {
   a: ["xx", "kk"],
-  b: [666, 999, 88],
+  b: [123, 456, 789],
   c: [{ a: 1 }, { a: 2 }, { b: "3" }],
   d: [
     {
@@ -313,9 +362,9 @@ const { error, data } = types(sample).verify({
 });
 ```
 
-#### 对象验证
-
 ```js
+// 对象验证
+
 const sample = {
   a: {
     a1: 1,
@@ -345,86 +394,27 @@ const { error, data } = types(sample).verify({
 });
 ```
 
-#### and 依赖验证
-
 ```js
-const { error, data } = types({
-  username: "莉莉",
-  addressee: "嘟嘟",
-}).verify({
-  username: {
-    type: String,
-    and: ["addressee", "address"],
-  },
-  addressee: {
-    type: String,
-    allowNull: true,
-  },
-  address: {
-    type: String,
-    allowNull: true,
-    and(value) {
-      if (value === 1) {
-        return ["addressee", "address"];
-      } else if (value === 2) {
-        return ["username", "xx"];
-      }
-    },
-  },
-});
-```
+// 扩展数据类型
 
-#### or 依赖验证
-
-```js
-const { error, data } = types({
-  username: "莉莉",
-  addressee: "嘟嘟",
-}).verify({
-  username: {
-    type: String,
-    or: ["addressee", "address"],
-  },
-  addressee: {
-    type: String,
-    allowNull: true,
-  },
-  address: {
-    type: String,
-    allowNull: true,
-  },
-});
-```
-
-#### 扩展类型验证
-
-```js
-types.use("int", {
+types.type("int", {
   type(data) {
     if (Number.isInteger(data)) {
       return { data };
     } else {
-      return { error: "必须为int类型" };
+      return { error: "必须为 int 类型" };
     }
   },
 });
 
-const { mongoId, email, mobilePhone, int } = types;
+const { int } = types;
 
-const { error, data } = types({
-  id: "5968d3b4956fe04299ea5c18",
-  mobilePhone: "18555555555",
-  age: 20,
-}).verify({
-  id: mongoId,
-  mobilePhone: mobilePhone,
-  age: int,
-});
+const { error, data } = types({ age: int }).verify({ age: 20 });
 ```
 
-#### 综合示例
-
 ```js
+// 综合示例
+
 const sample = {
   name: "测试",
   num: "123456789987",
@@ -435,10 +425,10 @@ const sample = {
     age: 18,
     address: [
       {
-        city: "深圳",
+        city: "双鸭山",
       },
       {
-        city: "北京",
+        city: "巴萨",
       },
     ],
   },
@@ -465,13 +455,13 @@ const sample = {
     lala: "168",
     kaka: 6,
   },
-  search: "深圳",
+  search: "双鸭山",
   searchField: "userName",
   email: "xxx@xx.xx",
   arr: ["jjsd", "ddd"],
 };
 
-const { mongoId, email, mobilePhone } = types;
+const { email, mobilePhone } = types;
 
 const { error, data } = types(sample).verify(
   {
@@ -485,7 +475,6 @@ const { error, data } = types(sample).verify(
       type: Number,
       value: 666,
     },
-    ObjectId: mongoId,
     user: {
       username: "莉莉",
       age: Number,
@@ -494,7 +483,7 @@ const { error, data } = types(sample).verify(
           city: String,
         },
         {
-          city: "北京",
+          city: "巴萨",
         },
       ],
     },
@@ -522,14 +511,12 @@ const { error, data } = types(sample).verify(
       to: Boolean,
     },
     addressee: String,
-    search: "深圳",
-    phone: {
-      type: mobilePhone,
-    },
+    search: "双鸭山",
+    phone: mobilePhone,
     coupon: {
       type: String,
-      set(value) {
-        return { $gt: value };
+      set($gt) {
+        return { $gt };
       },
     },
     integral: {

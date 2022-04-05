@@ -1,6 +1,5 @@
 import test from 'jtm';
-
-const { types } = test;
+import types from 'typea';
 
 test('array 匹配单项或多项', t => {
 

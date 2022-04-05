@@ -1,46 +1,66 @@
-import test from 'jtm'
+import test from 'jtm';
+import types from 'typea';
 
-const { types } = test;
-
-test('function', t => {
+test('sync function', t => {
 
    function func() { }
 
    const { error, data } = types(Function).verify(func);
 
-   // console.log(data);
+   t.deepEqual(func, data, error);
+
+});
+
+test('async function', t => {
+
+   async function func() { }
+
+   const result = types(Function).verify(func);
+
+   t.deepEqual(func, result.data, result.error);
+
+});
+
+
+test('function', t => {
+
+   const func = (v) => { return v + 1; }
+
+   const { error, data } = types((fn) => fn(1)).verify(func);
 
    t.deepEqual(func, data, error);
 
 });
 
 
-test('inline', t => {
+test('function express', t => {
 
    const sample = {
-      a(x, y) {
-         return [x, y]
-      },
-      b(a, b) {
-         return a + b
-      },
-   }
+      name: 'lili',
+      a(a, b) { return a + b },
+      b(a, b) { return a * b },
+      c() { },
+   };
 
-   const { error, data } = types({
-      a: Function,
+   const schema = types({
+      name: String,
+      a(fn, set) {
+         const value = fn(1, 1);
+         sample.a = value;
+         set(value);
+      },
       b: {
          type: Function,
-         set(func) {
-            return func(1, 1)
+         set(f) {
+            sample.b = 2;
+            return f(1, 2);
          }
       },
-   }).verify(sample);
+      c() { }
+   });
 
-   // console.log(data);
+   const { data, error } = schema.verify(sample);
 
-   t.deepEqual({
-      a: sample.a,
-      b: 2,
-   }, data, error, data);
+   t.deepEqual(sample, data, error);
 
 });

@@ -1,6 +1,5 @@
-import test from 'jtm'
-
-const { types } = test;
+import test from 'jtm';
+import types from 'typea';
 
 test('common', t => {
 
@@ -17,46 +16,37 @@ test('common', t => {
 
    const { email } = types;
 
-   const { error, data } = types({
+   const schema = types({
       "name": {
          "type": String,
          "name": "名称",
          "default": "默认值",
-         "allowNull": false,
-         "and": ["num"]
+         "allowNull": false
       },
       "num": {
          "type": Number,
-         "value": 666,
-         "or": ["name", 'xxx']
+         "value": 666
       },
       "coupon": {
          type: String,
-         set(value) {
-            return { "$gt": value }
-         },
-         or() {
-            return ["integral-", "email"]
-         }
+         set($gt) { return { $gt } }
       },
       "integral": {
-         "kaka": {
-            "type": Number
-         }
+         "kaka": Number
       },
       "email": {
          "type": email
       }
-   }).verify(sample);
+   })
 
-   // console.log(data)
+   const { error, data } = schema.verify(sample);
 
-   t.deepEqual(data, {
+   t.deepEqual({
       name: '测试',
       num: 666,
       coupon: { '$gt': 'uuuu' },
       integral: { kaka: 6 },
       email: 'xxx@xx.xx'
-   }, error)
+   }, data, error)
 
 });
