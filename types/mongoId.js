@@ -6,7 +6,7 @@ export default {
     if (isMongoId(String(data))) {
       return { data }
     } else {
-      return { error: '必须为MongoId' }
+      return { error: '必须为 mongoId 类型' }
     }
   },
 }

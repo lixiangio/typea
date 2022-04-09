@@ -1,15 +1,24 @@
 # typea
 
-功能强大的轻量级 JS 运行时数据类型验证与转换器，使用全镜像数据结构设计，简单、直观、易于读写。
+功能强大的 JS 运行时数据验证与转换器，使用全镜像数据结构设计，轻量级、简单、直观、易于读写。
+
+Typea 中类型的概念一部分引用自 TypeScript，二者的类型声明方式有相似之处，仅供参考。
 
 ### 特性
 
-- 支持字符串、数值、对象、数组、元组、函数等常见基础类型；
+- 支持 String、Number、Boolean、Object、Array、Function、Symbol 等常见基础类型；
 
-- 支持赋值验证，满足模糊匹配与精准匹配的双重需求；
+- 支持 Tupl 元组类型，为数组内的子元素提供精确类型匹配；
+
+- 支持 Union 联合类型，匹配可变的动态类型；
+
+- 支持 Index Signatures 索引类型匹配，为无固定名称的属性定义类型；
+
+- 支持 Literal 字面量类型赋值匹配，可满足模糊匹配与精准匹配的双重需求；
+
 - 支持对象、数组递归匹配，只需要按数据结构建模即可，不必担心数据层级深度、复杂度等问题；
 
-- 通过分布在节点上的 set 方法可合成新的数据结构，实现数据集中处理，减少碎片化代码；
+- 支持数据就近、集中处理，减少碎片化代码，通过分布在节点上的 set 方法来合成新的数据结构；
 
 - 拥有足够的容错能力，在验证阶段几乎不需要使用 try/catch 来捕获异常，返回的 path 路径信息可快速定位错误节点；
 
@@ -30,11 +39,11 @@ import types from "typea";
 import email from "typea/email.js";
 import mobilePhone from "typea/mobilePhone.js";
 
-types.type(email.name, email);
-types.type(mobilePhone.name, mobilePhone);
+types.add(email.name, email);
+types.add(mobilePhone.name, mobilePhone);
 
 // 自定义类型
-types.type("int", {
+types.add("int", {
   type(data) {
     if (Number.isInteger(data)) {
       return { data };
@@ -53,35 +62,35 @@ types.type("int", {
 ```
 
 ```js
-import types from 'typea';
+// 创建 schema， 使用 schema 验证数据
 
-const { email, mobilePhone, int } = types; // 已注册的扩展类型
+const { string, number, email, mobilePhone, int, union } = types;
 
-// 创建数据模型（模型结构通常是可重复使用静态结构，只需要创建一次即可，每次都创建新的 schema 通常没有意义）
+// 创建数据模型（模型结构是可重复使用静态结构体，通常只需要创建一次即可重复引用，作用与 TS 中的 interface、 type 相似）
 const schema = types({
   id: Number,
-  name: String,
+  name: string, // 使用大小写 string、String 或空的 string() 声明等效，所有基础类型大小写均为等效
   email,
   mobilePhone,
-  num: Number,
-  array: [String],
-  tuple: [String, Number, ()=> {}, function() {}, { name: String }],
-  title: "hello",
+  num: union(String, Number, Symbol), // 定义 Union 联合类型
+  array: [String], // 定义数组或元组
+  tuple: [
+    String,
+    Number,
+    () => {},
+    function () {},
+    { name: String }
+  ], // 定义元组
+  title: "hello", // 定义 Literal 字面量
   user: {
     username: "莉莉",
-    age: {
-      type: int,
-      max: 200
-    },
-    address: [
-      { city: String },
-      { city: "母鸡" }
-    ],
+    age: int({ max: 200 }),
+    address: [{ city: String }, { city: "母鸡" }],
   },
   methods: {
-    open() {},
-    close() {},
+    open() {}, // 定义 Function 类型
   },
+  [String]: String, // 索引类型
 });
 
 const { error, data } = schema.verify({
@@ -91,19 +100,21 @@ const { error, data } = schema.verify({
   mobilePhone: "18666666666",
   num: 12345,
   array: ["a", "b", "c"],
-  tuple: ["hello", 123, ()=> {}, function(v) { return v++; }, { name: 'lili' }],
+  tuple: [
+    "hello word",
+    123,
+    () => {},
+    function (v) { return v++; },
+    { name: "lili" },
+  ],
   title: "hello",
   user: {
     username: "莉莉",
     age: 99,
-    address: [
-      { city: "黑猫" },
-      { city: "母鸡" }
-    ],
+    address: [{ city: "黑猫" }, { city: "母鸡" }],
   },
   methods: {
     open(v) { return v + 1; },
-    close(v) { return v - 1; },
   },
 });
 
@@ -127,7 +138,7 @@ typea 支持常规、严格、宽松三种验证模式，多数情况下只需�
 ```js
 const schema = types(express);
 
-const { error, data } = schema.verify(data[, extend])
+const { error, data } = schema.verify(data)
 ```
 
 #### 严格模式
@@ -137,7 +148,7 @@ const { error, data } = schema.verify(data[, extend])
 ```js
 const schema = types(express);
 
-const { error, data } = schema.strictVerify(data[, extend])
+const { error, data } = schema.verify(data, 'strict')
 ```
 
 #### 宽松模式
@@ -147,18 +158,12 @@ const { error, data } = schema.strictVerify(data[, extend])
 ```js
 const schema = types(express);
 
-const { error, data } = schema.looseVerify(data[, extend])
+const { error, data } = schema.verify(data, 'loose')
 ```
 
 ### 输入参数
 
 - `express` _any_ - 待验证数据的结构镜像验证表达式，参考[验证表达式](#模型验证表达式)。
-
-- `extend` _objcte_ - 数据结构扩展选项，根据输入数据生成新的数据结构（可选）
-
-  - `$name` _function_ - 数据扩展函数，基于已验证的数据构建新的数据结构，输出结果将以函数名作为 key 保存到返回值的 data 中。函数中 this 和第一个入参指向 data（已存在的同名属性值会被函数返回值覆盖）
-
-  - `$name`_any_ - 除函数外的其它任意数据类型，在已验证的数据结构上添加新的属性或覆盖已存在的同名属性
 
 - `data`_any_ - 验证数据，支持任意数据类型
 
@@ -172,21 +177,8 @@ const { error, data } = schema.looseVerify(data[, extend])
 
 - `msg` _string_ - 验证失败后返回的错误信息，相对于 error 而言，msg 对用户更加友好，可直接在客户端显示
 
-### 模型验证表达式
-
-options 数据验证表达式支持无限嵌套，不管你的数据层级有多深。
-
-type 作为验证表达式的内部保留关键字，应尽量避免在入参中包含同名的 type 属性，否则可能导致验证结果出现混乱。
-
-整体数据结构与待验证数据结构基本保持一致，除了使用 type 对象表达式不得不增加额外的数据结构。验证表达式中判断一个对象节点是否为验证选项的唯一依据是检查对象中是否包含 type 属性，如果没有 type 则被视为对象结构。
-
-options 中支持值表达式，可以对表达式节点直接赋值，实现输入、输出的完全匹配或部分匹配，在用于对象模糊断言时非常有用。
-
-当使用数组表达式时，需要区分单数和复数模式，单数时多个同级子节点会共用一个子表达式，通常用于验证具有相似数据结构的子集。复数时为精确匹配模式，可以完整定义每个子集。
 
 #### 通用选项
-
-- `type`_any_ - 数据类型
 
 - `default`_any_ - 空值时的默认赋值，优先级高于 allowNull
 
@@ -243,10 +235,10 @@ import email from "typea/email.js";
 import mobilePhone from "typea/mobilePhone.js";
 import mongoId from "typea/mongoId.js";
 
-types.type(email.name, email);
-types.type(date.name, date);
-types.type(mobilePhone.name, mobilePhone);
-types.type(mongoId.name, mongoId);
+types.add(email.name, email);
+types.add(date.name, date);
+types.add(mobilePhone.name, mobilePhone);
+types.add(mongoId.name, mongoId);
 ```
 
 ##### email
@@ -263,17 +255,17 @@ types.type(mongoId.name, mongoId);
 
 ### 自定义数据类型
 
-typea 中仅内置了少量常见的数据类型，如果不能满足需求，可以通过 types.type() 方法搭配 validator 等第三方库自行扩展。
+typea 中仅内置了少量常见的数据类型，如果不能满足需求，可以通过 types.add() 方法搭配 validator 等第三方库自行扩展。
 
 > 当定义的数据类型已存在时则合并，新的验证函数会覆盖内置的同名验证函数。
 
-#### types.type(name, options)
+#### types.add(name, options)
 
 - `name` _function, symbol, string_ - 类型 Key（必填）
 
 - `options` _object_ - 类型选项（必填）
 
-  - `type(data, options)` _function_ - 数据类型验证函数（必填）
+  - `add(data, options)` _function_ - 数据类型验证函数（必填）
 
     - `data` _any_ - 待验证数据
 
@@ -282,7 +274,7 @@ typea 中仅内置了少量常见的数据类型，如果不能满足需求，�
   - `[$name](data, options)` _function_ - 自定义验证函数（可选）
 
 ```js
-types.type("int", {
+types.add("int", {
   type(data) {
     if (Number.isInteger(data)) {
       return { data };
@@ -330,30 +322,24 @@ const sample = {
   e: [1, 2, 3],
 };
 
+const { string, number } = types;
+
+const numberAllowNull = number({ allowNull: false });
+
 const { error, data } = types(sample).verify({
-  a: [String],
-  b: [
-    {
-      type: Number,
-      allowNull: false,
-    },
-  ],
+  a: [string],
+  b: [numberAllowNull],
   c: [{ a: Number, b: Number }],
   d: [
     {
       d1: 666,
-      d2: String,
+      d2: string,
     },
     Number,
     [
       {
         xa: Number,
-        xb: [
-          {
-            type: Number,
-            allowNull: false,
-          },
-        ],
+        xb: [numberAllowNull],
       },
     ],
     String,
@@ -376,20 +362,16 @@ const sample = {
   },
 };
 
+const { number } = types;
+
 const { error, data } = types(sample).verify({
   a: {
-    a1: {
-      type: Number,
-      allowNull: false,
-    },
+    a1: number({ allowNull: false  }),
     a2: 12,
   },
   b: 99,
-  f: {
-    type: Function,
-    set(func) {
-      return func(1, 1);
-    },
+  f(func, set){
+    set(func(1, 1))
   },
 });
 ```
@@ -397,7 +379,7 @@ const { error, data } = types(sample).verify({
 ```js
 // 扩展数据类型
 
-types.type("int", {
+types.add("int", {
   type(data) {
     if (Number.isInteger(data)) {
       return { data };
@@ -461,93 +443,59 @@ const sample = {
   arr: ["jjsd", "ddd"],
 };
 
-const { email, mobilePhone } = types;
+const { string, number, email, mobilePhone } = types;
 
-const { error, data } = types(sample).verify(
-  {
-    name: {
-      type: String,
-      name: "名称",
-      allowNull: false,
-      default: "默认值",
-    },
-    num: {
-      type: Number,
-      value: 666,
-    },
-    user: {
-      username: "莉莉",
-      age: Number,
-      address: [
-        {
-          city: String,
-        },
-        {
-          city: "巴萨",
-        },
-      ],
-    },
-    list: [
+const { error, data } = types(sample).verify({
+  name: string({
+    name: "名称",
+    allowNull: false,
+    default: "默认值",
+  }),
+  num: number({ value: 666 }),
+  user: {
+    username: "莉莉",
+    age: Number,
+    address: [
       {
-        username: String,
-        age: {
-          kk: [{ kkk: Number }],
-        },
+        city: String,
+      },
+      {
+        city: "巴萨",
       },
     ],
-    money: {
-      type: Number,
-      min: 1,
-      in: [1, 2],
-    },
-    files: [
-      {
-        type: String,
-        allowNull: false,
-      },
-    ],
-    guaranteeFormat: {
-      type: Number,
-      to: Boolean,
-    },
-    addressee: String,
-    search: "双鸭山",
-    phone: mobilePhone,
-    coupon: {
-      type: String,
-      set($gt) {
-        return { $gt };
-      },
-    },
-    integral: {
-      lala: {
-        type: Number,
-      },
-      kaka: {
-        type: Number,
-        allowNull: false,
-        in: [1, 3, 8, 6],
-      },
-    },
-    email: {
-      type: email,
-      set(value) {
-        return [value, , null, , undefined, 666];
-      },
-    },
-    arr: [String],
   },
-  {
-    filter({ email, integral }) {
-      return {
-        email: email,
-      };
+  list: [
+    {
+      username: String,
+      age: {
+        kk: [{ kkk: Number }],
+      },
     },
-    where({ email, integral }) {
-      return {
-        integral: integral,
-      };
+  ],
+  money: number({
+    min: 1,
+    in: [1, 2],
+  }),
+  files: [number({ allowNull: false })],
+  guaranteeFormat: number,
+  addressee: String,
+  search: "双鸭山",
+  phone: mobilePhone,
+  coupon: string({
+    set($gt) { return { $gt }; },
+  }),
+  integral: {
+    lala: Number,
+    kaka: number({
+      allowNull: false,
+      in: [1, 3, 8, 6],
     },
-  }
-);
+  }),
+  email: email({
+    set(value) {
+      return [value, , null, , undefined, 666];
+    },
+  }),
+  arr: [String],
+});
 ```

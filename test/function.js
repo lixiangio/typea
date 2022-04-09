@@ -45,16 +45,12 @@ test('function express', t => {
    const schema = types({
       name: String,
       a(fn, set) {
-         const value = fn(1, 1);
-         sample.a = value;
-         set(value);
+         sample.a = fn(1, 1);
+         set(sample.a);
       },
-      b: {
-         type: Function,
-         set(f) {
-            sample.b = 2;
-            return f(1, 2);
-         }
+      b(fn, set) {
+         sample.b = fn(1, 2);
+         set(sample.b)
       },
       c() { }
    });

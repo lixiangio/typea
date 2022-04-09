@@ -52,19 +52,17 @@ const sample = {
 
 test('mixing', t => {
 
-  const { mongoId, email, mobilePhone } = types;
+  const { number, string, mongoId, email, mobilePhone } = types;
 
   const schema = types({
-    "name": {
-      "type": String,
+    "name": string({
       "name": "名称",
       "allowNull": false,
       "default": "默认值"
-    },
-    "num": {
-      "type": Number,
+    }),
+    "num": number({
       "value": 666,
-    },
+    }),
     "ObjectId": mongoId,
     "user": {
       "username": "莉莉",
@@ -86,46 +84,28 @@ test('mixing', t => {
         },
       }
     ],
-    "money": {
-      "type": Number,
+    "money": number({
       "min": 1,
       "in": [1, 2],
-    },
-    "files": [{
-      "type": String,
-      "allowNull": false,
-    }],
-    "guaranteeFormat": {
-      "type": Number,
-      "to": Boolean,
-    },
+    }),
+    "files": [string({ "allowNull": false })],
+    "guaranteeFormat": number,
     "addressee": String,
     "search": "双鸭山",
-    "phone": {
-      "type": mobilePhone
-    },
-    "coupon": {
-      "type": String,
-      set($gt) {
-        return { $gt }
-      }
-    },
+    "phone": mobilePhone,
+    "coupon": string({ set($gt) { return { $gt } } }),
     "integral": {
-      "lala": {
-        "type": Number,
-      },
-      "kaka": {
-        "type": Number,
+      "lala": Number,
+      "kaka": number({
         "allowNull": false,
         "in": [1, 3, 8, 6],
-      }
+      })
     },
-    "email": {
-      "type": email,
+    "email": email({
       set(value) {
         return [value, undefined, null, undefined, undefined, 666]
       }
-    },
+    }),
     "arr": [String],
   })
 

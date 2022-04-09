@@ -1,37 +1,31 @@
-/**
- * 通用验证方法
- */
+// 通用验证方法
 export const base = {
     /**
-     * 参数自定义转换方法
+     * 函数赋值
      * @param data 数据
-     * @param options 赋值函数
-     * @returns
+     * @param method 赋值函数
      */
-    set(data, options) {
-        return { data: options(data) };
+    set(data, method) {
+        return { data: method(data) };
     },
     /**
      * 直接赋值（覆盖原来的值）
      * @param data 不使用，忽略赋值
-     * @param options 将选项作为值使用，覆盖之前的值
+     * @param value 将选项作为值使用，覆盖之前的值
      */
-    value(data, options) {
-        return { data: options };
+    value(data, value) {
+        return { data: value };
     }
 };
-const types = new Map();
-types.set(String, {
-    // 数据类型验证
+export const type = Symbol('type');
+const stringMethods = {
+    // string 类型验证
     type(data) {
         if (typeof data === 'string') {
             return { data: data.trim() };
         }
-        else if (typeof data === 'number') {
-            return { data: data.toString() };
-        }
         else {
-            return { error: '必须为 string 类型' };
+            return { error: "必须为 string 类型" };
         }
     },
     // 限制最小长度
@@ -55,7 +49,7 @@ types.set(String, {
     // 正则
     reg(data, reg) {
         if (data.search(reg) === -1) {
-            return { error: '格式错误' };
+            return { error: '正则表达式格式错误' };
         }
         else {
             return { data };
@@ -72,8 +66,16 @@ types.set(String, {
         }
     },
     ...base
-});
-types.set(Number, {
+};
+function string(options) {
+    return {
+        [type]: stringMethods,
+        options
+    };
+}
+string[type] = stringMethods;
+String[type] = stringMethods;
+const numberMethods = {
     type(data) {
         if (isNaN(data)) {
             return { error: '必须为 number 类型' };
@@ -109,8 +111,35 @@ types.set(Number, {
         }
     },
     ...base
-});
-types.set(Array, {
+};
+function number(options) {
+    return {
+        [type]: numberMethods,
+        options
+    };
+}
+number[type] = numberMethods;
+Number[type] = numberMethods;
+const booleanMethods = {
+    type(data) {
+        if (typeof data === 'boolean') {
+            return { data };
+        }
+        else {
+            return { error: '必须为 boolean 类型' };
+        }
+    },
+    ...base
+};
+function boolean(options) {
+    return {
+        [type]: booleanMethods,
+        options
+    };
+}
+boolean[type] = booleanMethods;
+Boolean[type] = booleanMethods;
+const arrayMethods = {
     type(data) {
         if (Array.isArray(data)) {
             return { data };
@@ -121,7 +150,7 @@ types.set(Array, {
     },
     min(data, min) {
         if (data.length < min) {
-            return { error: `长度不能小于${min}个字符` };
+            return { error: `长度不能小于 ${min} 个字符` };
         }
         else {
             return { data };
@@ -129,15 +158,23 @@ types.set(Array, {
     },
     max(data, max) {
         if (data.length > max) {
-            return { error: `长度不能大于${max}个字符` };
+            return { error: `长度不能大于 ${max} 个字符` };
         }
         else {
             return { data };
         }
     },
     ...base
-});
-types.set(Object, {
+};
+function array(options) {
+    return {
+        [type]: arrayMethods,
+        options
+    };
+}
+array[type] = arrayMethods;
+Array[type] = arrayMethods;
+const objectMethods = {
     type(data) {
         if (typeof data === 'object') {
             return { data };
@@ -147,19 +184,32 @@ types.set(Object, {
         }
     },
     ...base
-});
-types.set(Boolean, {
+};
+function object(options) {
+    return {
+        [type]: objectMethods,
+        options
+    };
+}
+object[type] = objectMethods;
+Object[type] = objectMethods;
+const symbolMethods = {
     type(data) {
-        if (typeof data === 'boolean') {
+        if (typeof data === 'symbol') {
             return { data };
         }
         else {
-            return { error: '必须为 boolean 类型' };
+            return { error: '必须为 function 类型' };
         }
     },
     ...base
-});
-types.set(Function, {
+};
+function symbol(options) {
+    return { [type]: symbolMethods, options };
+}
+symbol[type] = symbolMethods;
+Symbol[type] = symbolMethods;
+const functionMethods = {
     type(data) {
         if (typeof data === 'function') {
             return { data };
@@ -169,6 +219,58 @@ types.set(Function, {
         }
     },
     ...base
-});
-// 数据类型验证方法
-export default types;
+};
+// function func(options: Options) {
+//   return {
+//     [type]: functionMethods,
+//     options
+//   };
+// }
+Function[type] = functionMethods;
+/////////////////////// 非基础类型 ///////////////////////
+const anyMethods = {
+    type(data) { return { data }; },
+    ...base
+};
+function any(options) {
+    return { [type]: anyMethods, options };
+}
+any[type] = anyMethods;
+const unionMethods = {
+    type(data) {
+        return { data };
+    }
+};
+/**
+ * 联合类型
+ * @param options
+ * @returns
+ */
+function union(...options) {
+    return { [type]: unionMethods, options };
+}
+union[type] = anyMethods;
+//////////////////// index 类型 ///////////////////
+export const symbols = {};
+function index(name, ...types) {
+    const symbol = Symbol('index');
+    symbols[symbol] = { name, types };
+    return symbol;
+}
+function optional(name) {
+    const symbol = Symbol('optional');
+    symbols[symbol] = name;
+    return symbol;
+}
+export const types = {
+    string,
+    number,
+    boolean,
+    array,
+    object,
+    symbol,
+    any,
+    union,
+    index,
+    optional
+};

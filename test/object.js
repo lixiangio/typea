@@ -1,6 +1,8 @@
 import test from 'jtm';
 import types from 'typea';
 
+const { number, string } = types;
+
 test('object', t => {
 
   const sample = {
@@ -8,7 +10,7 @@ test('object', t => {
       a1: 1,
       a2: 12,
     },
-    b: 99,
+    b: 10,
     f(a, b) {
       return a + b
     },
@@ -16,39 +18,26 @@ test('object', t => {
 
   const type = {
     a: {
-      a1: {
-        type: Number,
-        allowNull: false
-      },
+      a1: number({ allowNull: false }),
       a2: Number
     },
-    b: {
-      type: Number,
-      name: "拉拉",
+    b: number({
       set(data) {
         return data * 2
       }
-    },
-    f: {
-      type: Function,
-      set(func) {
-        return func(1, 1)
-      }
+    }),
+    f(fn, set) {
+      set(fn(1, 1));
+      // return { s: String, m: Number }
     },
   };
 
-  const { error, data } = types(type).verify(sample, {
-    test() { return 888; },
-    ss: 999
-  });
+  const { error, data } = types(type).verify(sample);
 
-  t.deepEqual({
-    a: { a1: 1, a2: 12 },
-    b: 198,
-    f: 2,
-    test: 888,
-    ss: 999
-  }, data, error);
+  sample.b = 20;
+  sample.f = 2;
+
+  t.deepEqual(sample, data, error);
 
 });
 
@@ -62,29 +51,20 @@ test('object null', async t => {
     d: null
   };
 
+  const allowNull = string({ allowNull: true })
+
   const { error, data } = types({
-    a: {
-      type: String,
+    a: string({
       allowNull: false,
       default: 'xxx',
-    },
+    }),
     b: [String],
-    c: {
-      type: String,
-      allowNull: true,
-    },
-    d: {
-      type: String,
-      allowNull: true,
-    }
-  }).strictVerify(sample);
+    c: allowNull,
+    d: allowNull
+  }).verify(sample, 'strict');
 
+  sample.a = 'xxx';
 
-  t.deepEqual({
-    a: 'xxx',
-    b: ["kkk", "xxx"],
-    c: '',
-    d: null
-  }, data, error);
+  t.deepEqual(sample, data, error);
 
 });

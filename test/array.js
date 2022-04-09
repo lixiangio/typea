@@ -1,18 +1,15 @@
 import test from 'jtm';
 import types from 'typea';
 
+const { number, boolean } = types;
+
 test('array 匹配单项或多项', t => {
 
-   const schema = types([
-      {
-         'state': {
-            type: Boolean,
-            default: true,
-         }
-      }
-   ])
+   const schema = types([{
+      'state': boolean({ default: true })
+   }])
 
-   const sample = [{ state: true }]
+   const sample = [{ state: true }];
 
    const { error, data } = schema.verify(sample);
 
@@ -26,10 +23,7 @@ test('array 匹配单项或多项', t => {
 test('array 匹配指定多项', t => {
 
    const item = {
-      'state': {
-         type: Boolean,
-         default: true,
-      }
+      'state': boolean({ default: true })
    };
 
    const schema = types([item, item])
@@ -48,11 +42,8 @@ test('array 匹配指定多项', t => {
 test('array 综合', t => {
 
    const schema = types({
-      a: [{ "type": String }],
-      b: [{
-         "type": Number,
-         "allowNull": false
-      }],
+      a: [String],
+      b: [number({ "allowNull": false })],
       c: [{ a: Number, b: Number }],
       d: [
          {
@@ -63,10 +54,7 @@ test('array 综合', t => {
          [
             {
                xa: Number,
-               xb: [{
-                  "type": Number,
-                  "allowNull": false
-               }],
+               xb: [number({ "allowNull": false })],
             }
          ],
          String

@@ -1,6 +1,6 @@
 {
    "name": "typea",
-   "version": "6.0.0",
+   "version": "7.0.0",
    "type": "module",
    "description": "JS数据结构验证、转换器",
    "main": "./build/index.js",
@@ -18,7 +18,7 @@
       "build": "tsc",
       "swc": "swc ./src/* -d ./dist && node ./dist/index.js",
       "test": "jtm",
-      "jtm": "jtm ./test/function.js"
+      "jtm": "jtm ./test/common.js"
    },
    "keywords": [
       "typea",
@@ -34,8 +34,8 @@
    },
    "homepage": "https://github.com/xiangle/typea#readme",
    "files": [
-      "build",
-      "validator"
+      "dist",
+      "types"
    ],
    "devDependencies": {
       "jtm": "^1.0.4"

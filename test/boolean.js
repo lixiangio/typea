@@ -1,6 +1,8 @@
 import test from 'jtm';
 import types from 'typea';
 
+const { boolean } = types;
+
 test('boolean', t => {
 
    const { error, data } = types(Boolean).verify(true);
@@ -23,17 +25,13 @@ test('inline', t => {
       c: [true, true, false, true]
    }
 
+   const allowNullBoolean = boolean({ "allowNull": false });
+
    const schema = types({
       a: Boolean,
       b: {
-         b1: {
-            type: Boolean,
-            allowNull: false
-         },
-         b2: {
-            type: Boolean,
-            allowNull: false
-         },
+         b1: allowNullBoolean,
+         b2: allowNullBoolean,
       },
       c: [Boolean]
    })

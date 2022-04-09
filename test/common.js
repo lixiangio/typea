@@ -14,39 +14,31 @@ test('common', t => {
       "email": "xxx@xx.xx",
    }
 
-   const { email } = types;
+   const { number, string, email, } = types;
 
    const schema = types({
-      "name": {
-         "type": String,
-         "name": "名称",
-         "default": "默认值",
+      "name": string({
+         "default": "lili",
          "allowNull": false
-      },
-      "num": {
-         "type": Number,
-         "value": 666
-      },
-      "coupon": {
-         type: String,
-         set($gt) { return { $gt } }
-      },
+      }),
+      "num": number({ "value": 666 }),
+      "coupon": string({
+         set($gt) {
+            sample.coupon = { $gt };
+            return sample.coupon;
+         }
+      }),
       "integral": {
-         "kaka": Number
+         "lala": "168",
+         "kaka": number
       },
-      "email": {
-         "type": email
-      }
+      email
    })
 
    const { error, data } = schema.verify(sample);
 
-   t.deepEqual({
-      name: '测试',
-      num: 666,
-      coupon: { '$gt': 'uuuu' },
-      integral: { kaka: 6 },
-      email: 'xxx@xx.xx'
-   }, data, error)
+   sample.num = data.num;
+
+   t.deepEqual(sample, data, error)
 
 });

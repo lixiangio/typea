@@ -1,20 +1,18 @@
 import test from 'jtm';
 import types from 'typea';
 
+const { number, boolean } = types;
+
+const numberAllowNull = number({ allowNull: false });
+
 test('常规', t => {
 
    const schema = types({
       a: {
-         a1: {
-            type: Number,
-            allowNull: false
-         },
-         a2: {
-            type: Number,
-            allowNull: false
-         }
+         a1: numberAllowNull,
+         a2: numberAllowNull
       },
-      b: Boolean,
+      b: boolean,
    })
 
    const sample = {
@@ -38,13 +36,8 @@ test('strict', t => {
 
    const schema = types({
       a: {
-         a1: {
-            type: Number
-         },
-         a2: {
-            type: Number,
-            allowNull: true
-         }
+         a1: number,
+         a2: number({ allowNull: true })
       },
       b: Boolean,
    })
@@ -57,7 +50,7 @@ test('strict', t => {
       b: true
    }
 
-   const { data, error } = schema.strictVerify(sample)
+   const { data, error } = schema.verify(sample, 'strict')
 
    // console.log(data)
 
@@ -70,13 +63,8 @@ test('loose', t => {
 
    const schema = types({
       a: {
-         a1: {
-            type: Number,
-         },
-         a2: {
-            type: Number,
-            allowNull: false
-         }
+         a1: number,
+         a2: numberAllowNull
       },
       b: Boolean,
    })
@@ -89,7 +77,7 @@ test('loose', t => {
       b: true
    }
 
-   const { error, data } = schema.looseVerify(sample)
+   const { error, data } = schema.verify(sample, 'loose')
 
    // console.log(data)
 

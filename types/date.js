@@ -7,7 +7,7 @@ export default {
     if (toDate(data + '')) {
       return { data }
     } else {
-      return { error: '必须为Date类型' }
+      return { error: '必须为 date 类型' }
     }
   },
 }

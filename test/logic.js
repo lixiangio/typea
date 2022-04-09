@@ -14,35 +14,32 @@ const sample = {
 
 test('and / or', t => {
 
-  const { email } = types;
+  const { email, string, number } = types;
 
   const schema = types({
-    "name": {
-      "type": String,
+    "name": string({
       "default": "测试",
       "allowNull": false,
       set(value) {
         if (sample.num) return value;
       }
-    },
-    "num": {
-      "type": Number,
+    }),
+    "num": number({
       "value": 666,
       set(value) {
         if (sample.name || sample.xxx) {
           return value;
         }
       }
-    },
+    }),
     "email": email,
-    "coupon": {
-      type: String,
+    "coupon": string({
       set($gt) {
         if (sample.integral || sample.email) {
           return { $gt };
         }
       }
-    }
+    })
   })
 
   const { data, error } = schema.verify(sample);

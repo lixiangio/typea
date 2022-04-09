@@ -1,7 +1,9 @@
 import test from 'jtm'
 import types from 'typea';
 
-test("strict", t => {
+const { string } = types;
+
+test("strict mode", t => {
 
    const sample = {
       a: "888",
@@ -13,18 +15,13 @@ test("strict", t => {
    }
 
    const { error, data } = types({
-      a: {
-         type: String,
-         allowNull: false,
-      },
+      a: string({ allowNull: false }),
       b: [String, String],
-      c: {
-         type: String
-      },
+      c: String,
       d: {
          s: Number
       }
-   }).strictVerify(sample);
+   }).verify(sample, 'strict');
 
    // console.log(data);
 
@@ -33,7 +30,7 @@ test("strict", t => {
 });
 
 
-test("loose", t => {
+test("loose mode", t => {
 
    const sample = {
       a: "888",
@@ -45,19 +42,16 @@ test("loose", t => {
    }
 
    const { error, data } = types({
-      a: {
-         type: String,
+      a: string({
          allowNull: false,
          default: 'xxx',
-      },
+      }),
       b: [String],
-      c: {
-         type: String
-      },
+      c: String,
       d: {
          s: String
       }
-   }).looseVerify(sample);
+   }).verify(sample, 'loose');
 
    // console.log(data);
 
