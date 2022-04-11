@@ -45,7 +45,7 @@ test('strict', t => {
    const sample = {
       a: {
          a1: 4545,
-         // a2: 888,
+         a2: 12,
       },
       b: true
    }

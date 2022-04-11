@@ -3,7 +3,7 @@ import types from 'typea';
 
 const sample = {
   "name": "测试",
-  "num": "123456789987",
+  "num": 123,
   "coupon": "uuuu",
   "integral": {
     "lala": "168",
@@ -25,10 +25,10 @@ test('and / or', t => {
       }
     }),
     "num": number({
-      "value": 666,
-      set(value) {
+      set() {
         if (sample.name || sample.xxx) {
-          return value;
+          sample.num = 666;
+          return sample.num;
         }
       }
     }),
@@ -36,19 +36,17 @@ test('and / or', t => {
     "coupon": string({
       set($gt) {
         if (sample.integral || sample.email) {
-          return { $gt };
+          sample.coupon = { $gt }
+          return sample.coupon;
         }
       }
     })
   })
 
+  delete sample.integral;
+
   const { data, error } = schema.verify(sample);
 
-  t.deepEqual(data, {
-    name: '测试',
-    num: 666,
-    coupon: { '$gt': 'uuuu' },
-    email: 'xxx@xx.xx'
-  }, error)
+  t.deepEqual(data, sample, error)
 
 });

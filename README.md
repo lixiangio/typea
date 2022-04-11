@@ -62,7 +62,7 @@ types.add("int", {
 ```
 
 ```js
-// 创建 schema， 使用 schema 验证数据
+// 创建 schema 并使用 schema 验证数据
 
 const { string, number, email, mobilePhone, int, union } = types;
 
@@ -123,42 +123,6 @@ if (error) {
 } else {
   console.log(data);
 }
-```
-
-### 验证模式
-
-typea 支持常规、严格、宽松三种验证模式，多数情况下只需要使用常规模式即可。
-
-> 引入严格模式和宽松模式的主要原因是为了弥补 js 对象结构对自身的表达存在分歧，当数组或对象结构中包含子表达式时没有额外的结构来定义空值。
-
-#### 常规模式
-
-常规模式下默认只对 allowNull 为 false 的节点强制执行非空验证，默认对包含子表达式的数组、对象结构体执行强制非空验证。
-
-```js
-const schema = types(express);
-
-const { error, data } = schema.verify(data)
-```
-
-#### 严格模式
-
-严格模式下默认会为所有节点强制执行非空验证，除非明确声明 allowNull 为 true。
-
-```js
-const schema = types(express);
-
-const { error, data } = schema.verify(data, 'strict')
-```
-
-#### 宽松模式
-
-宽松模式下不会对包含子表达式的数组、对象结构体进行强制非空验证。
-
-```js
-const schema = types(express);
-
-const { error, data } = schema.verify(data, 'loose')
 ```
 
 ### 输入参数
@@ -279,7 +243,7 @@ types.add("int", {
     if (Number.isInteger(data)) {
       return { data };
     } else {
-      return { error: "必须为int类型" };
+      return { error: "必须为 int 类型" };
     }
   },
   max(data, max) {
@@ -445,7 +409,7 @@ const sample = {
 
 const { string, number, email, mobilePhone } = types;
 
-const { error, data } = types(sample).verify({
+const { error, data } = types({
   name: string({
     name: "名称",
     allowNull: false,
@@ -497,5 +461,5 @@ const { error, data } = types(sample).verify({
     },
   }),
   arr: [String],
-});
+}).verify(sample);
 ```

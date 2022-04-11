@@ -41,31 +41,10 @@ test('array 匹配指定多项', t => {
 
 test('array 综合', t => {
 
-   const schema = types({
-      a: [String],
-      b: [number({ "allowNull": false })],
-      c: [{ a: Number, b: Number }],
-      d: [
-         {
-            d1: 666,
-            d2: String
-         },
-         Number,
-         [
-            {
-               xa: Number,
-               xb: [number({ "allowNull": false })],
-            }
-         ],
-         String
-      ],
-      e: Array
-   });
-
    const sample = {
       a: ['xx', 'kk'],
       b: [666, 999, 88,],
-      c: [{ a: 1 }, { a: 2 }, { b: 3 }],
+      c: [{ a: 1, b: 2 }, { a: 2, b: 2 }, { a: 1 }],
       d: [
          {
             d1: 666,
@@ -86,6 +65,33 @@ test('array 综合', t => {
       ],
       e: [1, 2, 3],
    };
+
+   const { optional } = types;
+
+   const schema = types({
+      a: [String],
+      b: [number({ "allowNull": false })],
+      c: [
+         { a: Number, [optional('b')]: Number },
+         // { a: Number, [optional('b')]: Number },
+         // { a: Number, [optional('b')]: Number }
+      ],
+      d: [
+         {
+            d1: 666,
+            d2: String
+         },
+         Number,
+         [
+            {
+               xa: Number,
+               xb: [number({ "allowNull": false })],
+            }
+         ],
+         String
+      ],
+      e: Array
+   });
 
    const { error, data } = schema.verify(sample);
 

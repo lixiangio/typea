@@ -11,45 +11,21 @@ export interface Options {
   [name: string | symbol]: any
 }
 
-// 通用验证方法
-export const base = {
-  /**
-   * 函数赋值
-   * @param data 数据
-   * @param method 赋值函数
-   */
-  set<Data>(data: Data, method: (d: Data) => any): Return {
-
-    return { data: method(data) };
-
-  },
-  /**
-   * 直接赋值（覆盖原来的值）
-   * @param data 不使用，忽略赋值
-   * @param value 将选项作为值使用，覆盖之前的值
-   */
-  value(data: void, value: any): Return {
-
-    return { data: value };
-
-  }
-};
-
 export const type = Symbol('type');
 
 const stringMethods = {
   // string 类型验证
   type(data: string): Return {
     if (typeof data === 'string') {
-      return { data: data.trim() }
+      return { data };
     } else {
-      return { error: "必须为 string 类型" }
+      return { error: "值必须为 string 类型" };
     }
   },
   // 限制最小长度
   min(data: string, min: number): Return {
     if (data.length < min) {
-      return { error: `长度不能小于${min}个字符` }
+      return { error: `值长度不能小于${min}个字符` }
     } else {
       return { data }
     }
@@ -57,7 +33,7 @@ const stringMethods = {
   // 限制最大长度
   max(data: string, max: number): Return {
     if (data.length > max) {
-      return { error: `长度不能大于"${max}"个字符` }
+      return { error: `值长度不能大于"${max}"个字符` }
     } else {
       return { data }
     }
@@ -78,8 +54,7 @@ const stringMethods = {
     } else {
       return { data }
     }
-  },
-  ...base
+  }
 }
 
 function string(options: Options) {
@@ -94,22 +69,22 @@ String[type] = stringMethods;
 
 const numberMethods = {
   type(data: number): Return {
-    if (isNaN(data)) {
-      return { error: '必须为 number 类型' }
+    if (typeof data === 'number') {
+      return { data };
     } else {
-      return { data: Number(data) }
+      return { error: '值必须为 number 类型' };
     }
   },
   min(data: number, min: number): Return {
     if (data < min) {
-      return { error: `不能小于"${min}"` }
+      return { error: `值不能小于"${min}"` }
     } else {
       return { data }
     }
   },
   max(data: number, max: number): Return {
     if (data > max) {
-      return { error: `不能大于"${max}"` };
+      return { error: `值不能大于"${max}"` };
     } else {
       return { data }
     }
@@ -122,8 +97,7 @@ const numberMethods = {
     } else {
       return { data }
     }
-  },
-  ...base
+  }
 }
 
 function number(options: Options) {
@@ -142,10 +116,9 @@ const booleanMethods = {
     if (typeof data === 'boolean') {
       return { data }
     } else {
-      return { error: '必须为 boolean 类型' }
+      return { error: '值必须为 boolean 类型' }
     }
-  },
-  ...base
+  }
 }
 
 function boolean(options: Options) {
@@ -164,24 +137,23 @@ const arrayMethods = {
     if (Array.isArray(data)) {
       return { data };
     } else {
-      return { error: '必须为 array 类型' };
+      return { error: '值必须为 array 类型' };
     }
   },
   min(data: any[], min: number): Return {
     if (data.length < min) {
-      return { error: `长度不能小于 ${min} 个字符` };
+      return { error: `值长度不能小于 ${min} 个字符` };
     } else {
       return { data };
     }
   },
   max(data: any[], max: number): Return {
     if (data.length > max) {
-      return { error: `长度不能大于 ${max} 个字符` };
+      return { error: `值长度不能大于 ${max} 个字符` };
     } else {
       return { data };
     }
-  },
-  ...base
+  }
 }
 
 function array(options: Options) {
@@ -200,10 +172,9 @@ const objectMethods = {
     if (typeof data === 'object') {
       return { data };
     } else {
-      return { error: '必须为 object 类型' };
+      return { error: '值必须为 object 类型' };
     }
-  },
-  ...base
+  }
 }
 
 function object(options: Options) {
@@ -222,10 +193,9 @@ const symbolMethods = {
     if (typeof data === 'symbol') {
       return { data }
     } else {
-      return { error: '必须为 function 类型' }
+      return { error: '值必须为 symbol 类型' }
     }
-  },
-  ...base
+  }
 }
 
 function symbol(options: Options) {
@@ -241,30 +211,20 @@ const functionMethods = {
     if (typeof data === 'function') {
       return { data }
     } else {
-      return { error: '必须为 function 类型' }
+      return { error: '值必须为 function 类型' }
     }
-  },
-  ...base
+  }
 }
-
-// function func(options: Options) {
-//   return {
-//     [type]: functionMethods,
-//     options
-//   };
-// }
 
 Function[type] = functionMethods;
 
 
 
-/////////////////////// 非基础类型 ///////////////////////
-
+/////////////////////// 扩展类型 ///////////////////////
 
 
 const anyMethods = {
-  type(data: any): Return { return { data } },
-  ...base
+  type(data: any): Return { return { data } }
 }
 
 function any(options: Options) {
@@ -272,7 +232,6 @@ function any(options: Options) {
 }
 
 any[type] = anyMethods;
-
 
 
 const unionMethods = {
@@ -284,30 +243,25 @@ const unionMethods = {
 /**
  * 联合类型
  * @param options 
- * @returns 
  */
 function union(...options) {
   return { [type]: unionMethods, options };
 }
 
-union[type] = anyMethods;
+union[type] = unionMethods;
 
 
 //////////////////// index 类型 ///////////////////
 
 export const symbols = {};
 
-function index(name: string, ...types: any[]) {
-  const symbol = Symbol('index');
-  symbols[symbol] = { name, types };
-  return symbol;
-}
-
 function optional(name: string) {
   const symbol = Symbol('optional');
   symbols[symbol] = name;
   return symbol;
 }
+
+export const stringKey = Symbol('stringKey');
 
 export const types = {
   string,
@@ -318,6 +272,6 @@ export const types = {
   symbol,
   any,
   union,
-  index,
-  optional
+  optional,
+  stringKey
 };

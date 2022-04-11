@@ -35,7 +35,7 @@ const sample = {
          },
       }
    ],
-   "money": "2",
+   "money": 2,
    "guaranteeFormat": 1,
    "addressee": "嘟嘟",
    "phone": "18565799072",

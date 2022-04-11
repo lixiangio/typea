@@ -3,7 +3,7 @@ import types from 'typea';
 
 const sample = {
   "name": "测试",
-  "num": "123456789987",
+  "num": 123456789987,
   "ObjectId": "59c8aea808deec3fc8da56b6",
   "files": ["abc.js", "334", "null", "666", "12"],
   "user": {
@@ -35,13 +35,13 @@ const sample = {
       },
     }
   ],
-  "money": "2",
+  "money": 2,
   "guaranteeFormat": 0,
   "addressee": "嘟嘟",
   "phone": "18565799072",
   "coupon": "uuuu",
   "integral": {
-    "lala": "168",
+    "lala": 168,
     "kaka": 6,
   },
   "search": "双鸭山",
@@ -60,9 +60,7 @@ test('mixing', t => {
       "allowNull": false,
       "default": "默认值"
     }),
-    "num": number({
-      "value": 666,
-    }),
+    "num": number({ set() { return 666; } }),
     "ObjectId": mongoId,
     "user": {
       "username": "莉莉",
@@ -109,39 +107,11 @@ test('mixing', t => {
     "arr": [String],
   })
 
-  const { error, data } = schema.verify(sample, {
-    filter({ email, integral }) {
-      return {
-        email,
-        integral,
-        "test": {
-          v1: 1,
-          v2: undefined,
-          v3: "",
-          v4: null,
-          v5: NaN,
-          v6: 0,
-        }
-      }
-    },
-    where({ email, integral }) {
-      return {
-        email,
-        integral,
-        "test": {
-          v1: 1,
-          v2: undefined,
-          v3: "",
-          v4: null,
-          v5: NaN,
-          v6: 0,
-        }
-      }
-    }
-  });
+  const { error, data } = schema.verify(sample);
 
   // console.log(data)
-
+  // t.deepEqual(sample, data, error);
+  
   t.ok(data, error);
 
 });

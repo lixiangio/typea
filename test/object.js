@@ -51,20 +51,21 @@ test('object null', async t => {
     d: null
   };
 
-  const allowNull = string({ allowNull: true })
+  const stringAllowNull = string({ allowNull: true })
 
   const { error, data } = types({
     a: string({
-      allowNull: false,
       default: 'xxx',
+      allowNull: false,
     }),
     b: [String],
-    c: allowNull,
-    d: allowNull
+    c: stringAllowNull,
+    d: null,
+    e: undefined
   }).verify(sample, 'strict');
 
   sample.a = 'xxx';
 
-  t.deepEqual(sample, data, error);
+  t.deepEqual(error, 'e 属性不存在', error);
 
 });

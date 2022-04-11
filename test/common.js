@@ -5,7 +5,7 @@ test('common', t => {
 
    const sample = {
       "name": "测试",
-      "num": "123456789987",
+      "num": 123456789987,
       "coupon": "uuuu",
       "integral": {
          "lala": "168",
@@ -21,7 +21,7 @@ test('common', t => {
          "default": "lili",
          "allowNull": false
       }),
-      "num": number({ "value": 666 }),
+      "num": number({ set() { return 666; } }),
       "coupon": string({
          set($gt) {
             sample.coupon = { $gt };
@@ -36,6 +36,8 @@ test('common', t => {
    })
 
    const { error, data } = schema.verify(sample);
+
+   console.log(error)
 
    sample.num = data.num;
 

@@ -1,25 +1,22 @@
 import Parser from './parser.js';
-import { types, type, base, type Options } from './types.js';
+import { types, type, type Options } from './types.js';
 
 /**
  * @param schema 验证表达式
  */
 function typea(schema: any) {
 
-  // schema 预处理
+  // schema 静态校验、优化
 
   return {
     /**
      * 常规模式，allowNull 值为 true 时强制验证
-     * 严格模式，禁止所有空值，有值验证，无值报错
-     * 宽松模式，忽略所有空值，有值验证，无值跳过，忽略 allowNull 属性
      * @param data 需要验证的数据
-     * @param mode 需要验证的数据
      */
-    verify(data: any, mode: string) {
+    verify(data: any) {
 
-      const parser = new Parser(mode);
-      return parser.recursion(mode, data, schema);
+      const parser = new Parser();
+      return parser.verify(undefined, data, schema);
 
     }
   };
@@ -49,8 +46,6 @@ typea.add = function (name: string, methods: object): void {
 
   // 创建新类型
   else {
-
-    Object.assign(methods, base);
 
     function extend(options: Options) {
       return { [type]: methods, options };

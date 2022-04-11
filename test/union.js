@@ -1,32 +1,20 @@
-import test from 'jtm';
-import types from 'typea';
+// import test from 'jtm';
+// import types from 'typea';
 
-const { index, optional, any, string, number, symbol, union } = types;
+// const { number, union } = types;
 
-test("type", t => {
+// test("union", t => {
 
-  const schema = types({
-    nane: union(String, number, [String, number]),
-    test: { name: String },
-    [optional('type')]: string,
-    [index(string)]: string,
-    [index(number)]: number,
-    [index(symbol)]: symbol,
-    value: any
-  });
+//   const schema = types({
+//     nane: union(String, number, [String, number]),
+//   });
 
-  const sample = {
-    nane: 'lili',
-    value: {
-      type: 1,
-      count: 10
-    }
-  };
+//   const sample = {
+//     nane: 'lili'
+//   };
 
-  const { error, data } = schema.verify(sample, 'strict');
+//   const { error, data } = schema.verify(sample, 'strict');
 
-  // console.log(data);
+//   t.deepEqual(sample, data, error);
 
-  t.deepEqual(sample, data, error);
-
-});
+// });

@@ -30,10 +30,23 @@
 // }
 
 
-const type = Symbol('type')
+// const type = Symbol('type')
 
-String[type] = {}
+// String[type] = {}
 
-console.log(String)
+// console.log(String)
 
-console.log(String[type])
+// console.log(String[type])
+
+// const o = {}
+
+// o[1] = 123;
+
+// o[Symbol(12)] = 5;
+
+// console.log(o)
+
+
+// console.log(Object.keys(null))
+
+console.log([] instanceof Object)
