@@ -19,7 +19,6 @@ test('and / or', t => {
   const schema = types({
     "name": string({
       "default": "测试",
-      "allowNull": false,
       set(value) {
         if (sample.num) return value;
       }
@@ -34,9 +33,9 @@ test('and / or', t => {
     }),
     "email": email,
     "coupon": string({
-      set($gt) {
+      set(value) {
         if (sample.integral || sample.email) {
-          sample.coupon = { $gt }
+          sample.coupon = value + "xxx";
           return sample.coupon;
         }
       }

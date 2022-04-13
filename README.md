@@ -1,24 +1,26 @@
 # typea
 
-功能强大的 JS 运行时数据验证与转换器，使用全镜像数据结构设计，轻量级、简单、直观、易于读写。
+功能强大的 JS 运行时数据验证与转换器，使用全镜像的对称数据结构模型，简单、直观、易于读写。
 
-Typea 中类型的概念一部分引用自 TypeScript，二者的类型声明方式有相似之处，仅供参考。
+Typea 中的部分类型概念引用自 TypeScript，二者的类型声明方式有相似之处。
 
 ### 特性
 
 - 支持 String、Number、Boolean、Object、Array、Function、Symbol 等常见基础类型；
 
-- 支持 Tupl 元组类型，为数组内的子元素提供精确类型匹配；
+- 支持 Tupl 元组类型，为数组内的每个子元素提供精确的差异化类型匹配；
 
-- 支持 Union 联合类型，匹配可变的动态类型；
+- 支持在数组/元组中使用 (...) 类型扩展运算符，匹配多个连续的同类型元素；
 
-- 支持 Index Signatures 索引类型匹配，为无固定名称的属性定义类型；
+- 支持 Index Signatures 索引类型，为无固定名称的属性统一定义类型；
+
+- 支持 Union 联合类型，匹配多个已知类型中的一个；
 
 - 支持 Literal 字面量类型赋值匹配，可满足模糊匹配与精准匹配的双重需求；
 
-- 支持对象、数组递归匹配，只需要按数据结构建模即可，不必担心数据层级深度、复杂度等问题；
+- 支持对象、数组递归验证，只需要按数据结构建模即可，不必担心数据层级深度、复杂度等问题；
 
-- 支持数据就近、集中处理，减少碎片化代码，通过分布在节点上的 set 方法来合成新的数据结构；
+- 支持数据就近、集中处理，减少碎片化代码，通过分布在节点上的 set 方法可合成新的数据结构；
 
 - 拥有足够的容错能力，在验证阶段几乎不需要使用 try/catch 来捕获异常，返回的 path 路径信息可快速定位错误节点；
 
@@ -42,18 +44,18 @@ import mobilePhone from "typea/mobilePhone.js";
 types.add(email.name, email);
 types.add(mobilePhone.name, mobilePhone);
 
-// 自定义类型
+// 创建一个自定义 int 类型
 types.add("int", {
   type(data) {
     if (Number.isInteger(data)) {
       return { data };
     } else {
-      return { error: "必须为int类型" };
+      return { error: "值必须为 int 类型" };
     }
   },
   max(data, max) {
     if (data > max) {
-      return { error: `不能大于${max}` };
+      return { error: `值不能大于${max}` };
     } else {
       return { data };
     }
@@ -63,24 +65,20 @@ types.add("int", {
 
 ```js
 // 创建 schema 并使用 schema 验证数据
-
-const { string, number, email, mobilePhone, int, union } = types;
+// 支持基础类型大小写混用，如类型声明 string、string() 、String 等效
+const { string, number, boolean, email, mobilePhone, int, stringKey, union } = types;
 
 // 创建数据模型（模型结构是可重复使用静态结构体，通常只需要创建一次即可重复引用，作用与 TS 中的 interface、 type 相似）
 const schema = types({
   id: Number,
-  name: string, // 使用大小写 string、String 或空的 string() 声明等效，所有基础类型大小写均为等效
+  name: string,
   email,
   mobilePhone,
-  num: union(String, Number, Symbol), // 定义 Union 联合类型
-  array: [String], // 定义数组或元组
-  tuple: [
-    String,
-    Number,
-    () => {},
-    function () {},
-    { name: String }
-  ], // 定义元组
+  num: union(String, Number), // 定义 Union 联合类型，类似 TS 中的 string | number
+  list: [...String], // 类似于 TS 的 string[]
+  array: [...number, boolean], // 类似于 TS 的 number[]
+  link: [String], // 定义单项元组
+  tuple: [String, Number, { name: String }, () => {}, function () {}], // 定义多项元组
   title: "hello", // 定义 Literal 字面量
   user: {
     username: "莉莉",
@@ -90,7 +88,7 @@ const schema = types({
   methods: {
     open() {}, // 定义 Function 类型
   },
-  [String]: String, // 索引类型
+  [stringKey]: String, // 索引类型
 });
 
 const { error, data } = schema.verify({
@@ -99,13 +97,17 @@ const { error, data } = schema.verify({
   email: "gmail@gmail.com",
   mobilePhone: "18666666666",
   num: 12345,
-  array: ["a", "b", "c"],
+  list: ["a", "b", "c"],
+  array: [1, 6, 8, 12, true],
+  link: ["https://github.com/"],
   tuple: [
     "hello word",
     123,
-    () => {},
-    function (v) { return v++; },
     { name: "lili" },
+    () => {},
+    function (v) {
+      return v++;
+    },
   ],
   title: "hello",
   user: {
@@ -139,8 +141,7 @@ if (error) {
 
 - `error` _string_ - 验证失败时返回的错误信息，包含错误的具体位置信息，仅供开发者调试使用
 
-- `msg` _string_ - 验证失败后返回的错误信息，相对于 error 而言，msg 对用户更加友好，可直接在客户端显示
-
+<!-- - `msg` _string_ - 验证失败后返回的错误信息，相对于 error 而言，msg 对用户更加友好，可直接在客户端显示 -->
 
 #### 通用选项
 
@@ -150,15 +151,12 @@ if (error) {
 
 - `set` _function_ - 赋值函数，用于对输入值处理后再输出赋值，函数中 this 指向原始数据 data，当值为空时不执行。
 
-- `ignore` _nay[]_ - 忽略指定的值，当存在匹配项时该字段不会被创建。如忽略空值，通过 [null, ""] 重新定义空值。
-
-<!-- * `error` *String, Function* - 验证失败时的提示文本信息 -->
 
 #### 专用选项
 
 > 针对不同的数据类型，会有不同的可选参数，选项如下
 
-##### String
+##### string
 
 - `min` _number_ - 限制字符串最小长度
 
@@ -168,7 +166,7 @@ if (error) {
 
 - `in` _string[]_ - 匹配多个可选值中的一个
 
-##### Number
+##### number
 
 > 内置类型转换，允许字符串类型的纯数字
 
@@ -178,19 +176,19 @@ if (error) {
 
 - `in` _number[]_ - 匹配多个可选值中的一个
 
-##### Array
+##### array
 
 - `min` _number_ - 限制数组最小长度
 
 - `max` _number_ - 限制数组最大长度
 
-##### Object、Date、Boolean、Function
+<!-- ##### object、date、boolean、function
 
-> 无专用选项
+> 无专用选项 -->
 
 #### 附加常见数据类型
 
-typea 仓库中提供了以下常见类型，默认不安装，推荐按需引用。
+typea 仓库中包含了以下常见类型，默认不安装，推荐按需引用。
 
 ```js
 import types from "typea";
@@ -199,8 +197,8 @@ import email from "typea/email.js";
 import mobilePhone from "typea/mobilePhone.js";
 import mongoId from "typea/mongoId.js";
 
-types.add(email.name, email);
 types.add(date.name, date);
+types.add(email.name, email);
 types.add(mobilePhone.name, mobilePhone);
 types.add(mongoId.name, mongoId);
 ```
@@ -225,11 +223,11 @@ typea 中仅内置了少量常见的数据类型，如果不能满足需求，�
 
 #### types.add(name, options)
 
-- `name` _function, symbol, string_ - 类型 Key（必填）
+- `name` _function, symbol, string_ - 类型 Key（必选）
 
 - `options` _object_ - 类型选项（必填）
 
-  - `add(data, options)` _function_ - 数据类型验证函数（必填）
+  - `type(data, options)` _function_ - 数据类型验证函数（必选）
 
     - `data` _any_ - 待验证数据
 
@@ -330,12 +328,12 @@ const { number } = types;
 
 const { error, data } = types(sample).verify({
   a: {
-    a1: number({ allowNull: false  }),
+    a1: number({ allowNull: false }),
     a2: 12,
   },
   b: 99,
-  f(func, set){
-    set(func(1, 1))
+  f(func, set) {
+    set(func(1, 1));
   },
 });
 ```

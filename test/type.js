@@ -31,6 +31,6 @@ test("type", t => {
       name: 'lili'
    }).verify(sample, 'strict');
 
-   t.deepEqual(sample, data, error);
+   t.deepEqual(data, sample, error);
 
 });

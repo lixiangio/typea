@@ -6,7 +6,7 @@ export default {
     if (isMobilePhone(String(data), 'zh-CN')) {
       return { data }
     } else {
-      return { error: '必须为手机号' }
+      return { error: '值必须为手机号' }
     }
   }
 }

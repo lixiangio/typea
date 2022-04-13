@@ -18,7 +18,7 @@
       "build": "tsc",
       "swc": "swc ./src/* -d ./dist && node ./dist/index.js",
       "test": "jtm",
-      "jtm": "jtm ./test/array.js"
+      "jtm": "jtm ./test/extend.js"
    },
    "keywords": [
       "typea",

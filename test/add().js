@@ -30,7 +30,7 @@ test(`type('int')`, t => {
 
    const sample = {
       "id": 6,
-      "age": 28,
+      "age": 15,
    };
 
    const { int } = types;
@@ -39,14 +39,13 @@ test(`type('int')`, t => {
       "id": int({ "in": [3, 5, 7, 6] }),
       "age": int({
          "max": 50,
-         "allowNull": false,
-         set(value) { 
+         set(value) {
             sample.age = value * 2;
             return sample.age;
-          }
+         }
       }),
    }).verify(sample);
 
-   t.deepEqual(sample, data, error);
+   t.deepEqual(data, sample, error);
 
 });

@@ -57,6 +57,6 @@ test('function express', t => {
 
    const { data, error } = schema.verify(sample);
 
-   t.deepEqual(sample, data, error);
+   t.deepEqual(data, sample, error);
 
 });

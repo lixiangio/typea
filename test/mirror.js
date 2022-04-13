@@ -1,6 +1,8 @@
 import test from 'jtm';
 import types from 'typea';
 
+const { mongoId, email, mobilePhone } = types;
+
 const sample = {
    "name": "测试",
    "num": "123456789987",
@@ -28,9 +30,9 @@ const sample = {
       {
          "username": "可可",
          "age": {
-            "kk": [
-               { kkk: 666 },
-               { kkk: 999 }
+            "k": [
+               { ka: 666 },
+               { ks: 999 }
             ]
          },
       }
@@ -50,8 +52,6 @@ const sample = {
    "arr": ['jjsd', 'ddd']
 }
 
-const { mongoId, email, mobilePhone } = types;
-
 
 test('结构镜像', t => {
 
@@ -59,7 +59,7 @@ test('结构镜像', t => {
       "name": String,
       "num": String,
       "ObjectId": mongoId,
-      "files": [String],
+      "files": [...String],
       "user": {
          "username": String,
          "age": Number,
@@ -82,9 +82,9 @@ test('结构镜像', t => {
          {
             "username": String,
             "age": {
-               "kk": [
-                  { kkk: Number },
-                  { kkk: Number }
+               "k": [
+                  { ka: Number },
+                  { ks: Number }
                ]
             },
          }
@@ -101,11 +101,11 @@ test('结构镜像', t => {
       "search": String,
       "searchField": String,
       "email": email,
-      "arr": [String]
+      "arr": [...String]
    }).verify(sample);
 
    // console.log(data)
-   
+
    t.ok(data, error);
 
 });

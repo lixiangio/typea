@@ -1,40 +1,32 @@
-import { type, symbols, stringKey, type Methods, type Options } from './types.js';
+import { typeKey, extensionKey, stringKey, symbols } from './types.js';
+import type { Methods, Options } from './types.js';
 
 interface ObjectIndex { [name: string | symbol]: any }
 
-const { toString } = Object.prototype;
+const { toString, hasOwnProperty } = Object.prototype;
 
 export default class Parser {
   /**
    * 递归验证器
-   * @param index 数据索引
    * @param data 待验证数据
    * @param node 验证表达式
    */
-  verify(index: string | number, data: any, node: any) {
+  verify(node: any, data: any) {
 
     // node 为类型函数
     if (typeof node === 'function') {
 
-      const methods = node[type];
+      const methods = node[typeKey];
 
-      // 带有 symbol('type') 的非对象类型函数，仅用作类型声明，不执行，也不传递参数
+      // 带有 symbol('type') 的非对象类型函数，仅用作类型声明，不执行，无参数
       if (methods) {
 
-        if (data === undefined) {
+        const { error, data: subData } = methods.type(data);
 
-          return { error: " 值不允许为空" };
-
+        if (error) {
+          return { error: ` ${error}` };
         } else {
-
-          const { error, data: subData } = methods.type(data);
-
-          if (error) {
-            return { error: ` ${error}` };
-          } else {
-            return { data: subData };
-          }
-
+          return { data: subData };
         }
 
       }
@@ -53,32 +45,35 @@ export default class Parser {
 
     }
 
-    // 节点为对象或数组
+    // node 为 object 或 array
     else if (node instanceof Object) {
 
-      const methods = node[type];
+      const methods = node[typeKey];
 
-      // node 为类型对象,来自类型函数的返回值
+      // node 为类型对象
       if (methods) {
 
-        return this.type(index, data, methods, node.options);
+        return this.type(methods, node.options, data);
 
       }
 
-      // node 为数组对象
+      // node 为数组结构
       else if (Array.isArray(node)) {
 
-        return this.array(index, data, node);
+        return this.array(node, data);
 
-      } else {
+      }
+      
+      // node 为对象结构
+      else {
 
-        return this.object(index, data, node);
+        return this.object(node, data);
 
       }
 
     }
 
-    // 节点为字面赋值类型
+    // node 为字面量赋值类型
     else if (data === node) {
 
       return { data };
@@ -88,39 +83,69 @@ export default class Parser {
     // 字面类型匹配失败
     else {
 
-      return { error: ` 值必须为 "${node}"` };
+      return { error: ` 值必须为${node}` };
 
     }
 
   }
 
   /**
-   * 对象类型节点
-   * @param index 属性名
+   * 对象结构
    * @param data 待验证数据
    * @param node 验证表达式
    */
-  object(index: string | number, data: any, node: ObjectIndex) {
+  object(node: ObjectIndex, data: any) {
 
     if (toString.call(data) !== '[object Object]') {
-
       return { error: " 值必须为 object 类型" };
-
     }
 
-    // 提取 symbol 索引表达式
+    const mixinNode = { ...node };
+
+    // 提 key 中的 symbol 类型索引表达式
     const symbolKeys = Object.getOwnPropertySymbols(node);
 
     for (const symbol of symbolKeys) {
 
-      // 模型中包含可选属性，仅当数据中属性名称存在时才参与校验
+      // 可选属性，仅当数据中属性名称存在时才参与校验
       if (symbol.description === 'optional') {
 
         const name = symbols[symbol];
 
-        if (data.hasOwnProperty(name)) {
-          const subNode = node[symbol];
-          node[name] = subNode;
+        if (hasOwnProperty.call(data, name)) {
+          mixinNode[name] = node[symbol];
+        }
+
+      }
+
+    }
+
+    const indexSbuNode = node[stringKey];
+
+    // 有索引时，将 data 中的非模型属性添加至混合模型
+    if (indexSbuNode) {
+
+      for (const name in data) {
+
+        if (hasOwnProperty.call(mixinNode, name) === false) {
+
+          mixinNode[name] = indexSbuNode;
+
+        }
+
+      }
+
+    }
+
+    // 无索引时，仅检查模型中声明的属性，忽略模型以外的属性
+    else {
+
+      for (const name in mixinNode) {
+
+        if (hasOwnProperty.call(data, name) === false) {
+
+          return { error: `.${name} 属性不存在` };
+
         }
 
       }
@@ -129,55 +154,15 @@ export default class Parser {
 
     const result = {};
 
-    for (const name in node) {
+    // 验证混合模型
+    for (const name in mixinNode) {
 
-      if (data.hasOwnProperty(name)) {
-        const { error, data: value } = this.verify(name, data[name], node[name]);
+      const { error, data: value } = this.verify(mixinNode[name], data[name]);
 
-        if (error) {
-          // 非根节点
-          if (index) {
-            return { error: `.${name}${error}` };
-          } else {
-            return { error: `${name}${error}` };
-          }
-        }
-
-        else {
-          result[name] = value;
-        }
+      if (error) {
+        return { error: `.${name}${error}` };
       } else {
-        return { error: `${name} 属性不存在` };
-      }
-
-    }
-
-    const indexNode = node[stringKey];
-
-    // 有索引类型，对模型以外的剩余属性进行索引验证
-    if (indexNode) {
-
-      for (const name in data) {
-
-        if (node.hasOwnProperty(name) === false) {
-
-          const { error, data: value } = this.verify(name, data[name], indexNode);
-
-          if (error) {
-            // 非根节点
-            if (index) {
-              return { error: `.${name}${error}` };
-            } else {
-              return { error: `${name}${error}` };
-            }
-          }
-
-          else {
-            result[name] = value;
-          }
-
-        }
-
+        result[name] = value;
       }
 
     }
@@ -187,83 +172,99 @@ export default class Parser {
   }
 
   /**
-   * 数组类型节点
-   * @param index 
-   * @param data 
-   * @param express 
-   */
-  array(index: number | string, data: any[], express: any[]) {
+ * 数组结构
+ * @param data 
+ * @param node 
+ */
+  array(node: any[], data: any[]) {
 
     if (Array.isArray(data) === false) {
-      return { error: `${index} 值必须为 Array 类型` };
+      return { error: ` 值必须为 array 类型` };
     }
 
-    let itemKey = 0;
-    const dataArray = [];
+    const result = [];
 
-    // 只有一个子表达式时，循环复用子表达式，匹配一个或多个子项
-    // 当有多个子表达式时，每个子表达示的占位与值之间一对一精确匹配，概念等同于 Typescript 中的元组类型
-    if (express.length === 1) {
+    let index = 0;
+    let iteratorError: string;
 
-      const [options] = express;
+    for (const item of node) {
 
-      for (const item of data) {
+      if (item instanceof Object) {
 
-        // 子集递归验证
-        const { error, data: subData } = this.verify(itemKey, item, options);
-
-        if (error) {
-          return { "error": `[${itemKey}]${error}` };
-        } else if (subData !== undefined) {
-          dataArray.push(subData);
+        // 扩展类型对象，一对多匹配，试探性向后匹配，直至类型匹配失败或无索引
+        if (item[extensionKey]) {
+          let next = true;
+          const typeObject = item.type;
+          while (next) {
+            if (hasOwnProperty.call(data, index)) {
+              const { error, data: subData } = this.verify(typeObject, data[index]);
+              if (error) {
+                iteratorError = error;
+                next = false;
+              } else {
+                index++;
+                result.push(subData);
+              }
+            } else {
+              next = false;
+            }
+          }
         }
 
-        itemKey++;
+        // 类型函数、类型对象、结构对象、结构数组，一对一匹配
+        else {
+          const { error, data: subData } = this.verify(item, data[index]);
+          if (error) {
+            return { "error": `[${index}] ${error}` };
+          } else {
+            index++;
+            result.push(subData);
+            iteratorError = null;
+          }
+        }
 
+      }
+
+      // 字面量全等匹配
+      else {
+        if (item === data[index]) {
+          index++;
+          result.push(item);
+          iteratorError = null;
+        } else {
+          return { error: `[${index}] 值必须全等于${item}` };
+        }
       }
 
     }
 
-    // express 为复数时表示元组匹配
-    else {
-
-      for (const item of data) {
-
-        const options = express[itemKey];
-
-        // 子集递归验证
-        const { error, data: subData } = this.verify(itemKey, item, options);
-
-        if (error) {
-          return { "error": `[${itemKey}]${error}` };
-        } else if (subData !== undefined) {
-          dataArray.push(subData);
-        }
-
-        itemKey++;
-
+    // 索引未完全匹配
+    if (data.length > index) {
+      if (iteratorError) {
+        return { error: `[${index}]${iteratorError}` };
+      } else {
+        return { error: `[${index}] 超出最大索引匹配范围` };
       }
-
     }
 
-    return { data: dataArray };
+    return { data: result };
 
   }
 
   /**
-   * 类型选项节点
-   * @param key 
-   * @param data 
-   * @param options 
+   * 类型结构
+   * @param data 待验证数据
+   * @param methods 验证方法 
+   * @param options 验证选项
    */
-  type(key: string | number, data: any, methods: Methods, options: Options) {
+  type(methods: Methods, options: Options, data: any) {
 
     if (options) {
 
       const { set, default: defaultValue, allowNull, ...other } = options;
 
       if (set) {
-        return { data: set(data) };
+        data = set(data);
       }
 
       // 空值处理选项
@@ -271,12 +272,7 @@ export default class Parser {
 
         // 填充默认值
         if (defaultValue) {
-          return { data: defaultValue };
-        }
-
-        // 禁止空值
-        else if (allowNull === false) {
-          return { error: " 值不允许为空" };
+          data = defaultValue;
         }
 
         // 允许空值
@@ -288,17 +284,15 @@ export default class Parser {
           return { error: " 值不允许为空" };
         }
 
-      } else {
-
-        const { error } = methods.type(data);
-
-        if (error) return { error: ` ${error}` };
-
       }
 
-      // 其它验证选项
+      const { error } = methods.type(data);
+
+      if (error) return { error: ` ${error}` };
+
+      // 扩展验证选项
       for (const name in other) {
-        const method = methods[name]; // 每个有效的 express.name 都有对应的 methods[name]() 处理函数
+        const method = methods[name]; // 每个有效的 node[$name] 对应一个 methods[$name]() 处理函数
         if (method) {
           const option = other[name];
           const { error, data: value } = method(data, option);
@@ -315,7 +309,7 @@ export default class Parser {
     } else {
 
       if (data === undefined) {
-        return { error: " 值不允许为空" };
+        return { error: " 值不允许为 undefined" };
       } else {
         const { error } = methods.type(data);
         if (error) return { error: ` ${error}` };

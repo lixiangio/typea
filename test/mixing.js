@@ -46,18 +46,17 @@ const sample = {
   },
   "search": "双鸭山",
   "searchField": "userName",
-  "email": "xxx@xx.xx",
+  "email": "xxx@xx.com",
   "arr": ['jjsd', 'ddd']
 }
 
 test('mixing', t => {
 
-  const { number, string, mongoId, email, mobilePhone } = types;
+  const { number, string, mongoId, email, mobilePhone, any, iterator } = types;
 
   const schema = types({
     "name": string({
       "name": "名称",
-      "allowNull": false,
       "default": "默认值"
     }),
     "num": number({ set() { return 666; } }),
@@ -75,43 +74,37 @@ test('mixing', t => {
       ],
     },
     "list": [
-      {
+      iterator({
         "username": String,
         "age": {
-          "kk": [{ kkk: Number }]
+          "kk": [iterator({ kkk: Number })]
         },
-      }
+      })
     ],
     "money": number({
       "min": 1,
       "in": [1, 2],
     }),
-    "files": [string({ "allowNull": false })],
+    "files": [string({ "allowNull": true }), ...string],
     "guaranteeFormat": number,
     "addressee": String,
     "search": "双鸭山",
     "phone": mobilePhone,
-    "coupon": string({ set($gt) { return { $gt } } }),
+    "coupon": any({ set($gt) { return { $gt } } }),
     "integral": {
       "lala": Number,
-      "kaka": number({
-        "allowNull": false,
-        "in": [1, 3, 8, 6],
-      })
+      "kaka": number({ "in": [1, 3, 8, 6] })
     },
-    "email": email({
-      set(value) {
-        return [value, undefined, null, undefined, undefined, 666]
-      }
-    }),
-    "arr": [String],
+    "email": email({ set(value) { return value.trim() } }),
+    "arr": [...String],
   })
 
   const { error, data } = schema.verify(sample);
 
   // console.log(data)
-  // t.deepEqual(sample, data, error);
-  
+
+  // t.deepEqual(data, sample, error);
+
   t.ok(data, error);
 
 });

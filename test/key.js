@@ -1,7 +1,7 @@
 import test from 'jtm';
 import types from 'typea';
 
-const { optional, stringKey } = types;
+const { stringKey } = types;
 
 test("stringKey", t => {
 
@@ -21,10 +21,11 @@ test("stringKey", t => {
       count: 10,
       value: 'c'
     },
-    // xxx: '12'
+    xxx: 12
   };
 
   const schema = types({
+    xxx: Number,
     [stringKey]: {
       type: Number,
       count: Number,
@@ -34,29 +35,6 @@ test("stringKey", t => {
 
   const { error, data } = schema.verify(sample, 'strict');
 
-  t.deepEqual(sample, data, error);
-
-});
-
-
-test("optional()", t => {
-
-  const sample = {
-    data: {
-      name: '123',
-      value: {}
-    }
-  };
-
-  const schema = types({
-    [optional('data')]: {
-      name: String,
-      value: Object
-    }
-  });
-
-  const { error, data } = schema.verify(sample, 'strict');
-
-  t.deepEqual(sample, data, error);
+  t.deepEqual(data, sample, error);
 
 });

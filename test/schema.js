@@ -27,7 +27,7 @@ test('常规', t => {
 
    // console.log(data)
 
-   t.deepEqual(sample, data, error);
+   t.deepEqual(data, sample, error);
 
 });
 
@@ -54,7 +54,7 @@ test('strict', t => {
 
    // console.log(data)
 
-   t.deepEqual(sample, data, error)
+   t.deepEqual(data, sample, error)
 
 });
 
@@ -81,6 +81,6 @@ test('loose', t => {
 
    // console.log(data)
 
-   t.deepEqual(sample, data, error);
+   t.deepEqual(data, sample, error);
 
 });

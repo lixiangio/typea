@@ -25,19 +25,17 @@ test('inline', t => {
       c: [true, true, false, true]
    }
 
-   const allowNullBoolean = boolean({ "allowNull": false });
-
    const schema = types({
       a: Boolean,
       b: {
-         b1: allowNullBoolean,
-         b2: allowNullBoolean,
+         b1: boolean,
+         b2: boolean,
       },
-      c: [Boolean]
+      c: [...boolean]
    })
 
    const { error, data } = schema.verify(sample);
 
-   t.deepEqual(sample, data, error);
+   t.deepEqual(data, sample, error);
 
 })

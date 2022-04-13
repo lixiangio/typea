@@ -12,7 +12,7 @@ test('tuple', t => {
 
   const schema = types({
     tuple: [String, Number, Function, function () { }, { name: String }],
-    array: [number({ set(v) { return Number(v) } })]
+    array: [...number({ set(v) { return Number(v) } })]
   });
 
   const { error, data } = schema.verify(sample);
@@ -20,6 +20,6 @@ test('tuple', t => {
   // 将 string 转换为 number
   sample.array[2] = Number(sample.array[2]);
 
-  t.deepEqual(sample, data, error);
+  t.deepEqual(data, sample, error);
 
 });

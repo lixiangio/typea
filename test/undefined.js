@@ -1,7 +1,7 @@
 import test from 'jtm';
 import types from 'typea';
 
-const { number, string } = types;
+const { string } = types;
 
 test('undefined, null', async t => {
 
@@ -14,7 +14,7 @@ test('undefined, null', async t => {
 
   const stringAllowNull = string({ allowNull: true })
 
-  const { error, data } = types({
+  const { error } = types({
     a: string({
       default: 'xxx',
       allowNull: false,

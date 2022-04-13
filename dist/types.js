@@ -1,5 +1,53 @@
-export const type = Symbol('type');
-const stringMethods = {
+import typea from './index.js';
+export const typeKey = Symbol('type');
+export const extensionKey = Symbol('extensionKey');
+export const stringKey = Symbol('stringKey');
+export const iteratorKey = Symbol.iterator;
+/**
+ * 扩展类型数组迭代器
+ */
+function iteratorMethod() {
+    const type = this;
+    return {
+        end: false,
+        next() {
+            if (this.end) {
+                this.end = false;
+                return { done: true };
+            }
+            else {
+                this.end = true;
+                return { value: { [extensionKey]: true, type } };
+            }
+        }
+    };
+}
+/**
+ * 添加数据类型声明
+ * @param name 类型名称
+ * @param methods 验证方法
+ * @param TypeFunction 附加类型
+ */
+export function addDataType(name, methods, TypeFunction) {
+    const result = {
+        [name](options) {
+            return {
+                [typeKey]: methods,
+                [iteratorKey]: iteratorMethod,
+                options
+            };
+        }
+    };
+    const typefn = result[name];
+    typefn[typeKey] = methods;
+    typefn[iteratorKey] = iteratorMethod;
+    typea[name] = typefn;
+    if (TypeFunction) {
+        TypeFunction[typeKey] = methods;
+        TypeFunction[iteratorKey] = iteratorMethod;
+    }
+}
+addDataType('string', {
     // string 类型验证
     type(data) {
         if (typeof data === 'string') {
@@ -46,16 +94,8 @@ const stringMethods = {
             return { data };
         }
     }
-};
-function string(options) {
-    return {
-        [type]: stringMethods,
-        options
-    };
-}
-string[type] = stringMethods;
-String[type] = stringMethods;
-const numberMethods = {
+}, String);
+addDataType('number', {
     type(data) {
         if (typeof data === 'number') {
             return { data };
@@ -90,16 +130,8 @@ const numberMethods = {
             return { data };
         }
     }
-};
-function number(options) {
-    return {
-        [type]: numberMethods,
-        options
-    };
-}
-number[type] = numberMethods;
-Number[type] = numberMethods;
-const booleanMethods = {
+}, Number);
+addDataType('boolean', {
     type(data) {
         if (typeof data === 'boolean') {
             return { data };
@@ -108,16 +140,18 @@ const booleanMethods = {
             return { error: '值必须为 boolean 类型' };
         }
     }
-};
-function boolean(options) {
-    return {
-        [type]: booleanMethods,
-        options
-    };
-}
-boolean[type] = booleanMethods;
-Boolean[type] = booleanMethods;
-const arrayMethods = {
+}, Boolean);
+addDataType('symbol', {
+    type(data) {
+        if (typeof data === 'symbol') {
+            return { data };
+        }
+        else {
+            return { error: '值必须为 symbol 类型' };
+        }
+    }
+}, Symbol);
+addDataType('array', {
     type(data) {
         if (Array.isArray(data)) {
             return { data };
@@ -142,49 +176,19 @@ const arrayMethods = {
             return { data };
         }
     }
-};
-function array(options) {
-    return {
-        [type]: arrayMethods,
-        options
-    };
-}
-array[type] = arrayMethods;
-Array[type] = arrayMethods;
-const objectMethods = {
+}, Array);
+const { toString } = Object.prototype;
+addDataType('object', {
     type(data) {
-        if (typeof data === 'object') {
+        if (toString.call(data) === '[object Object]') {
             return { data };
         }
         else {
             return { error: '值必须为 object 类型' };
         }
     }
-};
-function object(options) {
-    return {
-        [type]: objectMethods,
-        options
-    };
-}
-object[type] = objectMethods;
-Object[type] = objectMethods;
-const symbolMethods = {
-    type(data) {
-        if (typeof data === 'symbol') {
-            return { data };
-        }
-        else {
-            return { error: '值必须为 symbol 类型' };
-        }
-    }
-};
-function symbol(options) {
-    return { [type]: symbolMethods, options };
-}
-symbol[type] = symbolMethods;
-Symbol[type] = symbolMethods;
-const functionMethods = {
+}, Object);
+Function[typeKey] = {
     type(data) {
         if (typeof data === 'function') {
             return { data };
@@ -194,15 +198,10 @@ const functionMethods = {
         }
     }
 };
-Function[type] = functionMethods;
 /////////////////////// 扩展类型 ///////////////////////
-const anyMethods = {
+addDataType('any', {
     type(data) { return { data }; }
-};
-function any(options) {
-    return { [type]: anyMethods, options };
-}
-any[type] = anyMethods;
+});
 const unionMethods = {
     type(data) {
         return { data };
@@ -213,26 +212,25 @@ const unionMethods = {
  * @param options
  */
 function union(...options) {
-    return { [type]: unionMethods, options };
+    return { [typeKey]: unionMethods, options };
 }
-union[type] = unionMethods;
-//////////////////// index 类型 ///////////////////
+union[typeKey] = unionMethods;
+//////////////////// 索引类型 ///////////////////
 export const symbols = {};
+// 可选属性
 function optional(name) {
     const symbol = Symbol('optional');
     symbols[symbol] = name;
     return symbol;
 }
-export const stringKey = Symbol('stringKey');
-export const types = {
-    string,
-    number,
-    boolean,
-    array,
-    object,
-    symbol,
-    any,
+Object.assign(typea, {
     union,
     optional,
-    stringKey
-};
+    stringKey,
+    /**
+     * 扩展类型数据包装器，用于将对象、数组类型标记为可迭代类型
+     */
+    iterator(type) {
+        return { [extensionKey]: true, type };
+    }
+});

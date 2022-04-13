@@ -1,10 +1,10 @@
+import { typeKey, addDataType } from './types.js';
 import Parser from './parser.js';
-import { types, type } from './types.js';
 /**
  * @param schema 验证表达式
  */
-function typea(schema) {
-    // schema 静态校验、优化
+export default function typea(schema) {
+    // schema 静态检查、优化
     return {
         /**
          * 常规模式，allowNull 值为 true 时强制验证
@@ -12,7 +12,18 @@ function typea(schema) {
          */
         verify(data) {
             const parser = new Parser();
-            return parser.verify(undefined, data, schema);
+            const result = parser.verify(schema, data);
+            if (result.error) {
+                if (result.error[0] === '.') {
+                    return { error: result.error.slice(1) };
+                }
+                else {
+                    return { error: result.error };
+                }
+            }
+            else {
+                return { data: result.data };
+            }
         }
     };
 }
@@ -22,23 +33,15 @@ function typea(schema) {
  * @param methods 扩展方法
  */
 typea.add = function (name, methods) {
-    // 通过String定位，扩展已有数据类型或创建新类型
     if (typeof name !== 'string')
         return;
-    const extendFn = typea[name];
-    // 扩展已添加的类型
-    if (extendFn) {
-        const _methods = extendFn[type];
-        Object.assign(_methods, methods);
+    const typeFn = typea[name];
+    // 扩展已添加的类型函数
+    if (typeFn) {
+        Object.assign(typeFn[typeKey], methods);
     }
-    // 创建新类型
+    // 创建新的类型函数
     else {
-        function extend(options) {
-            return { [type]: methods, options };
-        }
-        extend[type] = methods;
-        typea[name] = extend;
+        addDataType(name, methods);
     }
 };
-Object.assign(typea, types);
-export default typea;

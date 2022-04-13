@@ -37,7 +37,7 @@ test('object', t => {
   sample.b = 20;
   sample.f = 2;
 
-  t.deepEqual(sample, data, error);
+  t.deepEqual(data, sample, error);
 
 });
 
@@ -53,7 +53,7 @@ test('object null', async t => {
 
   const stringAllowNull = string({ allowNull: true })
 
-  const { error, data } = types({
+  const { error } = types({
     a: string({
       default: 'xxx',
       allowNull: false,

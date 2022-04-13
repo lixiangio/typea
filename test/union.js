@@ -1,20 +1,19 @@
-// import test from 'jtm';
-// import types from 'typea';
+import test from 'jtm';
+import types from 'typea';
 
-// const { number, union } = types;
+const { string, number, union } = types;
 
-// test("union", t => {
+test("union", t => {
 
-//   const schema = types({
-//     nane: union(String, number, [String, number]),
-//   });
+  const schema = types({
+    nane: union(string({ max: 3 }), number({ max: 100 }), [String, number]),
+    list: [union(String, number, Boolean), Boolean, Boolean, number],
+  });
 
-//   const sample = {
-//     nane: 'lili'
-//   };
+  const sample = { nane: 'lili' };
 
-//   const { error, data } = schema.verify(sample, 'strict');
+  const { error, data } = schema.verify(sample, 'strict');
 
-//   t.deepEqual(sample, data, error);
+  t.deepEqual(data, sample, error);
 
-// });
+});

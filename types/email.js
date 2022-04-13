@@ -6,7 +6,7 @@ export default {
     if (isEmail(String(data))) {
       return { data }
     } else {
-      return { error: '必须为 email 格式' }
+      return { error: '值必须为 email 格式' }
     }
   },
 }
