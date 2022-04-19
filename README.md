@@ -39,16 +39,15 @@ npm install typea
 ### Examples
 
 ```js
-// 根据需求，添加扩展数据类型，或创建自定义数据类型
-
 import types from "typea";
+
+// 根据需求，添加扩展类型
 import email from "typea/email.js";
 import mobilePhone from "typea/mobilePhone.js";
-
 types.add(email.name, email);
 types.add(mobilePhone.name, mobilePhone);
 
-// 创建一个自定义 int 类型
+// 创建一个简单的自定义 int 类型
 types.add("int", {
   type(data) {
     if (Number.isInteger(data)) {
@@ -69,11 +68,10 @@ types.add("int", {
 
 ```js
 // 创建 schema 并使用 schema 验证数据
-// 支持基础类型大小写混用，如类型声明 string、string() 、String 等效
-const { string, number, boolean, email, mobilePhone, int, $, $index, union, partial } =
-  types;
+const { $, $index, union, partial } = types;
+const { string, number, boolean, email, mobilePhone, int } = types;
 
-// 创建数据模型（模型结构是可重复使用静态结构体，通常只需要创建一次即可重复引用，作用与 TS 中的 interface、 type 相似）
+// 创建数据模型
 const schema = types({
   id: Number,
   name: string,
@@ -81,7 +79,7 @@ const schema = types({
   mobilePhone,
   num: union(String, Number, 'abc', null, [], undefined), // 定义 Union 联合类型
   list: [...String], // 类似于 TS 的 string[]
-  array: [...number, boolean], // 类似于 TS 的 number[]
+  array: [...number, boolean], // 扩展符，混合类型
   link: [String], // 定义单项元组
   tuple: [String, Number, { name: String }, () => {}, function () {}], // 定义多项元组
   user: partial({
@@ -133,6 +131,14 @@ if (error) {
   console.log(data);
 }
 ```
+
+### 类型
+
+基础类型大小写可以混用（推荐使用小写类型），如类型声明 string、string() 、String 等效，扩展类型不支持大小写混用。
+
+### 模型
+
+模型通常是可重复使用静态结构体，只需要创建一次即可重复使用，作用与 TS 中的 interface、 type 相似。
 
 ### 输入参数
 
