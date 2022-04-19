@@ -50,7 +50,7 @@ test('strict', t => {
       b: true
    }
 
-   const { data, error } = schema.verify(sample, 'strict')
+   const { data, error } = schema.verify(sample)
 
    // console.log(data)
 

@@ -62,10 +62,10 @@ test('object null', async t => {
     c: stringAllowNull,
     d: null,
     e: undefined
-  }).verify(sample, 'strict');
+  }).verify(sample);
 
   sample.a = 'xxx';
 
-  t.deepEqual(error, 'e 属性不存在', error);
+  t.deepEqual(error, 'e 属性缺失', error);
 
 });

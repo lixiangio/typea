@@ -96,13 +96,13 @@ test('array 综合示例', t => {
       f: [1, 2, 3],
    };
 
-   const { iterator, optional } = types;
+   const { iterator, $ } = types;
 
    const schema = types({
       a: [number, ...number],
       b: [...string, number],
       c: [...number({ "allowNull": true })],
-      d: [iterator({ a: Number, [optional('b')]: number })],
+      d: [iterator({ a: Number, [$("b")]: number })],
       e: [
          {
             d1: 666,

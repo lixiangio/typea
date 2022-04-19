@@ -13,7 +13,7 @@ test('string', t => {
 
 test('string[] or [string]', t => {
 
-   const sample = ['a', 'b', 'c']
+   const sample = ['a', 'b', 'c'];
 
    const { error, data } = types([...String]).verify(sample);
 
@@ -23,7 +23,7 @@ test('string[] or [string]', t => {
 
 test('[string, string]', t => {
 
-   const sample = ['a', 'b']
+   const sample = ['a', 'b'];
 
    const { error, data } = types([String, String]).verify(sample);
 

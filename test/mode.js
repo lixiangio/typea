@@ -21,7 +21,7 @@ test("strict", t => {
       d: {
          s: Number
       }
-   }).verify(sample, 'strict');
+   }).verify(sample);
 
    // console.log(data);
 

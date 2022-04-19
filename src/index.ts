@@ -1,24 +1,27 @@
-import { typeKey, addDataType, type Methods } from './types.js';
-import Parser from './parser.js';
+import { entry } from './router.js';
+import { typeKey, $index } from './common.js';
+import addType, { type Methods } from './addType.js';
+import utility from './utility.js';
+import  './types.js';
 
 /**
  * @param schema 验证表达式
  */
 export default function typea(schema: any) {
 
-  // schema 静态检查、优化
+  // chema 静态检查、优化
 
   return {
     /**
-     * 常规模式，allowNull 值为 true 时强制验证
      * @param data 需要验证的数据
      */
     verify(data: any) {
 
-      const parser = new Parser();
-      const result = parser.verify(schema, data);
+      const result = entry(schema, data);
+
       if (result.error) {
-        if (result.error[0] === '.') {
+        const [point] = result.error;
+        if (point === '.') {
           return { error: result.error.slice(1) };
         } else {
           return { error: result.error };
@@ -31,6 +34,11 @@ export default function typea(schema: any) {
   };
 
 }
+
+typea.typeKey = typeKey;
+typea.$index = $index;
+
+Object.assign(typea, utility);
 
 /**
  * 添加自定义数据类型
@@ -53,7 +61,7 @@ typea.add = function (name: string, methods: Methods): void {
   // 创建新的类型函数
   else {
 
-    addDataType(name, methods);
+    addType(name, methods);
 
   }
 

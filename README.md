@@ -2,27 +2,31 @@
 
 功能强大的 JS 运行时数据验证与转换器，使用全镜像的对称数据结构模型，简单、直观、易于读写。
 
-Typea 中的部分类型概念引用自 TypeScript，二者的类型声明方式有相似之处。
+Typea 中的很多类型概念引用自 TypeScript，相关概念请参考 [TypeScript 文档](https://www.typescriptlang.org/docs/)。
 
 ### 特性
 
 - 支持 String、Number、Boolean、Object、Array、Function、Symbol 等常见基础类型；
 
-- 支持 Tupl 元组类型，为数组内的每个子元素提供精确的差异化类型匹配；
+- 支持 [Tupl Types](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) 元组类型，为数组内的每个子元素提供精确的差异化类型匹配；
 
-- 支持在数组/元组中使用 (...) 类型扩展运算符，匹配多个连续的同类型元素；
+- 支持在 Array / Tupl 类型中使用 (...) 扩展运算符，匹配零个或多个连续的同类型元素；
 
-- 支持 Index Signatures 索引类型，为无固定名称的属性统一定义类型；
+- 支持可选属性 [Optional Properties](https://www.typescriptlang.org/docs/handbook/2/objects.html#optional-properties)，Typea 中使用 [$(name)] 代替 TypeScript 的 "name?" 属性修饰符；
 
-- 支持 Union 联合类型，匹配多个已知类型中的一个；
+- 支持 [Index Signatures](https://www.typescriptlang.org/docs/handbook/2/objects.html#index-signatures) 索引签名，为无固定名称的属性统一定义类型；
 
-- 支持 Literal 字面量类型赋值匹配，可满足模糊匹配与精准匹配的双重需求；
+- 支持 [Union Types](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#union-types) 联合类型，匹配多个类型声明中的一个；
 
-- 支持对象、数组递归验证，只需要按数据结构建模即可，不必担心数据层级深度、复杂度等问题；
+- 支持 [partial(type)](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype)、[required(type)](https://www.typescriptlang.org/docs/handbook/utility-types.html#requiredtype)、[pick(type, key)](https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys)、[omit(type, key)](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys) 类型转换函数；
+
+- 支持 [Literal Types](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) 字面量类型赋值匹配，可满足模糊匹配与精准匹配的双重需求；
+
+- 支持对象、数组递归验证，只需要按数据结构建模即可，不必担心数据层级深度问题；
 
 - 支持数据就近、集中处理，减少碎片化代码，通过分布在节点上的 set 方法可合成新的数据结构；
 
-- 拥有足够的容错能力，在验证阶段几乎不需要使用 try/catch 来捕获异常，返回的 path 路径信息可快速定位错误节点；
+- 拥有足够的容错能力，在验证期间通常不需要使用 try/catch 来捕获异常，返回的 path 路径信息可快速定位错误节点；
 
 - 支持按需扩展自定义数据类型，实现最小化集成。
 
@@ -66,7 +70,8 @@ types.add("int", {
 ```js
 // 创建 schema 并使用 schema 验证数据
 // 支持基础类型大小写混用，如类型声明 string、string() 、String 等效
-const { string, number, boolean, email, mobilePhone, int, stringKey, union } = types;
+const { string, number, boolean, email, mobilePhone, int, $, $index, union, partial } =
+  types;
 
 // 创建数据模型（模型结构是可重复使用静态结构体，通常只需要创建一次即可重复引用，作用与 TS 中的 interface、 type 相似）
 const schema = types({
@@ -74,21 +79,21 @@ const schema = types({
   name: string,
   email,
   mobilePhone,
-  num: union(String, Number), // 定义 Union 联合类型，类似 TS 中的 string | number
+  num: union(String, Number, 'abc', null, [], undefined), // 定义 Union 联合类型
   list: [...String], // 类似于 TS 的 string[]
   array: [...number, boolean], // 类似于 TS 的 number[]
   link: [String], // 定义单项元组
   tuple: [String, Number, { name: String }, () => {}, function () {}], // 定义多项元组
-  title: "hello", // 定义 Literal 字面量
-  user: {
-    username: "莉莉",
+  user: partial({
+    username: "莉莉", // 定义 Literal 字面量
     age: int({ max: 200 }),
     address: [{ city: String }, { city: "母鸡" }],
-  },
+  }),
   methods: {
     open() {}, // 定义 Function 类型
   },
-  [stringKey]: String, // 索引类型
+  [$('title')]: "hello", // 可选属性
+  [$index]: String, // 索引类型
 });
 
 const { error, data } = schema.verify({
@@ -116,7 +121,9 @@ const { error, data } = schema.verify({
     address: [{ city: "黑猫" }, { city: "母鸡" }],
   },
   methods: {
-    open(v) { return v + 1; },
+    open(v) {
+      return v + 1;
+    },
   },
 });
 
@@ -143,14 +150,13 @@ if (error) {
 
 <!-- - `msg` _string_ - 验证失败后返回的错误信息，相对于 error 而言，msg 对用户更加友好，可直接在客户端显示 -->
 
-#### 通用选项
+#### 类型函数的通用选项
 
 - `default`_any_ - 空值时的默认赋值，优先级高于 allowNull
 
 - `allowNull` _boolean_ - 是否允许为空，当值为 false 时强制进行非空验证。
 
 - `set` _function_ - 赋值函数，用于对输入值处理后再输出赋值，函数中 this 指向原始数据 data，当值为空时不执行。
-
 
 #### 专用选项
 

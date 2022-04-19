@@ -29,7 +29,7 @@ test("type", t => {
          max: number
       },
       name: 'lili'
-   }).verify(sample, 'strict');
+   }).verify(sample);
 
    t.deepEqual(data, sample, error);
 

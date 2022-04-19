@@ -1,70 +1,9 @@
-import typea from './index.js';
-
-export const typeKey = Symbol('type');
-export const extensionKey = Symbol('extensionKey');
-export const stringKey = Symbol('stringKey');
-export const iteratorKey = Symbol.iterator;
-
-export interface Methods {
-  [name: string]: (data: any, option?: any) => { error?: string, data?: any }
-}
-
-export interface Options {
-  default?: any
-  allowNull?: boolean
-  ignore?: any[]
-  [name: string | symbol]: any
-}
+import addType from './addType.js';
 
 interface Return { data?: any, error?: string }
 
-/**
- * 扩展类型数组迭代器
- */
-function iteratorMethod() {
-  const type = this;
-  return {
-    end: false,
-    next() {
-      if (this.end) {
-        this.end = false;
-        return { done: true };
-      } else {
-        this.end = true;
-        return { value: { [extensionKey]: true, type } };
-      }
-    }
-  };
-}
-
-/**
- * 添加数据类型声明
- * @param name 类型名称
- * @param methods 验证方法
- * @param TypeFunction 附加类型
- */
-export function addDataType(name: string, methods: Methods, TypeFunction?: Function) {
-  const result = {
-    [name](options: Options) {
-      return {
-        [typeKey]: methods,
-        [iteratorKey]: iteratorMethod,
-        options
-      };
-    }
-  }
-  const typefn = result[name];
-  typefn[typeKey] = methods;
-  typefn[iteratorKey] = iteratorMethod;
-  typea[name] = typefn;
-  if (TypeFunction) {
-    TypeFunction[typeKey] = methods;
-    TypeFunction[iteratorKey] = iteratorMethod;
-  }
-}
-
-addDataType('string', {
-  // string 类型验证
+addType('string', {
+  // 验证 string 类型
   type(data: string): Return {
     if (typeof data === 'string') {
       return { data };
@@ -105,9 +44,10 @@ addDataType('string', {
       return { data }
     }
   }
-}, String)
+}, String);
 
-addDataType('number', {
+
+addType('number', {
   type(data: number): Return {
     if (typeof data === 'number') {
       return { data };
@@ -140,7 +80,7 @@ addDataType('number', {
   }
 }, Number);
 
-addDataType('boolean', {
+addType('boolean', {
   type(data: boolean): Return {
     if (typeof data === 'boolean') {
       return { data }
@@ -150,7 +90,7 @@ addDataType('boolean', {
   }
 }, Boolean);
 
-addDataType('symbol', {
+addType('symbol', {
   type(data: symbol): Return {
     if (typeof data === 'symbol') {
       return { data }
@@ -160,7 +100,7 @@ addDataType('symbol', {
   }
 }, Symbol);
 
-addDataType('array', {
+addType('array', {
   type(data: any[]): Return {
     if (Array.isArray(data)) {
       return { data };
@@ -186,7 +126,7 @@ addDataType('array', {
 
 const { toString } = Object.prototype;
 
-addDataType('object', {
+addType('object', {
   type(data: object): Return {
     if (toString.call(data) === '[object Object]') {
       return { data };
@@ -196,7 +136,8 @@ addDataType('object', {
   }
 }, Object);
 
-Function[typeKey] = {
+
+addType('func', {
   type(data: () => object): Return {
     if (typeof data === 'function') {
       return { data }
@@ -204,51 +145,12 @@ Function[typeKey] = {
       return { error: '值必须为 function 类型' }
     }
   }
-};
+}, Function);
+
 
 /////////////////////// 扩展类型 ///////////////////////
 
-addDataType('any', {
+addType('any', {
   type(data: any): Return { return { data } }
 });
 
-
-const unionMethods = {
-  type(data): Return {
-    return { data }
-  }
-}
-
-/**
- * 联合类型
- * @param options 
- */
-function union(...options: any[]) {
-  return { [typeKey]: unionMethods, options };
-}
-
-union[typeKey] = unionMethods;
-
-
-//////////////////// 索引类型 ///////////////////
-
-export const symbols = {};
-
-// 可选属性
-function optional(name: string) {
-  const symbol = Symbol('optional');
-  symbols[symbol] = name;
-  return symbol;
-}
-
-Object.assign(typea, {
-  union,
-  optional,
-  stringKey,
-  /**
-   * 扩展类型数据包装器，用于将对象、数组类型标记为可迭代类型
-   */
-  iterator(type: object) {
-    return { [extensionKey]: true, type };
-  }
-});

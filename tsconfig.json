@@ -6,7 +6,12 @@
     "target": "esnext",
     "module": "esnext",
     "outDir": "dist",
-    "moduleResolution": "node",
-    // "noEmit": true,
+    "paths": {
+      "typea": [
+        "./src/index"
+      ]
+    },
+    // "strict": true,
+    "moduleResolution": "node"
   }
 }

@@ -3,7 +3,7 @@ import types from 'typea';
 
 const { string } = types;
 
-test('undefined, null', async t => {
+test('null、undefined', t => {
 
   const sample = {
     a: undefined,
@@ -23,10 +23,30 @@ test('undefined, null', async t => {
     c: stringAllowNull,
     d: null,
     e: undefined
-  }).verify(sample, 'strict');
+  }).verify(sample);
 
   sample.a = 'xxx';
 
-  t.deepEqual(error, 'e 属性不存在', error);
+  t.deepEqual(error, 'e 属性缺失', error);
+
+});
+
+test('null error', t => {
+
+  const sample = { b: ["kkk", null] };
+
+  const { error } = types({ b: [String, undefined] }).verify(sample);
+
+  t.deepEqual(error, 'b[1] 值必须为 undefined，实际得到 null', error);
+
+});
+
+test('undefined error', t => {
+
+  const sample = { b: ["kkk"] };
+
+  const { error } = types({ b: [String, undefined] }).verify(sample);
+
+  t.deepEqual(error, 'b[1] 属性缺失，值必须为 undefined', error);
 
 });
