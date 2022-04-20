@@ -1,5 +1,6 @@
 import test from 'jtm';
 import types from 'typea';
+import { iterator, optional } from 'typea/utility';
 
 const { string, number, boolean } = types;
 
@@ -72,7 +73,7 @@ test('array 综合示例', t => {
 
    const sample = {
       a: [1, 2],
-      b: ['a', 'b', 123],
+      // b: ['a', 'b', 123],
       c: [666, 999, 88,],
       d: [{ a: 1, b: 2 }, { a: 2, b: 2 }, { a: 1 }],
       e: [
@@ -96,20 +97,18 @@ test('array 综合示例', t => {
       f: [1, 2, 3],
    };
 
-   const { iterator, $ } = types;
-
    const schema = types({
       a: [number, ...number],
-      b: [...string, number],
-      c: [...number({ "allowNull": true })],
-      d: [iterator({ a: Number, [$("b")]: number })],
+      b: optional([...string, number]),
+      c: [...number({ "optional": true })],
+      d: [iterator({ a: Number, b: number({ optional: true }) })],
       e: [
          {
-            d1: 666,
+            d1: optional(666),
             d2: String
          },
          Number,
-         [iterator({ xa: Number, xb: [...number({ "allowNull": true })] })],
+         [iterator({ xa: Number, xb: [...number({ optional: true })] })],
          String
       ],
       f: Array

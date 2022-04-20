@@ -3,7 +3,7 @@ import types from 'typea';
 
 const { number, boolean } = types;
 
-const numberAllowNull = number({ allowNull: false });
+const numberAllowNull = number({ optional: true });
 
 test('常规', t => {
 
@@ -37,7 +37,7 @@ test('strict', t => {
    const schema = types({
       a: {
          a1: number,
-         a2: number({ allowNull: true })
+         a2: number({ optional: true })
       },
       b: Boolean,
    })

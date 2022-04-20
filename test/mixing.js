@@ -1,5 +1,6 @@
 import test from 'jtm'
 import types from 'typea';
+import { iterator } from 'typea/utility';
 
 const sample = {
   "name": "测试",
@@ -52,7 +53,7 @@ const sample = {
 
 test('mixing', t => {
 
-  const { number, string, mongoId, email, mobilePhone, any, iterator } = types;
+  const { number, string, mongoId, email, mobilePhone, any } = types;
 
   const schema = types({
     "name": string({
@@ -85,12 +86,12 @@ test('mixing', t => {
       "min": 1,
       "in": [1, 2],
     }),
-    "files": [string({ "allowNull": true }), ...string],
+    "files": [string({ "optional": true }), ...string],
     "guaranteeFormat": number,
     "addressee": String,
     "search": "双鸭山",
     "phone": mobilePhone,
-    "coupon": any({ set($gt) { return { $gt } } }),
+    "coupon": any({ set(gt) { return { gt } } }),
     "integral": {
       "lala": Number,
       "kaka": number({ "in": [1, 3, 8, 6] })

@@ -1,6 +1,7 @@
 import test from 'jtm';
 import types from 'typea';
 
+const { number } = types;
 
 test('number', t => {
 
@@ -39,15 +40,19 @@ test('{ [name: string]: number }', t => {
 
    const sample = {
       x: 1,
-      y: 2
+      // y: 2
    }
 
    const schema = types({
       x: Number,
-      y: Number
+      y: number({ default: 12 })
    })
 
    const { error, data } = schema.verify(sample);
+
+   sample.y = 12;
+
+   // console.log(data)
 
    t.deepEqual(data, sample, error);
 

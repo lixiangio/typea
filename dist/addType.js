@@ -1,25 +1,21 @@
-import typea from './index.js';
-import { typeKey, extensionKey, iteratorKey } from './common.js';
+import { actionKey, optionalKye, extensionKey } from './common.js';
+const { hasOwnProperty } = Object.prototype;
 /**
 * 类型函数、类型对象参数执行器
 * @param options 验证选项
 * @param data 待验证数据
 */
-function action(options, data) {
+export function action(options, data) {
     if (options) {
-        const { set, default: defaultValue, allowNull, ...other } = options;
+        const { set, default: defaultValue, ...other } = options;
         if (set) {
             data = set(data);
         }
         // 空值处理选项
         else if (data === undefined) {
             // 填充默认值
-            if (defaultValue) {
+            if (hasOwnProperty.call(options, 'default')) {
                 data = defaultValue;
-            }
-            // 允许空值
-            else if (allowNull === true) {
-                return { data };
             }
             else {
                 return { error: " 值不允许为空" };
@@ -76,27 +72,31 @@ function iteratorMethod() {
         }
     };
 }
+export function baseBind(Base, type) {
+    Base[actionKey] = type[actionKey];
+    Base[Symbol.iterator] = iteratorMethod;
+}
 /**
  * 添加数据类型声明
  * @param name 类型名称
  * @param methods 验证方法
  * @param TypeFunction 附加类型
  */
-export default function (name, methods, TypeFunction) {
-    const typeNode = { action, methods };
+export default function (methods) {
+    const actionNode = { methods, action };
     function type(options) {
+        if (options) {
+            if (options.optional || options.default || options.set) {
+                options[optionalKye] = true;
+            }
+        }
         return {
-            [typeKey]: typeNode,
-            [iteratorKey]: iteratorMethod,
-            options
+            [actionKey]: actionNode,
+            [Symbol.iterator]: iteratorMethod,
+            ...options
         };
     }
-    type[typeKey] = typeNode;
-    type[iteratorKey] = iteratorMethod;
-    typea[name] = type;
-    if (TypeFunction) {
-        TypeFunction[typeKey] = typeNode;
-        TypeFunction[iteratorKey] = iteratorMethod;
-    }
+    type[actionKey] = actionNode;
+    type[Symbol.iterator] = iteratorMethod;
     return type;
 }

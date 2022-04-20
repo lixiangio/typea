@@ -1,14 +1,7 @@
 import { entry } from './router.js';
-import { typeKey, symbols, extensionKey } from './common.js';
-const { hasOwnProperty } = Object.prototype;
-// 可选属性
-export function $(name) {
-    const symbol = Symbol('optional');
-    symbols[symbol] = name;
-    return symbol;
-}
+import { actionKey, optionalKye, extensionKey } from './common.js';
 /**
- * 类型扩展数据包装器，仅适用于在数组结构内使用，将对象、数组结构标记为可迭代状态
+ * 类型扩展数据包装器，仅适用于在数组结构内使用，作用是将对象、数组结构标记为可迭代状态
  */
 export function iterator(node) {
     return { [extensionKey]: true, node };
@@ -19,7 +12,7 @@ export function iterator(node) {
  */
 export function union(...types) {
     return {
-        [typeKey]: {
+        [actionKey]: {
             action(_, value) {
                 let errorInfo;
                 for (const item of types) {
@@ -36,34 +29,55 @@ export function union(...types) {
         }
     };
 }
+const { hasOwnProperty } = Object.prototype;
 /**
- * 可选属性类型
+ * 可选属性，适用于任意类型，表示 optional() 返回值关联的属性为可选属性
+ * 通常用于将对象和数组包装为可选
+ */
+export function optional(node, options) {
+    return {
+        [optionalKye]: true,
+        ...options,
+        node
+    };
+}
+/**
+ * 对象可选属性，表示传入的对象内的属性为可选，仅接受对象结构
  */
 export function partial(node) {
     const newNode = {};
     for (const name in node) {
-        newNode[$(name)] = node[name];
+        newNode[name] = {
+            [optionalKye]: true,
+            node: node[name]
+        };
     }
     return newNode;
 }
 /**
- * 必选类型，将可选类型转为必选类型
+ * 对象必选属性，将所有可选属性转为必选类型
  */
 export function required(node) {
-    const newNode = { ...node };
-    const symbolKeys = Object.getOwnPropertySymbols(node);
-    for (const symbol of symbolKeys) {
-        // 可选属性，仅当数据中属性名称存在时才参与校验
-        if (symbol.description === 'optional') {
-            const name = symbols[symbol];
-            newNode[name] = node[symbol];
-            delete newNode[symbol];
+    const newNode = {};
+    for (const name in node) {
+        const subNode = node[name];
+        if (subNode && subNode[optionalKye]) {
+            if (hasOwnProperty.call(subNode, 'node')) {
+                newNode[name] = subNode.node;
+            }
+            else {
+                newNode[name] = { ...subNode };
+                delete newNode[name][optionalKye];
+            }
+        }
+        else {
+            newNode[name] = subNode;
         }
     }
     return newNode;
 }
 /**
- * 选择类型，通过一个模型中选取属性，创建新的模型
+ * 对象选择类型，从已有模型中选取属性，创建新的模型
  * @returns
  */
 export function pick(node, ...keys) {
@@ -79,7 +93,7 @@ export function pick(node, ...keys) {
     return newNode;
 }
 /**
- * 省略类型
+ * 对象省略类型
  * @returns
  */
 export function omit(node, ...keys) {
@@ -89,6 +103,3 @@ export function omit(node, ...keys) {
     }
     return newNode;
 }
-export default {
-    $, iterator, union, partial, required, pick, omit
-};

@@ -3,7 +3,7 @@ import './types.js';
 /**
  * @param schema 验证表达式
  */
- export function typea(schema: any): {
+declare function typea(schema: any): {
     /**
      * @param data 需要验证的数据
      */
@@ -16,8 +16,8 @@ import './types.js';
     };
 };
 declare namespace typea {
-    var typeKey: typeof import("./common.js").typeKey;
-    var $index: typeof import("./common.js").$index;
+    var $string: typeof import("./common.js").$string;
+    var actionKey: typeof import("./common.js").actionKey;
     var add: (name: string, methods: Methods) => void;
 }
 export default typea;

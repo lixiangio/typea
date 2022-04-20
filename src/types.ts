@@ -1,8 +1,8 @@
-import addType from './addType.js';
+import addType, { baseBind } from './addType.js';
 
 interface Return { data?: any, error?: string }
 
-addType('string', {
+export const string = addType({
   // 验证 string 类型
   type(data: string): Return {
     if (typeof data === 'string') {
@@ -44,10 +44,12 @@ addType('string', {
       return { data }
     }
   }
-}, String);
+});
+
+baseBind(String, string);
 
 
-addType('number', {
+export const number = addType({
   type(data: number): Return {
     if (typeof data === 'number') {
       return { data };
@@ -78,9 +80,11 @@ addType('number', {
       return { data }
     }
   }
-}, Number);
+});
 
-addType('boolean', {
+baseBind(Number, number);
+
+export const boolean = addType({
   type(data: boolean): Return {
     if (typeof data === 'boolean') {
       return { data }
@@ -88,9 +92,12 @@ addType('boolean', {
       return { error: '值必须为 boolean 类型' }
     }
   }
-}, Boolean);
+});
 
-addType('symbol', {
+baseBind(Boolean, boolean);
+
+
+export const symbol = addType({
   type(data: symbol): Return {
     if (typeof data === 'symbol') {
       return { data }
@@ -98,9 +105,12 @@ addType('symbol', {
       return { error: '值必须为 symbol 类型' }
     }
   }
-}, Symbol);
+});
 
-addType('array', {
+baseBind(Symbol, symbol);
+
+
+export const array = addType({
   type(data: any[]): Return {
     if (Array.isArray(data)) {
       return { data };
@@ -122,11 +132,14 @@ addType('array', {
       return { data };
     }
   }
-}, Array);
+});
+
+baseBind(Array, array);
+
 
 const { toString } = Object.prototype;
 
-addType('object', {
+export const object = addType({
   type(data: object): Return {
     if (toString.call(data) === '[object Object]') {
       return { data };
@@ -134,10 +147,12 @@ addType('object', {
       return { error: '值必须为 object 类型' };
     }
   }
-}, Object);
+});
+
+baseBind(Object, object);
 
 
-addType('func', {
+export const func = addType({
   type(data: () => object): Return {
     if (typeof data === 'function') {
       return { data }
@@ -145,12 +160,12 @@ addType('func', {
       return { error: '值必须为 function 类型' }
     }
   }
-}, Function);
-
-
-/////////////////////// 扩展类型 ///////////////////////
-
-addType('any', {
-  type(data: any): Return { return { data } }
 });
 
+baseBind(Function, func);
+
+/////////////////////// 非基础类型 ///////////////////////
+
+export const any = addType({
+  type(data: any): Return { return { data } }
+});

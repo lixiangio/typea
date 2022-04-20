@@ -1,27 +1,27 @@
-import typea from './index.js';
-import { typeKey, extensionKey, iteratorKey } from './common.js';
+import { actionKey, optionalKye, extensionKey } from './common.js';
+import type { Options } from './common.js';
+
+interface Return {
+  error?: string, data?: any
+}
 
 export interface Methods {
-  [name: string]: (data: any, option?: any) => { error?: string, data?: any }
+  type(data: unknown): Return
+  [name: string]: (data: any, option?: any) => Return
 }
 
-export interface Options {
-  default?: any
-  allowNull?: boolean
-  ignore?: any[]
-  [name: string | symbol]: any
-}
+const { hasOwnProperty } = Object.prototype;
 
 /**
 * 类型函数、类型对象参数执行器
 * @param options 验证选项
 * @param data 待验证数据
 */
-function action(options: Options, data: any) {
+export function action(options: Options, data: any) {
 
   if (options) {
 
-    const { set, default: defaultValue, allowNull, ...other } = options;
+    const { set, default: defaultValue, ...other } = options;
 
     if (set) {
       data = set(data);
@@ -31,13 +31,8 @@ function action(options: Options, data: any) {
     else if (data === undefined) {
 
       // 填充默认值
-      if (defaultValue) {
+      if (hasOwnProperty.call(options, 'default')) {
         data = defaultValue;
-      }
-
-      // 允许空值
-      else if (allowNull === true) {
-        return { data };
       }
 
       else {
@@ -87,7 +82,9 @@ function action(options: Options, data: any) {
  * 数组扩展类型迭代器
  */
 function iteratorMethod() {
+
   const node = this;
+
   return {
     end: false,
     next() {
@@ -100,6 +97,15 @@ function iteratorMethod() {
       }
     }
   };
+
+}
+
+
+export function baseBind(Base, type) {
+
+  Base[actionKey] = type[actionKey];
+  Base[Symbol.iterator] = iteratorMethod;
+
 }
 
 /**
@@ -108,26 +114,25 @@ function iteratorMethod() {
  * @param methods 验证方法
  * @param TypeFunction 附加类型
  */
-export default function (name: string, methods: Methods, TypeFunction?: Function) {
+export default function (methods: Methods) {
 
-  const typeNode = { action, methods };
+  const actionNode = { methods, action };
 
   function type(options?: Options) {
+    if (options) {
+      if (options.optional || options.default || options.set) {
+        options[optionalKye] = true;
+      }
+    }
     return {
-      [typeKey]: typeNode,
-      [iteratorKey]: iteratorMethod,
-      options
+      [actionKey]: actionNode,
+      [Symbol.iterator]: iteratorMethod,
+      ...options
     };
   }
 
-  type[typeKey] = typeNode;
-  type[iteratorKey] = iteratorMethod;
-  typea[name] = type;
-
-  if (TypeFunction) {
-    TypeFunction[typeKey] = typeNode;
-    TypeFunction[iteratorKey] = iteratorMethod;
-  }
+  type[actionKey] = actionNode;
+  type[Symbol.iterator] = iteratorMethod;
 
   return type;
 

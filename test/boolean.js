@@ -1,7 +1,5 @@
 import test from 'jtm';
-import types from 'typea';
-
-const { boolean } = types;
+import types, { boolean } from 'typea';
 
 test('boolean', t => {
 

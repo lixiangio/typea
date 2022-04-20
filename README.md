@@ -6,13 +6,13 @@ Typea 中的很多类型概念引用自 TypeScript，相关概念请参考 [Type
 
 ### 特性
 
-- 支持 String、Number、Boolean、Object、Array、Function、Symbol 等常见基础类型；
+- 支持 string、number、boolean、object、array、function、symbol、any 等常见基础类型；
 
 - 支持 [Tupl Types](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) 元组类型，为数组内的每个子元素提供精确的差异化类型匹配；
 
-- 支持在 Array / Tupl 类型中使用 (...) 扩展运算符，匹配零个或多个连续的同类型元素；
+- 支持在 Array / Tupl 中使用 (...) 扩展运算符，匹配零个或多个连续的同类型元素；
 
-- 支持可选属性 [Optional Properties](https://www.typescriptlang.org/docs/handbook/2/objects.html#optional-properties)，Typea 中使用 [$(name)] 代替 TypeScript 的 "name?" 属性修饰符；
+- 支持 [Optional Properties](https://www.typescriptlang.org/docs/handbook/2/objects.html#optional-properties) 可选属性，Typea 中使用 optional(type) 函数代替 TypeScript 的 "name?" 属性修饰符；
 
 - 支持 [Index Signatures](https://www.typescriptlang.org/docs/handbook/2/objects.html#index-signatures) 索引签名，为无固定名称的属性统一定义类型；
 
@@ -42,8 +42,9 @@ npm install typea
 import types from "typea";
 
 // 根据需求，添加扩展类型
-import email from "typea/email.js";
-import mobilePhone from "typea/mobilePhone.js";
+import email from "typea/type/email.js";
+import mobilePhone from "typea/type/mobilePhone.js";
+
 types.add(email.name, email);
 types.add(mobilePhone.name, mobilePhone);
 
@@ -67,9 +68,11 @@ types.add("int", {
 ```
 
 ```js
+import types from "typea";
+import { optional, union, partial } from "typea/utility";
+
 // 创建 schema 并使用 schema 验证数据
-const { $, $index, union, partial } = types;
-const { string, number, boolean, email, mobilePhone, int } = types;
+const { string, number, boolean, email, mobilePhone, int, $string } = types;
 
 // 创建数据模型
 const schema = types({
@@ -77,21 +80,21 @@ const schema = types({
   name: string,
   email,
   mobilePhone,
-  num: union(String, Number, 'abc', null, [], undefined), // 定义 Union 联合类型
+  num: union(String, Number, 'abc', null, [], undefined), // Union 联合类型
   list: [...String], // 类似于 TS 的 string[]
-  array: [...number, boolean], // 扩展符，混合类型
-  link: [String], // 定义单项元组
-  tuple: [String, Number, { name: String }, () => {}, function () {}], // 定义多项元组
+  array: [...number, boolean], // 扩展运算符与混合类型声明
+  link: [String], // 匹配只包含单个子元素的元组
+  tuple: [String, Number, { name: String }, () => {}, function () {}], // 匹配包含多个不同类型子元素的元组
   user: partial({
-    username: "莉莉", // 定义 Literal 字面量
+    username: "莉莉", // Literal 字面量
     age: int({ max: 200 }),
-    address: [{ city: String }, { city: "母鸡" }],
+    address: optional([{ city: String }, { city: "母鸡" }]),
   }),
   methods: {
-    open() {}, // 定义 Function 类型
+    open() {}, // Function 类型
   },
-  [$('title')]: "hello", // 可选属性
-  [$index]: String, // 索引类型
+  title: optional("hello"), // 可选属性
+  [$string]: String, // 索引类型
 });
 
 const { error, data } = schema.verify({
@@ -132,19 +135,24 @@ if (error) {
 }
 ```
 
+
 ### 类型
 
-基础类型大小写可以混用（推荐使用小写类型），如类型声明 string、string() 、String 等效，扩展类型不支持大小写混用。
+基础类型大小写兼容（推荐使用小写类型），如类型声明 string、string() 、String 等效。扩展类型不支持大小写混用。
+
+大写不需要通过声明就可以直接使用，好处是使用方便，缺点是不支持传参,仅适用于声明简单的基础数据类型。
+
+小写的好处是可以通过函数传参的方式，添加更丰富的类型描述信息，实现更高级的数据校验功能。
 
 ### 模型
 
-模型通常是可重复使用静态结构体，只需要创建一次即可重复使用，作用与 TS 中的 interface、 type 相似。
+模型通常是可复用的静态类型结构体，只需要创建一次即可，作用与 TS 中的 interface、 type 相似。
 
 ### 输入参数
 
-- `express` _any_ - 待验证数据的结构镜像验证表达式，参考[验证表达式](#模型验证表达式)。
+- `express` _any_ - 待验证的数据结构镜像表达式；
 
-- `data`_any_ - 验证数据，支持任意数据类型
+- `data`_any_ - 需要验证的数据，支持任意数据类型；
 
 ### 返回值
 
@@ -158,11 +166,11 @@ if (error) {
 
 #### 类型函数的通用选项
 
-- `default`_any_ - 空值时的默认赋值，优先级高于 allowNull
+- `partial` _boolean_ - 可选属性，当值为 true 时允许存在未定义属性。
 
-- `allowNull` _boolean_ - 是否允许为空，当值为 false 时强制进行非空验证。
+- `default`_any_ - 属性不存在时填充默认值，在使用 default 时，partial 会自动设为 true
 
-- `set` _function_ - 赋值函数，用于对输入值处理后再输出赋值，函数中 this 指向原始数据 data，当值为空时不执行。
+- `set` _function_ - 赋值函数，用于对输入值处理后再输出赋值，函数中 this 指向原始数据 data。使用 set 时， partial 会自动设为 true。
 
 #### 专用选项
 
@@ -298,7 +306,7 @@ const sample = {
 
 const { string, number } = types;
 
-const numberAllowNull = number({ allowNull: false });
+const numberAllowNull = number({ partial: true });
 
 const { error, data } = types(sample).verify({
   a: [string],
@@ -340,7 +348,7 @@ const { number } = types;
 
 const { error, data } = types(sample).verify({
   a: {
-    a1: number({ allowNull: false }),
+    a1: number({ partial: true }),
     a2: 12,
   },
   b: 99,
@@ -422,7 +430,7 @@ const { string, number, email, mobilePhone } = types;
 const { error, data } = types({
   name: string({
     name: "名称",
-    allowNull: false,
+    partial: true,
     default: "默认值",
   }),
   num: number({ value: 666 }),
@@ -450,7 +458,7 @@ const { error, data } = types({
     min: 1,
     in: [1, 2],
   }),
-  files: [number({ allowNull: false })],
+  files: [number({ partial: true })],
   guaranteeFormat: number,
   addressee: String,
   search: "双鸭山",
@@ -461,7 +469,7 @@ const { error, data } = types({
   integral: {
     lala: Number,
     kaka: number({
-      allowNull: false,
+      partial: true,
       in: [1, 3, 8, 6],
     },
   }),

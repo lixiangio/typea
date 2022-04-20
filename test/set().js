@@ -16,9 +16,7 @@ test('set', t => {
    const { number, string, } = types;
 
    const schema = types({
-      "name": string({
-         "default": "lili"
-      }),
+      "name": string({ "default": "lili" }),
       "num": number({ set() { return 666; } }),
       "coupon": string({
          set(value) {

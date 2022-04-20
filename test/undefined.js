@@ -12,12 +12,12 @@ test('null、undefined', t => {
     d: null
   };
 
-  const stringAllowNull = string({ allowNull: true })
+  const stringAllowNull = string({ optional: true })
 
   const { error } = types({
     a: string({
       default: 'xxx',
-      allowNull: false,
+      optional: true,
     }),
     b: [String, undefined],
     c: stringAllowNull,

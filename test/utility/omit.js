@@ -1,7 +1,8 @@
 import test from 'jtm';
 import types from 'typea';
+import { omit } from 'typea/utility';
 
-const { string, number, omit } = types;
+const { string, number } = types;
 
 test("omit", t => {
 

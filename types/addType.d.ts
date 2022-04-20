@@ -1,4 +1,4 @@
-import { typeKey, extensionKey } from './common.js';
+import { actionKey, extensionKey } from './common.js';
 export interface Methods {
     [name: string]: (data: any, option?: any) => {
         error?: string;
@@ -16,12 +16,12 @@ export interface Options {
 * @param options 验证选项
 * @param data 待验证数据
 */
-declare function action(options: Options, data: any): {
-    data: any;
-    error?: undefined;
-} | {
+export declare function action(options: Options, data: any): {
     error: string;
     data?: undefined;
+} | {
+    data: any;
+    error?: undefined;
 };
 /**
  * 数组扩展类型迭代器
@@ -46,14 +46,13 @@ declare function iteratorMethod(): {
  * @param TypeFunction 附加类型
  */
 export default function (name: string, methods: Methods, TypeFunction?: Function): (options?: Options) => {
-    [x: symbol]: {
-        action: typeof action;
-        methods: Methods;
-    } | typeof iteratorMethod;
-    [typeKey]: {
+    default?: any;
+    allowNull?: boolean;
+    ignore?: any[];
+    [actionKey]: {
         action: typeof action;
         methods: Methods;
     };
-    options: Options;
+    [Symbol.iterator]: typeof iteratorMethod;
 };
 export {};

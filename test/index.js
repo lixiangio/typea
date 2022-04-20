@@ -1,32 +1,9 @@
 import test from 'jtm';
 import types from 'typea';
 
-const { $, $index } = types;
+const { $string } = types;
 
-test("$(name)", t => {
-
-  const sample = {
-    data: {
-      name: '123',
-      value: {}
-    }
-  };
-
-  const schema = types({
-    [$('data')]: {
-      name: String,
-      value: Object
-    }
-  });
-
-  const { error, data } = schema.verify(sample);
-
-  t.deepEqual(data, sample, error);
-
-});
-
-
-test("$index", t => {
+test("$string", t => {
 
   const sample = {
     a: {
@@ -49,7 +26,7 @@ test("$index", t => {
 
   const schema = types({
     xxx: Number,
-    [$index]: {
+    [$string]: {
       type: Number,
       count: Number,
       value: String

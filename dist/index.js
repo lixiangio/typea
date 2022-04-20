@@ -1,8 +1,9 @@
 import { entry } from './router.js';
-import { typeKey, $index } from './common.js';
+import { actionKey, $string } from './common.js';
 import addType from './addType.js';
-import utility from './utility.js';
-import './types.js';
+import * as types from './types.js';
+export * from './common.js';
+export * from './types.js';
 /**
  * @param schema 验证表达式
  */
@@ -29,9 +30,9 @@ export default function typea(schema) {
         }
     };
 }
-typea.typeKey = typeKey;
-typea.$index = $index;
-Object.assign(typea, utility);
+typea.$string = $string;
+typea.actionKey = actionKey;
+Object.assign(typea, types);
 /**
  * 添加自定义数据类型
  * @param name 数据类型名称
@@ -43,10 +44,10 @@ typea.add = function (name, methods) {
     const typeFn = typea[name];
     // 扩展已添加的类型函数
     if (typeFn) {
-        Object.assign(typeFn[typeKey], methods);
+        Object.assign(typeFn[actionKey], methods);
     }
     // 创建新的类型函数
     else {
-        addType(name, methods);
+        typea[name] = addType(methods);
     }
 };

@@ -1,7 +1,8 @@
 import test from 'jtm';
 import types from 'typea';
+import { pick } from 'typea/utility';
 
-const { string, number, pick } = types;
+const { string, number } = types;
 
 test("pick", t => {
 

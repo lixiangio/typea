@@ -15,7 +15,7 @@ test("strict", t => {
    };
 
    const { data, error } = types({
-      a: string({ allowNull: false }),
+      a: string({ optional: true }),
       b: [String, String],
       c: String,
       d: {

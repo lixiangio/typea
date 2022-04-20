@@ -1,4 +1,4 @@
-import { typeKey, extensionKey, $index, symbols } from './common.js';
+import { actionKey, optionalKye, extensionKey, $string } from './common.js';
 const { toString, hasOwnProperty } = Object.prototype;
 /**
  * 数据入口
@@ -8,10 +8,10 @@ const { toString, hasOwnProperty } = Object.prototype;
 export function entry(node, data) {
     // node 为 object 或 array
     if (node instanceof Object) {
-        const typeNode = node[typeKey];
-        // node 中携带 Symbol('type')，表示类型函数或类型对象 
-        if (typeNode) {
-            return typeNode.action(node.options, data);
+        const subNode = node[actionKey];
+        // node 中携带 Symbol('actionKey')，表示绑定了可执行函数
+        if (subNode) {
+            return subNode.action(node, data);
         }
         // node 为对象结构
         else if (toString.call(node) === '[object Object]') {
@@ -57,20 +57,10 @@ export function entry(node, data) {
  * @param node 验证表达式
  */
 export function object(node, data) {
+    const result = {};
     const mixinNode = { ...node };
-    // 提 key 中的 symbol 类型索引表达式
-    const symbolKeys = Object.getOwnPropertySymbols(node);
-    for (const symbol of symbolKeys) {
-        // 可选属性，仅当数据中属性名称存在时才参与校验
-        if (symbol.description === 'optional') {
-            const name = symbols[symbol];
-            if (hasOwnProperty.call(data, name)) {
-                mixinNode[name] = node[symbol];
-            }
-        }
-    }
-    const indexSbuNode = node[$index];
-    // 有索引时，将 data 中的非模型属性添加至混合模型
+    const indexSbuNode = node[$string];
+    // 有索引时使用泛匹配，将 data 中的非模型属性添加至混合模型
     if (indexSbuNode) {
         for (const name in data) {
             if (hasOwnProperty.call(mixinNode, name) === false) {
@@ -81,13 +71,42 @@ export function object(node, data) {
     // 无索引时，仅检查模型中声明的属性，忽略模型以外的属性
     else {
         for (const name in mixinNode) {
-            if (hasOwnProperty.call(data, name) === false) {
-                return { error: `.${name} 属性缺失` };
+            const subNode = mixinNode[name];
+            if (hasOwnProperty.call(data, name)) {
+                if (subNode && subNode[optionalKye]) {
+                    const { set } = subNode;
+                    // 有 set 函数时，使用自定义处理逻辑，不校验子模型
+                    if (set) {
+                        result[name] = set(data[name]);
+                        delete mixinNode[name];
+                        continue;
+                    }
+                    // 子节点
+                    else if (hasOwnProperty.call(subNode, 'node')) {
+                        mixinNode[name] = subNode.node;
+                    }
+                }
+            }
+            else {
+                // 忽略可选属性缺失错误
+                if (subNode && subNode[optionalKye]) {
+                    delete mixinNode[name];
+                    const { set } = subNode;
+                    if (set) {
+                        result[name] = set(subNode.default);
+                    }
+                    // 默认值
+                    else if (hasOwnProperty.call(subNode, 'default')) {
+                        result[name] = subNode.default;
+                    }
+                }
+                else {
+                    return { error: `.${name} 属性缺失` };
+                }
             }
         }
     }
-    const result = {};
-    // 混合模型验证
+    // 混合子模型验证
     for (const name in mixinNode) {
         const { error, data: value } = entry(mixinNode[name], data[name]);
         if (error) {

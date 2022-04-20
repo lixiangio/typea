@@ -1,8 +1,8 @@
 import types from 'typea';
-import date from 'typea/types/date.js';
-import mongoId from 'typea/types/mongoId.js';
-import mobilePhone from 'typea/types/mobilePhone.js';
-import email from 'typea/types/email.js';
+import date from 'typea/date.js';
+import mongoId from 'typea/mongoId.js';
+import mobilePhone from 'typea/mobilePhone.js';
+import email from 'typea/email.js';
 
 types.add(date.name, date);
 types.add(mongoId.name, mongoId);

@@ -1,6 +1,6 @@
 import test from 'jtm'
-import types from 'typea';
-// import utility from 'typea/utility';
+import types, { number, string } from 'typea';
+import { iterator } from 'typea/utility';
 
 test('(...) 扩展运算符', t => {
 
@@ -23,7 +23,7 @@ test('(...) 扩展运算符', t => {
   const schema = types({
     "id": mongoId,
     email,
-    emais: [email, email({ "allowNull": true })],
+    emais: [email, email({ "optional": true })],
     mobilePhone,
     mobilePhones: [...mobilePhone],
     middlewares: [...Function],
@@ -58,14 +58,12 @@ test('array iterator()', t => {
     ]
   };
 
-  const { number, string, iterator, $ } = types;
-
   const schema = types({
     a: [number, ...number],
     b: [...string, number],
-    c: [...number({ "allowNull": true })],
-    d: [iterator({ a: Number, [$("b")]: number })],
-    e: [[iterator({ xa: Number, xb: [...number({ "allowNull": true })] })]]
+    c: [...number({ "optional": true })],
+    d: [iterator({ a: Number, b: number({ "optional": true }) })],
+    e: [[iterator({ xa: Number, xb: [...number({ "optional": true })] })]]
   });
 
   const { error, data } = schema.verify(sample);

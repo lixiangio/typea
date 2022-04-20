@@ -1,7 +1,8 @@
 import test from 'jtm';
 import types from 'typea';
+import { partial } from 'typea/utility';
 
-const { string, number, partial } = types;
+const { string, number } = types;
 
 test("partial", t => {
 

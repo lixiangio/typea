@@ -1,7 +1,5 @@
 import test from 'jtm';
-import types from 'typea';
-
-const { number, string } = types;
+import typea, { number, string } from 'typea';
 
 test('object', t => {
 
@@ -18,7 +16,7 @@ test('object', t => {
 
   const type = {
     a: {
-      a1: number({ allowNull: false }),
+      a1: number({ optional: true }),
       a2: Number
     },
     b: number({
@@ -32,7 +30,7 @@ test('object', t => {
     },
   };
 
-  const { error, data } = types(type).verify(sample);
+  const { error, data } = typea(type).verify(sample);
 
   sample.b = 20;
   sample.f = 2;
@@ -51,12 +49,12 @@ test('object null', async t => {
     d: null
   };
 
-  const stringAllowNull = string({ allowNull: true })
+  const stringAllowNull = string({ optional: true })
 
-  const { error } = types({
+  const { error } = typea({
     a: string({
       default: 'xxx',
-      allowNull: false,
+      optional: true,
     }),
     b: [String],
     c: stringAllowNull,
