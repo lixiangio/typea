@@ -14,7 +14,7 @@ export const string = addType({
   // 限制最小长度
   min(data: string, min: number): Return {
     if (data.length < min) {
-      return { error: `值长度不能小于${min}个字符` }
+      return { error: `值长度不能小于 "${min}" 个字符` }
     } else {
       return { data }
     }
@@ -22,7 +22,7 @@ export const string = addType({
   // 限制最大长度
   max(data: string, max: number): Return {
     if (data.length > max) {
-      return { error: `值长度不能大于"${max}"个字符` }
+      return { error: `值长度不能大于 "${max}" 个字符` }
     } else {
       return { data }
     }
@@ -59,14 +59,14 @@ export const number = addType({
   },
   min(data: number, min: number): Return {
     if (data < min) {
-      return { error: `值不能小于"${min}"` }
+      return { error: `值不能小于 "${min}"` }
     } else {
       return { data }
     }
   },
   max(data: number, max: number): Return {
     if (data > max) {
-      return { error: `值不能大于"${max}"` };
+      return { error: `值不能大于 "${max}"` };
     } else {
       return { data }
     }
@@ -75,7 +75,7 @@ export const number = addType({
   in(data: number, array: [number]): Return {
     const result = array.indexOf(data);
     if (result === -1) {
-      return { error: `值必须为"${array}"中的一个` };
+      return { error: `值必须为 "${array}" 中的一个` };
     } else {
       return { data }
     }
@@ -120,14 +120,14 @@ export const array = addType({
   },
   min(data: any[], min: number): Return {
     if (data.length < min) {
-      return { error: `值长度不能小于 ${min} 个字符` };
+      return { error: `值长度不能小于 "${min}" 个字符` };
     } else {
       return { data };
     }
   },
   max(data: any[], max: number): Return {
     if (data.length > max) {
-      return { error: `值长度不能大于 ${max} 个字符` };
+      return { error: `值长度不能大于 "${max} "个字符` };
     } else {
       return { data };
     }

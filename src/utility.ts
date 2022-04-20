@@ -13,7 +13,7 @@ export function iterator(node: object) {
  * 联合类型
  * @param types 
  */
-export function union(...types: any[]) {
+export function union(...types: unknown[]) {
 
   return {
     [actionKey]: {
@@ -40,7 +40,7 @@ const { hasOwnProperty } = Object.prototype;
  * 可选属性，适用于任意类型，表示 optional() 返回值关联的属性为可选属性
  * 通常用于将对象和数组包装为可选
  */
-export function optional(node, options?: Options) {
+export function optional(node: unknown, options?: Options) {
 
   return {
     [optionalKye]: true,

@@ -59,7 +59,7 @@ types.add("int", {
   },
   max(data, max) {
     if (data > max) {
-      return { error: `值不能大于${max}` };
+      return { error: `值不能大于"${max}"` };
     } else {
       return { data };
     }
@@ -76,25 +76,25 @@ const { string, number, boolean, email, mobilePhone, int, $string } = types;
 
 // 创建数据模型
 const schema = types({
-  id: Number,
+  id: number,
   name: string,
   email,
   mobilePhone,
-  num: union(String, Number, 'abc', null, [], undefined), // Union 联合类型
-  list: [...String], // 类似于 TS 的 string[]
+  num: union(string, Number, 'abc', null, [], undefined), // Union 联合类型
+  list: [...string], // 类似于 TS 的 string[]
   array: [...number, boolean], // 扩展运算符与混合类型声明
-  link: [String], // 匹配只包含单个子元素的元组
-  tuple: [String, Number, { name: String }, () => {}, function () {}], // 匹配包含多个不同类型子元素的元组
+  link: [string], // 匹配只包含单个子元素的元组
+  tuple: [string, Number, { name: string }, function () {}], // 匹配包含多个不同类型子元素的元组
   user: partial({
     username: "莉莉", // Literal 字面量
     age: int({ max: 200 }),
     address: optional([{ city: String }, { city: "母鸡" }]),
   }),
   methods: {
-    open() {}, // Function 类型
+    open() {}, // func 类型
   },
   title: optional("hello"), // 可选属性
-  [$string]: String, // 索引类型
+  [$string]: string, // 索引签名
 });
 
 const { error, data } = schema.verify({
@@ -464,7 +464,7 @@ const { error, data } = types({
   search: "双鸭山",
   phone: mobilePhone,
   coupon: string({
-    set($gt) { return { $gt }; },
+    set(gt) { return { gt }; },
   }),
   integral: {
     lala: Number,

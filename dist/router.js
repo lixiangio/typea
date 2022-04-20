@@ -75,15 +75,13 @@ export function object(node, data) {
             if (hasOwnProperty.call(data, name)) {
                 if (subNode && subNode[optionalKye]) {
                     const { set } = subNode;
-                    // 有 set 函数时，使用自定义处理逻辑，不校验子模型
                     if (set) {
-                        result[name] = set(data[name]);
-                        delete mixinNode[name];
+                        result[name] = set(data[name]); // 有 set 函数时，使用自定义处理逻辑
+                        delete mixinNode[name]; // 通过属性删除，跳过子模型校验
                         continue;
                     }
-                    // 子节点
                     else if (hasOwnProperty.call(subNode, 'node')) {
-                        mixinNode[name] = subNode.node;
+                        mixinNode[name] = subNode.node; // 子节点
                     }
                 }
             }
@@ -95,7 +93,6 @@ export function object(node, data) {
                     if (set) {
                         result[name] = set(subNode.default);
                     }
-                    // 默认值
                     else if (hasOwnProperty.call(subNode, 'default')) {
                         result[name] = subNode.default;
                     }
