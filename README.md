@@ -41,12 +41,12 @@ npm install typea
 ```js
 import types from "typea";
 
-// 根据需求，添加扩展类型
-import email from "typea/type/email.js";
-import mobilePhone from "typea/type/mobilePhone.js";
+// 按需添加扩展类型
+import email from "typea/email.js";
+import mobilePhone from "typea/mobilePhone.js";
 
-types.add(email.name, email);
-types.add(mobilePhone.name, mobilePhone);
+types.add("email", email);
+types.add("mobilePhone", mobilePhone);
 
 // 创建一个简单的自定义 int 类型
 types.add("int", {
@@ -138,9 +138,9 @@ if (error) {
 
 ### 类型
 
-基础类型大小写兼容（推荐使用小写类型），如类型声明 string、string() 、String 等效。扩展类型不支持大小写混用。
+基础类型大小写兼容（推荐使用小写类型），如类型声明 string、string() 、String 等效，扩展类型不支持大小写混用。
 
-大写不需要通过声明就可以直接使用，好处是使用方便，缺点是不支持传参,仅适用于声明简单的基础数据类型。
+大写不需要通过声明就可以直接使用，好处是使用方便，缺点是不支持传参，仅适用于声明简单的基础数据类型。
 
 小写的好处是可以通过函数传参的方式，添加更丰富的类型描述信息，实现更高级的数据校验功能。
 
