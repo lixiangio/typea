@@ -72,10 +72,10 @@ types.add("int", {
 ```
 
 ```js
-import types from "typea";
+import types, { string, number, boolean, object } from "typea";
 import { optional, union, partial } from "typea/utility";
 
-const { string, number, boolean, email, mobilePhone, int, object } = types;
+const { email, mobilePhone, int } = types;
 
 const category = {
   id: number,
