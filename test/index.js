@@ -1,58 +1,9 @@
 import test from 'jtm'
-import types, { object } from 'typea';
-
-const sample = {
-  "name": "测试",
-  "num": 123456789987,
-  "ObjectId": "59c8aea808deec3fc8da56b6",
-  "files": ["abc.js", "334", "null", "666", "12"],
-  "user": {
-    "username": "莉莉",
-    "age": 18,
-    "address": [
-      {
-        "city": "双鸭山",
-      },
-      {
-        "city": "萨克斯",
-      }
-    ],
-  },
-  "list": [
-    {
-      "username": "吖吖",
-      "age": {
-        "kk": [{ kkk: 666 }]
-      },
-    },
-    {
-      "username": "可可",
-      "age": {
-        "kk": [
-          { kkk: 666 },
-          { kkk: 999 }
-        ]
-      },
-    }
-  ],
-  "money": 2,
-  "guaranteeFormat": 0,
-  "addressee": "嘟嘟",
-  "phone": "18565799072",
-  "coupon": "uuuu",
-  "integral": {
-    "lala": 168,
-    "kaka": 6,
-  },
-  "search": "双鸭山",
-  "searchField": "userName",
-  "email": "xxx@xx.com",
-  "arr": ['jjsd', 'ddd']
-}
+import types, { number, string, object, any } from 'typea';
 
 test('mixing', t => {
 
-  const { number, string, mongoId, email, mobilePhone, any } = types;
+  const { mongoId, email, mobilePhone } = types;
 
   const schema = types({
     "name": string({
@@ -96,6 +47,55 @@ test('mixing', t => {
     "email": email({ set(value) { return value.trim() } }),
     "arr": [...String],
   });
+
+  const sample = {
+    "name": "测试",
+    "num": 123456789987,
+    "ObjectId": "59c8aea808deec3fc8da56b6",
+    "files": ["abc.js", "334", "null", "666", "12"],
+    "user": {
+      "username": "莉莉",
+      "age": 18,
+      "address": [
+        {
+          "city": "双鸭山",
+        },
+        {
+          "city": "萨克斯",
+        }
+      ],
+    },
+    "list": [
+      {
+        "username": "吖吖",
+        "age": {
+          "kk": [{ kkk: 666 }]
+        },
+      },
+      {
+        "username": "可可",
+        "age": {
+          "kk": [
+            { kkk: 666 },
+            { kkk: 999 }
+          ]
+        },
+      }
+    ],
+    "money": 2,
+    "guaranteeFormat": 0,
+    "addressee": "嘟嘟",
+    "phone": "18565799072",
+    "coupon": "uuuu",
+    "integral": {
+      "lala": 168,
+      "kaka": 6,
+    },
+    "search": "双鸭山",
+    "searchField": "userName",
+    "email": "xxx@xx.com",
+    "arr": ['jjsd', 'ddd']
+  }
 
   const { error, data } = schema.verify(sample);
 

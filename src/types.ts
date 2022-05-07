@@ -71,7 +71,7 @@ export const number = Type("number", {
       return { data }
     }
   },
-  // 包含
+  // 匹配多个可选值中的一个
   in(data: number, array: [number]): Return {
     const result = array.indexOf(data);
     if (result === -1) {
@@ -82,7 +82,8 @@ export const number = Type("number", {
   }
 });
 
-export const numberString = Type("numberString", {
+// number 字符串类型,输出 number 类型
+export const snumber = Type("snumber", {
   type(data: number | string): Return {
     data = Number(data);
     if (typeof data === 'number') {
@@ -123,6 +124,16 @@ export const func = Type("func", {
   }
 });
 
+
+/** 绑定基础类型 */
+baseTypeBind(String, string);
+baseTypeBind(Number, number);
+baseTypeBind(Boolean, boolean);
+baseTypeBind(Symbol, symbol);
+baseTypeBind(Function, func);
+
+
+// 结构体数组
 export const array = Struct("array", {
   type(data: any[]): Return {
     if (Array.isArray(data)) {
@@ -149,6 +160,7 @@ export const array = Struct("array", {
 
 const { toString } = Object.prototype;
 
+// 结构体对象
 export const object = Struct("object", {
   type(data: object): Return {
     if (toString.call(data) === '[object Object]') {
@@ -159,12 +171,6 @@ export const object = Struct("object", {
   }
 });
 
-/** 绑定基础类型 */
-baseTypeBind(String, string);
-baseTypeBind(Number, number);
-baseTypeBind(Boolean, boolean);
-baseTypeBind(Symbol, symbol);
-baseTypeBind(Function, func);
 baseTypeBind(Array, array);
 baseTypeBind(Object, object);
 
