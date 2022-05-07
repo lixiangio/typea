@@ -1,10 +1,17 @@
 import test from 'jtm';
-import types from 'typea';
+import types, { string, number } from 'typea';
 import { required, optional } from 'typea/utility';
 
-const { string, number } = types;
-
 test("required", t => {
+
+  const struct = required({
+    nane: string,
+    age: number,
+    list: optional([number, Boolean, Boolean, number, number({ default: 1 })]),
+    data: { value: 1 },
+  })
+
+  const schema = types(struct);
 
   const sample = {
     nane: 'lili',
@@ -13,14 +20,9 @@ test("required", t => {
     data: { value: 1 }
   };
 
-  const schema = types(required({
-    nane: string,
-    age: number,
-    list: optional([number, Boolean, Boolean, number]),
-    data: { value: 1 },
-  }));
-
   const { error, data } = schema.verify(sample);
+
+  sample.list[4] = 1;
 
   t.deepEqual(data, sample, error);
 

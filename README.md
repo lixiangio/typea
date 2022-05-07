@@ -6,15 +6,17 @@ Typea 中的很多类型概念引用自 TypeScript，相关概念请参考 [Type
 
 ### 特性
 
-- 支持 string、number、boolean、object、array、function、symbol、any 等常见基础类型；
+- 支持 string、number、boolean、object、array、function、symbol、null、undefined、any 等常见基础类型；
 
-- 支持 [Tupl Types](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) 元组类型，为数组内的每个子元素提供精确的差异化类型匹配；
+- 支持 [Tuple Types](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) 元组类型，为数组内的每个子元素提供精确的差异化类型匹配；
 
-- 支持在 Array / Tupl 中使用 (...) 扩展运算符，匹配零个或多个连续的同类型元素；
+- 支持在 Array / Tuple 结构体中使用 [ ...type ] 扩展运算符语法定义类型，匹配零个或多个连续的同类型元素；
 
-- 支持 [Optional Properties](https://www.typescriptlang.org/docs/handbook/2/objects.html#optional-properties) 可选属性，Typea 中使用 optional(type) 函数代替 TypeScript 的 "name?" 属性修饰符；
+- 支持在 Object 结构体中使用 { ...type } 扩展运算符语法定义类型，匹配零个或多个同类型的可选属性；
 
-- 支持 [Index Signatures](https://www.typescriptlang.org/docs/handbook/2/objects.html#index-signatures) 索引签名，为无固定名称的属性统一定义类型；
+- 支持 [Optional Properties](https://www.typescriptlang.org/docs/handbook/2/objects.html#optional-properties) 可选属性，Typea 中使用 optional( type ) 函数代替 TypeScript 的 "name?" 属性修饰符；
+
+- 支持 [Index Signatures](https://www.typescriptlang.org/docs/handbook/2/objects.html#index-signatures) 索引签名，使用 [ $key ] 为动态属性添加类型约束；
 
 - 支持 [Union Types](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#union-types) 联合类型，匹配多个类型声明中的一个；
 
@@ -24,7 +26,7 @@ Typea 中的很多类型概念引用自 TypeScript，相关概念请参考 [Type
 
 - 支持对象、数组递归验证，只需要按数据结构建模即可，不必担心数据层级深度问题；
 
-- 对象属性命名安全、无冲突，模型中的所有类型声明均使用唯一的 symbol 类型标识，没有类似于 type 的特殊保留关键字；
+- 对象属性命名安全、无冲突，模型中的所有类型声明均使用唯一的 symbol 类型标识，没有类似 type 的特殊保留关键字；
 
 - 支持数据就近、集中处理，减少碎片化代码，通过分布在节点上的 set 方法可合成新的数据结构；
 
@@ -50,7 +52,7 @@ import mobilePhone from "typea/mobilePhone.js";
 types.add("email", email);
 types.add("mobilePhone", mobilePhone);
 
-// 创建一个简单的自定义 int 类型
+// 创建一个简单的自定义 int 类型，限制其最大返回值
 types.add("int", {
   type(data) {
     if (Number.isInteger(data)) {
@@ -73,8 +75,17 @@ types.add("int", {
 import types from "typea";
 import { optional, union, partial } from "typea/utility";
 
-// 创建 schema 并使用 schema 验证数据
-const { string, number, boolean, email, mobilePhone, int, $string } = types;
+const { string, number, boolean, email, mobilePhone, int, object } = types;
+
+const category = {
+  id: number,
+  name: string,
+  link: string,
+};
+
+const categorys = [...object(category)];
+
+category.childs = categorys; // 循环引用，递归验证，注意!：如果验证数据中也同样存在循环引用，会导致无限循环
 
 // 创建数据模型
 const schema = types({
@@ -82,32 +93,61 @@ const schema = types({
   name: string,
   email,
   mobilePhone,
-  num: union(string, Number, 'abc', null, [], undefined), // Union 联合类型
-  list: [...string], // 类似于 TS 的 string[]
-  array: [...number, boolean], // 扩展运算符与混合类型声明
-  link: [string], // 匹配只包含单个子元素的元组
-  tuple: [string, Number, { name: string }, function () {}], // 匹配包含多个不同类型子元素的元组
+  categorys,
+  union: union(number, "hello", null, [...number], undefined), // Union 联合类型
+  link: [string], // 单次匹配
+  url: [...string], // 连续的零次或多次匹配，类似于 TS 中的 string[]
+  link: [string, ...string], // 一次或多次 string 子匹配
+  array: [...number, boolean], // 多类型扩展匹配
+  tuple: [string, Number, { name: string }, function () {}], // 多类型固定匹配
   user: partial({
     username: "莉莉", // Literal 字面量
     age: int({ max: 200 }),
     address: optional([{ city: String }, { city: "母鸡" }]),
   }),
+  map: { ...number },
   methods: {
     open() {}, // func 类型
   },
-  title: optional("hello"), // 可选属性
-  [$string]: string, // 索引签名
+  description: optional(string), // 可选属性
+  ...string, // 索引签名，扩展赋值为 [$index]: string，作用等同于 TS 类型申明 [name: string]: string
 });
 
+// 使用数据模型校验数据
 const { error, data } = schema.verify({
   id: 123,
   name: "test",
   email: "gmail@gmail.com",
   mobilePhone: "18666666666",
-  num: 12345,
+  union: 100,
   list: ["a", "b", "c"],
   array: [1, 6, 8, 12, true],
-  link: ["https://github.com/"],
+  url: ["https://github.com/"],
+  link: ["https://github.com/", "https://www.google.com/"],
+  categorys: [
+    {
+      id: 1,
+      name: "dog",
+      childs: [
+        {
+          id: 13,
+          name: "d2",
+          childs: [
+            {
+              id: 12,
+              name: "lili",
+              childs: [],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 2,
+      name: "cat",
+      childs: [],
+    },
+  ],
   tuple: [
     "hello word",
     123,
@@ -123,11 +163,19 @@ const { error, data } = schema.verify({
     age: 99,
     address: [{ city: "黑猫" }, { city: "母鸡" }],
   },
+  map: {
+    a: 123,
+    b: 456,
+    c: 1000,
+  },
   methods: {
     open(v) {
       return v + 1;
     },
   },
+  string1: "s1",
+  string2: "s2",
+  string3: "s3",,
 });
 
 if (error) {
@@ -137,24 +185,23 @@ if (error) {
 }
 ```
 
-
 ### 类型
 
 基础类型大小写兼容（推荐使用小写类型），如类型声明 string、string() 、String 等效，扩展类型不支持大小写混用。
 
-大写不需要通过声明就可以直接使用，好处是使用方便，缺点是不支持传参，仅适用于声明简单的基础数据类型。
+大写不需要通过声明就可以直接使用，好处是使用方便，缺点是不支持传参，仅适用于简单的基础类型声明。
 
-小写的好处是可以通过函数传参的方式，添加更丰富的类型描述信息，实现更高级的数据校验功能。
+小写的好处是可以通过函数传参的方式，添加更丰富的类型扩展选项，实现更高级的数据校验功能。
 
 ### 模型
 
-模型通常是可复用的静态类型结构体，只需要创建一次即可，作用与 TS 中的 interface、 type 相似。
+模型是可复用的静态类型结构体，通常只需要创建一次即可，作用与 TS 中的 interface、 type 相似。
 
 ### 输入参数
 
-- `express` _any_ - 待验证的数据结构镜像表达式；
+- `node` _any_ - 数据结构镜像表达式；
 
-- `data`_any_ - 需要验证的数据，支持任意数据类型；
+- `data`_any_ - 待验证的数据，支持任意数据类型；
 
 ### 返回值
 
@@ -168,11 +215,11 @@ if (error) {
 
 #### 类型函数的通用选项
 
-- `partial` _boolean_ - 可选属性，当值为 true 时允许存在未定义属性。
+- `optional` _boolean_ - 可选属性，当值为 true 时允许存在未定义属性。
 
-- `default`_any_ - 属性不存在时填充默认值，在使用 default 时，partial 会自动设为 true
+- `default`_any_ - 属性不存在时填充默认值，在使用 default 时，optional 会自动设为 true。
 
-- `set` _function_ - 赋值函数，用于对输入值处理后再输出赋值，函数中 this 指向原始数据 data。使用 set 时， partial 会自动设为 true。
+- `set` _function_ - 赋值函数，用于对输入值处理后再输出赋值，函数中 this 指向原始数据 data。使用 set 时， optional 会自动设为 true。
 
 #### 专用选项
 
@@ -210,7 +257,7 @@ if (error) {
 
 #### 附加常见数据类型
 
-typea 仓库中包含了以下常见类型，默认不安装，推荐按需引用。
+typea 库中包含了以下常见类型，默认不引用，推荐按需扩展。
 
 ```js
 import types from "typea";
@@ -245,7 +292,7 @@ typea 中仅内置了少量常见的数据类型，如果不能满足需求，�
 
 #### types.add(name, options)
 
-- `name` _function, symbol, string_ - 类型 Key（必选）
+- `name` _function, symbol, string_ - 类型名称（必选）
 
 - `options` _object_ - 类型选项（必填）
 
@@ -266,9 +313,9 @@ types.add("int", {
       return { error: "必须为 int 类型" };
     }
   },
-  max(data, max) {
-    if (data > max) {
-      return { error: `不能大于${max}` };
+  min(data, min) {
+    if (data < min) {
+      return { error: `不能小于${min}` };
     } else {
       return { data };
     }
@@ -281,8 +328,31 @@ types.add("int", {
 ```js
 // 数组验证
 
-const sample = {
-  a: ["xx", "kk"],
+const { string, number } = types;
+
+const numberAllowNull = number({ optional: true });
+
+const { error, data } = types({
+  a: [string],
+  b: [numberAllowNull],
+  c: [{ a: Number, b: Number }],
+  d: [
+    {
+      d1: 666,
+      d2: string,
+    },
+    Number,
+    [
+      {
+        xa: Number,
+        xb: [numberAllowNull],
+      },
+    ],
+    String,
+  ],
+  e: Array,
+}).verify({
+  a: ["dog", "cat"],
   b: [123, 456, 789],
   c: [{ a: 1 }, { a: 2 }, { b: "3" }],
   d: [
@@ -304,31 +374,6 @@ const sample = {
     "hello",
   ],
   e: [1, 2, 3],
-};
-
-const { string, number } = types;
-
-const numberAllowNull = number({ partial: true });
-
-const { error, data } = types(sample).verify({
-  a: [string],
-  b: [numberAllowNull],
-  c: [{ a: Number, b: Number }],
-  d: [
-    {
-      d1: 666,
-      d2: string,
-    },
-    Number,
-    [
-      {
-        xa: Number,
-        xb: [numberAllowNull],
-      },
-    ],
-    String,
-  ],
-  e: Array,
 });
 ```
 
@@ -348,16 +393,16 @@ const sample = {
 
 const { number } = types;
 
-const { error, data } = types(sample).verify({
+const { error, data } = types({
   a: {
-    a1: number({ partial: true }),
+    a1: number({ optional: true }),
     a2: 12,
   },
   b: 99,
   f(func, set) {
     set(func(1, 1));
   },
-});
+}).verify(sample);
 ```
 
 ```js
@@ -376,110 +421,4 @@ types.add("int", {
 const { int } = types;
 
 const { error, data } = types({ age: int }).verify({ age: 20 });
-```
-
-```js
-// 综合示例
-
-const sample = {
-  name: "测试",
-  num: "123456789987",
-  ObjectId: "59c8aea808deec3fc8da56b6",
-  files: ["abc.js", "334", "null", "666", "12"],
-  user: {
-    username: "莉莉",
-    age: 18,
-    address: [
-      {
-        city: "双鸭山",
-      },
-      {
-        city: "巴萨",
-      },
-    ],
-  },
-  list: [
-    {
-      username: "吖吖",
-      age: {
-        kk: [{ kkk: 666 }],
-      },
-    },
-    {
-      username: "可可",
-      age: {
-        kk: [{ kkk: 666 }, { kkk: 999 }],
-      },
-    },
-  ],
-  money: "2",
-  guaranteeFormat: 0,
-  addressee: "嘟嘟",
-  phone: "18565799072",
-  coupon: "uuuu",
-  integral: {
-    lala: "168",
-    kaka: 6,
-  },
-  search: "双鸭山",
-  searchField: "userName",
-  email: "xxx@xx.xx",
-  arr: ["jjsd", "ddd"],
-};
-
-const { string, number, email, mobilePhone } = types;
-
-const { error, data } = types({
-  name: string({
-    name: "名称",
-    partial: true,
-    default: "默认值",
-  }),
-  num: number({ value: 666 }),
-  user: {
-    username: "莉莉",
-    age: Number,
-    address: [
-      {
-        city: String,
-      },
-      {
-        city: "巴萨",
-      },
-    ],
-  },
-  list: [
-    {
-      username: String,
-      age: {
-        kk: [{ kkk: Number }],
-      },
-    },
-  ],
-  money: number({
-    min: 1,
-    in: [1, 2],
-  }),
-  files: [number({ partial: true })],
-  guaranteeFormat: number,
-  addressee: String,
-  search: "双鸭山",
-  phone: mobilePhone,
-  coupon: string({
-    set(gt) { return { gt }; },
-  }),
-  integral: {
-    lala: Number,
-    kaka: number({
-      partial: true,
-      in: [1, 3, 8, 6],
-    },
-  }),
-  email: email({
-    set(value) {
-      return [value, , null, , undefined, 666];
-    },
-  }),
-  arr: [String],
-}).verify(sample);
 ```

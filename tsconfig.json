@@ -6,6 +6,7 @@
     "target": "esnext",
     "module": "esnext",
     "outDir": "dist",
+    "removeComments": true,
     "paths": {
       "typea": [
         "./src/index"

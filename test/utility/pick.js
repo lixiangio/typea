@@ -13,12 +13,14 @@ test("pick", t => {
     // data: { value: 1 }
   };
 
-  const schema = types(pick({
+  const struct = {
     nane: string,
     list: [number, Boolean, Boolean, number],
     age: number,
     data: { value: 1 },
-  }, 'nane', 'list'));
+  };
+
+  const schema = types(pick(struct, 'nane', 'list'));
 
   const { error, data } = schema.verify(sample);
 

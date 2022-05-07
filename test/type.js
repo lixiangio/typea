@@ -3,34 +3,36 @@ import types from 'typea';
 
 test("type", t => {
 
-   const { number } = types;
+  const { number } = types;
 
-   const sample = {
-      users: {
-         type: {
-            type: {
-               type: 100,
-               age: 10
-            }
-         },
-         max: 11
+  const schema = types({
+    users: {
+      type: {
+        type: {
+          type: number({ max: 200 }),
+          age: number
+        }
       },
-      name: 'lili'
-   };
+      max: number
+    },
+    name: 'lili',
+  });
 
-   const { error, data } = types({
-      users: {
-         type: {
-            type: {
-               type: number({ max: 200 }),
-               age: number
-            }
-         },
-         max: number
+  const sample = {
+    users: {
+      type: {
+        type: {
+          type: 100,
+          age: 10
+        }
       },
-      name: 'lili'
-   }).verify(sample);
+      max: 11
+    },
+    name: 'lili'
+  };
 
-   t.deepEqual(data, sample, error);
+  const { error, data } = schema.verify(sample);
+
+  t.deepEqual(data, sample, error);
 
 });

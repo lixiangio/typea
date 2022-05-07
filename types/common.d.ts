@@ -1,5 +1,12 @@
-export declare const symbols: {};
-export declare const $string: unique symbol;
-export declare const actionKey: unique symbol;
-export declare const optionalKye: unique symbol;
-export declare const extensionKey: unique symbol;
+export interface Options {
+    default?: any;
+    optional?: boolean;
+    set?(data: unknown): unknown;
+    [name: string | symbol]: unknown;
+}
+export declare const $index: symbol;
+export declare const methodKey: symbol;
+export declare const optionalKey: symbol;
+export declare const optionsKey: symbol;
+export declare const extensionNode: symbol;
+export declare function enumerableIterator(target: object, output: unknown): void;

@@ -1,40 +1,108 @@
-import test from 'jtm';
-import types from 'typea';
+import test from 'jtm'
+import types, { object } from 'typea';
 
-const { $string } = types;
+const sample = {
+  "name": "测试",
+  "num": 123456789987,
+  "ObjectId": "59c8aea808deec3fc8da56b6",
+  "files": ["abc.js", "334", "null", "666", "12"],
+  "user": {
+    "username": "莉莉",
+    "age": 18,
+    "address": [
+      {
+        "city": "双鸭山",
+      },
+      {
+        "city": "萨克斯",
+      }
+    ],
+  },
+  "list": [
+    {
+      "username": "吖吖",
+      "age": {
+        "kk": [{ kkk: 666 }]
+      },
+    },
+    {
+      "username": "可可",
+      "age": {
+        "kk": [
+          { kkk: 666 },
+          { kkk: 999 }
+        ]
+      },
+    }
+  ],
+  "money": 2,
+  "guaranteeFormat": 0,
+  "addressee": "嘟嘟",
+  "phone": "18565799072",
+  "coupon": "uuuu",
+  "integral": {
+    "lala": 168,
+    "kaka": 6,
+  },
+  "search": "双鸭山",
+  "searchField": "userName",
+  "email": "xxx@xx.com",
+  "arr": ['jjsd', 'ddd']
+}
 
-test("$string", t => {
+test('mixing', t => {
 
-  const sample = {
-    a: {
-      type: 54,
-      count: 3,
-      value: 'a'
-    },
-    b: {
-      type: 1,
-      count: 10,
-      value: 'b'
-    },
-    c: {
-      type: 12,
-      count: 10,
-      value: 'c'
-    },
-    xxx: 12
-  };
+  const { number, string, mongoId, email, mobilePhone, any } = types;
 
   const schema = types({
-    xxx: Number,
-    [$string]: {
-      type: Number,
-      count: Number,
-      value: String
-    }
+    "name": string({
+      "name": "名称",
+      "default": "默认值"
+    }),
+    "num": number({ set() { return 666; } }),
+    "ObjectId": mongoId,
+    "user": {
+      "username": "莉莉",
+      "age": Number,
+      "address": [
+        {
+          "city": String,
+        },
+        {
+          "city": "萨克斯",
+        }
+      ],
+    },
+    "list": [
+      ...object({
+        "username": String,
+        "age": { "kk": [...object({ kkk: Number })] },
+      })
+    ],
+    "money": number({
+      "min": 1,
+      "in": [1, 2],
+    }),
+    "files": [string({ optional: true }), ...string],
+    "guaranteeFormat": number,
+    "addressee": String,
+    "search": "双鸭山",
+    "phone": mobilePhone,
+    "coupon": any({ set(gt) { return { gt } } }),
+    "integral": {
+      "lala": Number,
+      "kaka": number({ "in": [1, 3, 8, 6] })
+    },
+    "email": email({ set(value) { return value.trim() } }),
+    "arr": [...String],
   });
 
   const { error, data } = schema.verify(sample);
 
-  t.deepEqual(data, sample, error);
+  // console.log(data)
+
+  // t.deepEqual(data, sample, error);
+
+  t.ok(data, error);
 
 });

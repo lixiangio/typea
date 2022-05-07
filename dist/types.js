@@ -1,6 +1,5 @@
-import addType, { baseBind } from './addType.js';
-export const string = addType({
-    // 验证 string 类型
+import { Type, Struct, baseTypeBind } from './create.js';
+export const string = Type("string", {
     type(data) {
         if (typeof data === 'string') {
             return { data };
@@ -9,7 +8,6 @@ export const string = addType({
             return { error: "值必须为 string 类型" };
         }
     },
-    // 限制最小长度
     min(data, min) {
         if (data.length < min) {
             return { error: `值长度不能小于 "${min}" 个字符` };
@@ -18,7 +16,6 @@ export const string = addType({
             return { data };
         }
     },
-    // 限制最大长度
     max(data, max) {
         if (data.length > max) {
             return { error: `值长度不能大于 "${max}" 个字符` };
@@ -27,7 +24,6 @@ export const string = addType({
             return { data };
         }
     },
-    // 正则
     reg(data, reg) {
         if (data.search(reg) === -1) {
             return { error: '正则表达式格式错误' };
@@ -36,7 +32,6 @@ export const string = addType({
             return { data };
         }
     },
-    // 包含
     in(data, array) {
         const result = array.indexOf(data);
         if (result === -1) {
@@ -47,8 +42,7 @@ export const string = addType({
         }
     }
 });
-baseBind(String, string);
-export const number = addType({
+export const number = Type("number", {
     type(data) {
         if (typeof data === 'number') {
             return { data };
@@ -73,7 +67,6 @@ export const number = addType({
             return { data };
         }
     },
-    // 包含
     in(data, array) {
         const result = array.indexOf(data);
         if (result === -1) {
@@ -84,8 +77,18 @@ export const number = addType({
         }
     }
 });
-baseBind(Number, number);
-export const boolean = addType({
+export const numberString = Type("numberString", {
+    type(data) {
+        data = Number(data);
+        if (typeof data === 'number') {
+            return { data };
+        }
+        else {
+            return { error: '值必须为 number 类型' };
+        }
+    }
+});
+export const boolean = Type("boolean", {
     type(data) {
         if (typeof data === 'boolean') {
             return { data };
@@ -95,8 +98,7 @@ export const boolean = addType({
         }
     }
 });
-baseBind(Boolean, boolean);
-export const symbol = addType({
+export const symbol = Type("symbol", {
     type(data) {
         if (typeof data === 'symbol') {
             return { data };
@@ -106,8 +108,17 @@ export const symbol = addType({
         }
     }
 });
-baseBind(Symbol, symbol);
-export const array = addType({
+export const func = Type("func", {
+    type(data) {
+        if (typeof data === 'function') {
+            return { data };
+        }
+        else {
+            return { error: '值必须为 function 类型' };
+        }
+    }
+});
+export const array = Struct("array", {
     type(data) {
         if (Array.isArray(data)) {
             return { data };
@@ -133,31 +144,22 @@ export const array = addType({
         }
     }
 });
-baseBind(Array, array);
 const { toString } = Object.prototype;
-export const object = addType({
+export const object = Struct("object", {
     type(data) {
         if (toString.call(data) === '[object Object]') {
             return { data };
         }
         else {
-            return { error: '值必须为 object 类型' };
+            return { error: "值必须为 object 类型" };
         }
     }
 });
-baseBind(Object, object);
-export const func = addType({
-    type(data) {
-        if (typeof data === 'function') {
-            return { data };
-        }
-        else {
-            return { error: '值必须为 function 类型' };
-        }
-    }
-});
-baseBind(Function, func);
-/////////////////////// 非基础类型 ///////////////////////
-export const any = addType({
-    type(data) { return { data }; }
-});
+baseTypeBind(String, string);
+baseTypeBind(Number, number);
+baseTypeBind(Boolean, boolean);
+baseTypeBind(Symbol, symbol);
+baseTypeBind(Function, func);
+baseTypeBind(Array, array);
+baseTypeBind(Object, object);
+export const any = Type("any", { type(data) { return { data }; } });

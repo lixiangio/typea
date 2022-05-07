@@ -1,8 +1,11 @@
-import addType, { baseBind } from './addType.js';
+import { Type, Struct, baseTypeBind } from './create.js';
 
-interface Return { data?: any, error?: string }
+interface Return {
+  data?: any,
+  error?: string,
+}
 
-export const string = addType({
+export const string = Type("string", {
   // 验证 string 类型
   type(data: string): Return {
     if (typeof data === 'string') {
@@ -46,10 +49,7 @@ export const string = addType({
   }
 });
 
-baseBind(String, string);
-
-
-export const number = addType({
+export const number = Type("number", {
   type(data: number): Return {
     if (typeof data === 'number') {
       return { data };
@@ -82,9 +82,18 @@ export const number = addType({
   }
 });
 
-baseBind(Number, number);
+export const numberString = Type("numberString", {
+  type(data: number | string): Return {
+    data = Number(data);
+    if (typeof data === 'number') {
+      return { data };
+    } else {
+      return { error: '值必须为 number 类型' };
+    }
+  }
+});
 
-export const boolean = addType({
+export const boolean = Type("boolean", {
   type(data: boolean): Return {
     if (typeof data === 'boolean') {
       return { data }
@@ -94,10 +103,7 @@ export const boolean = addType({
   }
 });
 
-baseBind(Boolean, boolean);
-
-
-export const symbol = addType({
+export const symbol = Type("symbol", {
   type(data: symbol): Return {
     if (typeof data === 'symbol') {
       return { data }
@@ -107,10 +113,17 @@ export const symbol = addType({
   }
 });
 
-baseBind(Symbol, symbol);
+export const func = Type("func", {
+  type(data: () => object): Return {
+    if (typeof data === 'function') {
+      return { data }
+    } else {
+      return { error: '值必须为 function 类型' }
+    }
+  }
+});
 
-
-export const array = addType({
+export const array = Struct("array", {
   type(data: any[]): Return {
     if (Array.isArray(data)) {
       return { data };
@@ -134,38 +147,27 @@ export const array = addType({
   }
 });
 
-baseBind(Array, array);
-
-
 const { toString } = Object.prototype;
 
-export const object = addType({
+export const object = Struct("object", {
   type(data: object): Return {
     if (toString.call(data) === '[object Object]') {
       return { data };
     } else {
-      return { error: '值必须为 object 类型' };
+      return { error: "值必须为 object 类型" };
     }
   }
 });
 
-baseBind(Object, object);
-
-
-export const func = addType({
-  type(data: () => object): Return {
-    if (typeof data === 'function') {
-      return { data }
-    } else {
-      return { error: '值必须为 function 类型' }
-    }
-  }
-});
-
-baseBind(Function, func);
+/** 绑定基础类型 */
+baseTypeBind(String, string);
+baseTypeBind(Number, number);
+baseTypeBind(Boolean, boolean);
+baseTypeBind(Symbol, symbol);
+baseTypeBind(Function, func);
+baseTypeBind(Array, array);
+baseTypeBind(Object, object);
 
 /////////////////////// 非基础类型 ///////////////////////
 
-export const any = addType({
-  type(data: any): Return { return { data } }
-});
+export const any = Type("any", { type(data: any): Return { return { data } } });

@@ -14,15 +14,6 @@ test('boolean', t => {
 
 test('inline', t => {
 
-   const sample = {
-      a: true,
-      b: {
-         b1: true,
-         b2: false
-      },
-      c: [true, true, false, true]
-   }
-
    const schema = types({
       a: Boolean,
       b: {
@@ -32,6 +23,15 @@ test('inline', t => {
       c: [...boolean]
    })
 
+   const sample = {
+      a: true,
+      b: {
+         b1: true,
+         b2: false
+      },
+      c: [true, true, false, true]
+   }
+   
    const { error, data } = schema.verify(sample);
 
    t.deepEqual(data, sample, error);

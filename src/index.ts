@@ -1,9 +1,12 @@
 import { entry } from './router.js';
-import { actionKey, $string } from './common.js';
-import addType, { type Methods } from './addType.js';
+import { methodKey, $index } from './common.js';
+import { Type } from './create.js';
+import type { Methods } from './create.js';
 import * as types from './types.js';
 export * from './common.js';
 export * from './types.js';
+
+export { $index };
 
 /**
  * @param schema 验证表达式
@@ -36,9 +39,6 @@ export default function typea(schema: any) {
 
 }
 
-typea.$string = $string;
-typea.actionKey = actionKey;
-
 Object.assign(typea, types);
 
 /**
@@ -48,21 +48,23 @@ Object.assign(typea, types);
  */
 typea.add = function (name: string, methods: Methods): void {
 
-  if (typeof name !== 'string') return;
+  if (typeof name !== 'string') {
+    throw new Error(`name 参数必须为 string 类型`);
+  }
 
   const typeFn = typea[name];
 
   // 扩展已添加的类型函数
   if (typeFn) {
 
-    Object.assign(typeFn[actionKey], methods);
+    Object.assign(typeFn[methodKey], methods);
 
   }
 
   // 创建新的类型函数
   else {
 
-    typea[name] = addType(methods);
+    typea[name] = Type(name, methods);
 
   }
 

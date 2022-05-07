@@ -1,4 +1,4 @@
-import { actionKey, optionalKye, extensionKey, $string } from './common.js';
+import { methodKey, optionsKey, optionalKey, extensionNode, $index } from './common.js';
 
 interface ObjectIndex { [name: string | symbol]: any }
 
@@ -6,35 +6,36 @@ const { toString, hasOwnProperty } = Object.prototype;
 
 /**
  * 数据入口
- * @param data 待验证数据
- * @param node 验证表达式
+ * @param node 数据模型
+ * @param data 数据实例
  */
 export function entry(node: any, data: any) {
 
   // node 为 object 或 array
   if (node instanceof Object) {
 
-    const subNode = node[actionKey];
+    const method = node[methodKey];
 
-    // node 中携带 Symbol('actionKey')，表示绑定了可执行函数
-    if (subNode) {
+    // node 中携带 Symbol('methodKey')，表示绑定了可执行函数
+    if (method) {
 
-      return subNode.action(node, data);
+      return method(node[optionsKey], data);
 
     }
 
-    // node 为对象结构
+    // node 为结构体对象
     else if (toString.call(node) === '[object Object]') {
 
       if (toString.call(data) === '[object Object]') {
         return object(node, data);
       } else {
+        console.log(node)
         return { error: " 值必须为 object 类型" };
       }
 
     }
 
-    // node 为数组结构
+    // node 为结构体数组
     else if (Array.isArray(node)) {
 
       if (Array.isArray(data)) {
@@ -82,84 +83,75 @@ export function entry(node: any, data: any) {
 
 /**
  * 对象结构
- * @param data 待验证数据
- * @param node 验证表达式
+ * @param node 数据模型
+ * @param data 数据实例
  */
 export function object(node: ObjectIndex, data: any) {
 
-  const result = {};
-  const mixinNode = { ...node };
+  const checkNode = {}, result = {};
 
-  const indexSbuNode = node[$string];
+  // 提取模型中声明的属性，用于下一步的统一验证
+  for (const name in node) {
 
-  // 有索引时使用泛匹配，将 data 中的非模型属性添加至混合模型
-  if (indexSbuNode) {
+    const sub = node[name];
 
-    for (const name in data) {
+    // 可选属性
+    if (sub && hasOwnProperty.call(sub, optionalKey)) {
 
-      if (hasOwnProperty.call(mixinNode, name) === false) {
 
-        mixinNode[name] = indexSbuNode;
+      // 有匹配数据，使用子节点覆盖可选节点
+      if (hasOwnProperty.call(data, name)) {
+
+        checkNode[name] = sub[optionalKey]; // 可选属性中保存了节点的数据类型或结构体
+
+      }
+
+      // 无匹配数据，忽略可选属性缺失错误
+      else {
+
+        const options = sub[optionsKey];
+
+        if (options instanceof Object) {
+
+          if (options.set) {
+
+            result[name] = options.set(options.default);
+
+          } else if (hasOwnProperty.call(options, 'default')) {
+
+            result[name] = options.default;
+
+          }
+
+        }
 
       }
 
     }
 
+    // 必选属性
+    else if (hasOwnProperty.call(data, name)) {
+
+      checkNode[name] = sub;
+
+    } else {
+
+      return { error: `.${name} 属性缺失` };
+
+    }
+
   }
 
-  // 无索引时，仅检查模型中声明的属性，忽略模型以外的属性
-  else {
+  // 有索引签名，将 data 中的非模型属性添加至混合模型
+  if (hasOwnProperty.call(node, $index)) {
 
-    for (const name in mixinNode) {
+    const indexSbuNode = node[$index];
 
-      const subNode = mixinNode[name];
+    for (const name in data) {
 
-      if (hasOwnProperty.call(data, name)) {
+      if (hasOwnProperty.call(checkNode, name) === false) {
 
-        if (subNode && subNode[optionalKye]) {
-
-          const { set } = subNode;
-
-          if (set) {
-
-            result[name] = set(data[name]); // 有 set 函数时，使用自定义处理逻辑
-
-            delete mixinNode[name]; // 通过属性删除，跳过子模型校验
-
-            continue;
-
-          } else if (hasOwnProperty.call(subNode, 'node')) {
-
-            mixinNode[name] = subNode.node; // 子节点
-
-          }
-
-        }
-
-      } else {
-
-        // 忽略可选属性缺失错误
-        if (subNode && subNode[optionalKye]) {
-
-          delete mixinNode[name];
-
-          const { set } = subNode;
-
-          if (set) {
-
-            result[name] = set(subNode.default);
-
-          } else if (hasOwnProperty.call(subNode, 'default')) {
-
-            result[name] = subNode.default;
-
-          }
-
-        } else {
-
-          return { error: `.${name} 属性缺失` };
-
-        }
+        checkNode[name] = indexSbuNode;
 
       }
 
@@ -168,9 +160,9 @@ export function object(node: ObjectIndex, data: any) {
   }
 
   // 混合子模型验证
-  for (const name in mixinNode) {
+  for (const name in checkNode) {
 
-    const { error, data: value } = entry(mixinNode[name], data[name]);
+    const { error, data: value } = entry(checkNode[name], data[name]);
 
     if (error) {
 
@@ -190,8 +182,8 @@ export function object(node: ObjectIndex, data: any) {
 
 /**
 * 数组结构
-* @param data 
-* @param node 
+* @param node 数据模型
+* @param data 数据实例
 */
 export function array(node: any[], data: any[]) {
 
@@ -204,11 +196,11 @@ export function array(node: any[], data: any[]) {
 
     if (item instanceof Object) {
 
-      // 扩展类型对象，一对多匹配，试探性向后匹配，直至类型匹配失败或无索引
-      if (item[extensionKey]) {
+      // 类型扩展节点，一对多匹配，试探性向后匹配，直至同类型匹配失败或无索引
+      if (hasOwnProperty.call(item, extensionNode)) {
 
         let next = true;
-        const subNode = item.node;
+        const subNode = item[extensionNode];
 
         while (next) {
           if (hasOwnProperty.call(data, index)) {
@@ -231,7 +223,9 @@ export function array(node: any[], data: any[]) {
       else {
         const { error, data: subData } = entry(item, data[index]);
         if (error) {
-          return { "error": `[${index}]${error}` };
+          if (hasOwnProperty.call(item, optionalKey) === false) {
+            return { "error": `[${index}]${error}` };
+          }
         } else {
           index++;
           result.push(subData);

@@ -1,67 +1,37 @@
 import { entry } from './router.js';
-import { actionKey, optionalKye, extensionKey } from './common.js';
-import type { Options } from './common.js';
-
-/**
- * 类型扩展数据包装器，仅适用于在数组结构内使用，作用是将对象、数组结构标记为可迭代状态
- */
-export function iterator(node: object) {
-  return { [extensionKey]: true, node };
-}
-
-/**
- * 联合类型
- * @param types 
- */
-export function union(...types: unknown[]) {
-
-  return {
-    [actionKey]: {
-      action(_, value: any) {
-        let errorInfo: string;
-        for (const item of types) {
-          const { error, data } = entry(item, value);
-          if (error) {
-            errorInfo = error;
-          } else {
-            return { data };
-          }
-        }
-        return { error: `${errorInfo}，联合类型匹配失败` };
-      }
-    }
-  };
-
-}
+import { methodKey, optionalKey, $index, enumerableIterator } from './common.js';
 
 const { hasOwnProperty } = Object.prototype;
 
 /**
- * 可选属性，适用于任意类型，表示 optional() 返回值关联的属性为可选属性
+ * 定义对象结构体中的可选属性，接收任意数据类型，表示 optional() 返回值关联的属性为可选属性
  * 通常用于将对象和数组包装为可选
  */
-export function optional(node: unknown, options?: Options) {
+export function optional(node: unknown) {
 
-  return {
-    [optionalKye]: true,
-    ...options,
-    node
-  };
+  const newNode = {};
+
+  Object.defineProperty(newNode, optionalKey, { value: node });
+  Object.defineProperty(newNode, $index, { value: node, enumerable: true });
+
+  return newNode;
 
 }
 
 /**
- * 对象可选属性，表示传入的对象内的属性为可选，仅接受对象结构
+ * 将传入结构体对象内的所有属性全部定义为可选
  */
 export function partial(node: object | any[]) {
 
   const newNode = {};
 
   for (const name in node) {
-    newNode[name] = {
-      [optionalKye]: true,
-      node: node[name]
-    };
+    const subNode = node[name];
+    if (subNode && hasOwnProperty.call(subNode, optionalKey)) {
+      newNode[name] = subNode;
+    } else {
+      newNode[name] = { [optionalKey]: subNode };
+    }
   }
 
   return newNode;
@@ -77,13 +47,8 @@ export function required(node: object) {
 
   for (const name in node) {
     const subNode = node[name];
-    if (subNode && subNode[optionalKye]) {
-      if (hasOwnProperty.call(subNode, 'node')) {
-        newNode[name] = subNode.node;
-      } else {
-        newNode[name] = { ...subNode };
-        delete newNode[name][optionalKye];
-      }
+    if (subNode && hasOwnProperty.call(subNode, optionalKey)) {
+      newNode[name] = subNode[optionalKey];
     } else {
       newNode[name] = subNode;
     }
@@ -95,7 +60,6 @@ export function required(node: object) {
 
 /**
  * 对象选择类型，从已有模型中选取属性，创建新的模型
- * @returns 
  */
 export function pick(node: object, ...keys: string[]) {
 
@@ -115,6 +79,8 @@ export function pick(node: object, ...keys: string[]) {
 
 /**
  * 对象省略类型
+ * @param node schema 节点
+ * @param keys 忽略属性名
  * @returns 
  */
 export function omit(node: object, ...keys: string[]) {
@@ -128,3 +94,34 @@ export function omit(node: object, ...keys: string[]) {
   return newNode;
 
 }
+
+
+/**
+ * 联合类型
+ * @param nodes 指定多个可选类型，顺序匹配其中的一个类型
+ */
+export function union(...nodes: unknown[]) {
+
+  const newNode = {};
+
+  Object.defineProperty(newNode, methodKey, {
+    value(options: undefined, value: any) {
+      let errorInfo: string;
+      for (const item of nodes) {
+        const { error, data } = entry(item, value);
+        if (error) {
+          errorInfo = error;
+        } else {
+          return { data };
+        }
+      }
+      return { error: `${errorInfo}，联合类型匹配失败` };
+    }
+  });
+
+  enumerableIterator(newNode, newNode);
+
+  return newNode;
+
+}
+

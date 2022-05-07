@@ -1,8 +1,6 @@
 import test from 'jtm';
-import types from 'typea';
-import { iterator, optional } from 'typea/utility';
-
-const { string, number, boolean } = types;
+import types, { string, number, boolean, array, object } from 'typea';
+import { optional } from 'typea/utility';
 
 test('[string] 匹配 1 个', t => {
 
@@ -16,7 +14,6 @@ test('[string] 匹配 1 个', t => {
 
 });
 
-
 test('[string, string] 匹配 2 个', t => {
 
    const schema = types([string, string]);
@@ -25,7 +22,7 @@ test('[string, string] 匹配 2 个', t => {
 
    const { error, data } = schema.verify(sample);
 
-   // console.log(data)
+   // console.log(data);
 
    t.deepEqual(data, sample, error);
 
@@ -55,7 +52,7 @@ test('[number, ...number] 至少匹配一个', t => {
 
 });
 
-test('[[string]] 嵌套数组', t => {
+test('[[string]]', t => {
 
    const schema = types([[string, string]]);
 
@@ -69,7 +66,68 @@ test('[[string]] 嵌套数组', t => {
 
 });
 
+test('[...object]', t => {
+
+   const schema = types([...object({
+      a: Number,
+      b: number({ optional: true })
+   })]);
+
+   const sample = [{ a: 1, b: 2 }, { a: 2, b: 2 }, { a: 1 }];
+
+   const { error, data } = schema.verify(sample);
+
+   t.deepEqual(data, sample, error);
+
+});
+
+test('[...array]', t => {
+
+   const schema = types([...array([Number, number({ optional: true })])]);
+
+   const sample = [[1, 10], [5, 20], [3, 4]];
+
+   const { error, data } = schema.verify(sample);
+
+   t.deepEqual(data, sample, error);
+
+});
+
+test('{...array}', t => {
+
+   const schema = types({ ...array([Number, number({ optional: true })]) });
+
+   const sample = {
+      a: [1, 2],
+      b: [10, 200],
+      c: [100],
+   };
+
+   const { error, data } = schema.verify(sample);
+
+   t.deepEqual(data, sample, error);
+
+});
+
 test('array 综合示例', t => {
+
+   const schema = types({
+      a: [number, ...number],
+      b: optional([...string, number]),
+      c: [...number],
+      d: [...object({ a: Number, b: number({ optional: true }) })],
+      e: [
+         {
+            d1: number({ default: 6 }),
+            d2: String
+         },
+         Number,
+         [...object({ xa: Number, xb: [...number] })],
+         String
+      ],
+      f: array([...number], { max: 2 }),
+      ...number
+   });
 
    const sample = {
       a: [1, 2],
@@ -95,24 +153,9 @@ test('array 综合示例', t => {
          "hello"
       ],
       f: [1, 2, 3],
+      g: 12,
+      h: 66
    };
-
-   const schema = types({
-      a: [number, ...number],
-      b: optional([...string, number]),
-      c: [...number({ "optional": true })],
-      d: [iterator({ a: Number, b: number({ optional: true }) })],
-      e: [
-         {
-            d1: optional(666),
-            d2: String
-         },
-         Number,
-         [iterator({ xa: Number, xb: [...number({ optional: true })] })],
-         String
-      ],
-      f: Array
-   });
 
    const { error, data } = schema.verify(sample);
 

@@ -29,14 +29,18 @@ test('[number, number]', t => {
 
    const sample = [1, 2]
 
-   const { error, data } = types([Number, Number]).verify(sample);
+   // console.log(number({ optional: true }).name)
+   // const xx = [...number({ optional: true })]
+   // console.log(xx[0][extensionNode].name)
+   
+   const { error, data } = types([Number, number, number({ optional: true })]).verify(sample);
 
    t.deepEqual(data, sample, error);
 
 })
 
 
-test('{ [name: string]: number }', t => {
+test('{ number }', t => {
 
    const sample = {
       x: 1,
@@ -58,3 +62,18 @@ test('{ [name: string]: number }', t => {
 
 })
 
+
+test('{ ...number }', t => {
+
+   const schema = types({ ...Number })
+
+   const sample = {
+      x: 1,
+      y: 2
+   }
+
+   const { error, data } = schema.verify(sample);
+
+   t.deepEqual(data, sample, error);
+
+})

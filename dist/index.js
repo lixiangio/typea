@@ -1,18 +1,12 @@
 import { entry } from './router.js';
-import { actionKey, $string } from './common.js';
-import addType from './addType.js';
+import { methodKey, $index } from './common.js';
+import { Type } from './create.js';
 import * as types from './types.js';
 export * from './common.js';
 export * from './types.js';
-/**
- * @param schema 验证表达式
- */
+export { $index };
 export default function typea(schema) {
-    // chema 静态检查、优化
     return {
-        /**
-         * @param data 需要验证的数据
-         */
         verify(data) {
             const result = entry(schema, data);
             if (result.error) {
@@ -30,24 +24,16 @@ export default function typea(schema) {
         }
     };
 }
-typea.$string = $string;
-typea.actionKey = actionKey;
 Object.assign(typea, types);
-/**
- * 添加自定义数据类型
- * @param name 数据类型名称
- * @param methods 扩展方法
- */
 typea.add = function (name, methods) {
-    if (typeof name !== 'string')
-        return;
-    const typeFn = typea[name];
-    // 扩展已添加的类型函数
-    if (typeFn) {
-        Object.assign(typeFn[actionKey], methods);
+    if (typeof name !== 'string') {
+        throw new Error(`name 参数必须为 string 类型`);
     }
-    // 创建新的类型函数
+    const typeFn = typea[name];
+    if (typeFn) {
+        Object.assign(typeFn[methodKey], methods);
+    }
     else {
-        typea[name] = addType(methods);
+        typea[name] = Type(name, methods);
     }
 };

@@ -1,1 +1,9 @@
-export {};
+export declare const string: (options?: import("./common.js").Options) => {};
+export declare const number: (options?: import("./common.js").Options) => {};
+export declare const numberString: (options?: import("./common.js").Options) => {};
+export declare const boolean: (options?: import("./common.js").Options) => {};
+export declare const symbol: (options?: import("./common.js").Options) => {};
+export declare const func: (options?: import("./common.js").Options) => {};
+export declare const array: (struct: {} | [], options?: import("./common.js").Options) => {};
+export declare const object: (struct: {} | [], options?: import("./common.js").Options) => {};
+export declare const any: (options?: import("./common.js").Options) => {};

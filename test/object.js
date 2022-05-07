@@ -1,18 +1,7 @@
 import test from 'jtm';
-import typea, { number, string } from 'typea';
+import types, { number, string, object } from 'typea';
 
 test('object', t => {
-
-  const sample = {
-    a: {
-      a1: 1,
-      a2: 12,
-    },
-    b: 10,
-    f(a, b) {
-      return a + b
-    },
-  }
 
   const type = {
     a: {
@@ -28,9 +17,21 @@ test('object', t => {
       set(fn(1, 1));
       // return { s: String, m: Number }
     },
+    // ...object({ a: 1, b: 2 })
   };
 
-  const { error, data } = typea(type).verify(sample);
+  const sample = {
+    a: {
+      a1: 1,
+      a2: 12,
+    },
+    b: 10,
+    f(a, b) {
+      return a + b
+    },
+  }
+  
+  const { error, data } = types(type).verify(sample);
 
   sample.b = 20;
   sample.f = 2;
@@ -51,7 +52,7 @@ test('object null', async t => {
 
   const stringAllowNull = string({ optional: true })
 
-  const { error } = typea({
+  const { error } = types({
     a: string({
       default: 'xxx',
       optional: true,
@@ -65,5 +66,41 @@ test('object null', async t => {
   sample.a = 'xxx';
 
   t.deepEqual(error, 'e 属性缺失', error);
+
+});
+
+test('[...object]', t => {
+
+  const schema = types([...object({
+    a: Number,
+    b: number({ optional: true })
+  })]);
+
+  const sample = [{ a: 1, b: 2 }, { a: 2, b: 2 }, { a: 1 }];
+
+  const { error, data } = schema.verify(sample);
+
+  t.deepEqual(data, sample, error);
+
+});
+
+test('{...object}', t => {
+
+  const schema = types({
+    ...object({
+      a: Number,
+      b: number({ optional: true })
+    })
+  });
+
+  const sample = {
+    a: { a: 1, b: 2 },
+    b: { a: 2, b: 2 },
+    c: { a: 1 }
+  };
+
+  const { error, data } = schema.verify(sample);
+
+  t.deepEqual(data, sample, error);
 
 });
