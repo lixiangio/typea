@@ -91,16 +91,19 @@ export function Type(name, methods) {
     }
     Object.defineProperty(type, "name", { value: name });
     Object.defineProperty(type, methodKey, {
-        value(_, data) {
-            if (data === undefined) {
+        value(_, value) {
+            if (value === undefined) {
                 return { error: " 值不允许为空" };
             }
             else {
-                const { error } = typeMethod(data);
-                if (error)
+                const { error, data } = typeMethod(value);
+                if (error) {
                     return { error: ` ${error}` };
+                }
+                else {
+                    return { data };
+                }
             }
-            return { data };
         }
     });
     enumerableIterator(type, type);

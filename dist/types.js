@@ -77,17 +77,6 @@ export const number = Type("number", {
         }
     }
 });
-export const numberString = Type("numberString", {
-    type(data) {
-        data = Number(data);
-        if (typeof data === 'number') {
-            return { data };
-        }
-        else {
-            return { error: '值必须为 number 类型' };
-        }
-    }
-});
 export const boolean = Type("boolean", {
     type(data) {
         if (typeof data === 'boolean') {
@@ -118,6 +107,11 @@ export const func = Type("func", {
         }
     }
 });
+baseTypeBind(String, string);
+baseTypeBind(Number, number);
+baseTypeBind(Boolean, boolean);
+baseTypeBind(Symbol, symbol);
+baseTypeBind(Function, func);
 export const array = Struct("array", {
     type(data) {
         if (Array.isArray(data)) {
@@ -155,11 +149,6 @@ export const object = Struct("object", {
         }
     }
 });
-baseTypeBind(String, string);
-baseTypeBind(Number, number);
-baseTypeBind(Boolean, boolean);
-baseTypeBind(Symbol, symbol);
-baseTypeBind(Function, func);
 baseTypeBind(Array, array);
 baseTypeBind(Object, object);
 export const any = Type("any", { type(data) { return { data }; } });

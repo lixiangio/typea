@@ -211,9 +211,11 @@ export function Type(name: string, methods: Methods) {
 
     if (error) return { error: ` ${error}` };
 
-    // 执行验证选项扩展函数
+    // 执行验证选项扩展函数，将上一个函数输出结果作为下一个函数的输入参数
     for (const name in other) {
+
       const method = methods[name]; // 每个有效的 node[$name] 对应一个 methods[$name]() 处理函数
+      
       if (method) {
         const option = other[name];
         const { error, data: value } = method(data, option);
@@ -223,6 +225,7 @@ export function Type(name: string, methods: Methods) {
           data = value;
         }
       }
+
     }
 
     return { data };
@@ -266,18 +269,20 @@ export function Type(name: string, methods: Methods) {
     /**
     * 无参数类型校验器，仅校验类型
     * @param _ 空位
-    * @param data 待验证数据
+    * @param value 待验证数据
     */
-    value(_: undefined, data: any): Return {
+    value(_: undefined, value: any): Return {
 
-      if (data === undefined) {
+      if (value === undefined) {
         return { error: " 值不允许为空" };
       } else {
-        const { error } = typeMethod(data);
-        if (error) return { error: ` ${error}` };
+        const { error, data } = typeMethod(value);
+        if (error) {
+          return { error: ` ${error}` }
+        } else {
+          return { data };
+        }
       }
-
-      return { data };
 
     }
   });

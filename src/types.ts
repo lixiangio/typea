@@ -82,18 +82,6 @@ export const number = Type("number", {
   }
 });
 
-// number 字符串类型,输出 number 类型
-export const snumber = Type("snumber", {
-  type(data: number | string): Return {
-    data = Number(data);
-    if (typeof data === 'number') {
-      return { data };
-    } else {
-      return { error: '值必须为 number 类型' };
-    }
-  }
-});
-
 export const boolean = Type("boolean", {
   type(data: boolean): Return {
     if (typeof data === 'boolean') {

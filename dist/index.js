@@ -1,6 +1,6 @@
 import { entry } from './router.js';
-import { methodKey, $index } from './common.js';
 import { Type } from './create.js';
+import { methodKey, $index } from './common.js';
 import * as types from './types.js';
 export * from './common.js';
 export * from './types.js';
