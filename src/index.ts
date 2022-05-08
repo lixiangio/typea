@@ -9,19 +9,20 @@ export * from './types.js';
 export { $index };
 
 /**
- * @param schema 验证表达式
+ * @param node 验证节点模型
  */
-export default function typea(schema: any) {
+export default function typea(node: any) {
 
   // chema 静态检查、优化
 
   return {
+    node,
     /**
      * @param data 需要验证的数据
      */
     verify(data: any) {
 
-      const result = entry(schema, data);
+      const result = entry(node, data);
 
       if (result.error) {
         const [point] = result.error;

@@ -1,6 +1,6 @@
 # typea
 
-功能强大的 JS 运行时数据验证与转换器，使用全镜像的对称数据结构模型，简单、直观、易于读写。
+功能强大的 JS 运行时数据验证与转换器，使用全镜像的对称数据结构模型，轻量级、简单、直观、易于读写。
 
 Typea 中的很多类型概念引用自 TypeScript，相关概念请参考 [TypeScript 文档](https://www.typescriptlang.org/docs/)。
 
@@ -14,7 +14,7 @@ Typea 中的很多类型概念引用自 TypeScript，相关概念请参考 [Type
 
 - 支持在 Object 结构体中使用 { ...type } 扩展运算符语法定义类型，匹配零个或多个同类型的可选属性；
 
-- 支持 [Optional Properties](https://www.typescriptlang.org/docs/handbook/2/objects.html#optional-properties) 可选属性，Typea 中使用 optional( type ) 函数代替 TypeScript 的 "name?" 属性修饰符；
+- 支持 [Optional Properties](https://www.typescriptlang.org/docs/handbook/2/objects.html#optional-properties) 可选属性，使用 optional( type ) 函数代替 TS 的 name? 属性修饰符；
 
 - 支持 [Index Signatures](https://www.typescriptlang.org/docs/handbook/2/objects.html#index-signatures) 索引签名，使用 [ $key ] 为动态属性添加类型约束；
 
@@ -26,24 +26,19 @@ Typea 中的很多类型概念引用自 TypeScript，相关概念请参考 [Type
 
 - 支持对象、数组递归验证，只需要按数据结构建模即可，不必担心数据层级深度问题；
 
-- 对象属性命名安全、无冲突，模型中的所有类型声明均使用唯一的 symbol 类型标识，没有类似 type 的特殊保留关键字；
-
 - 支持数据就近、集中处理，减少碎片化代码，通过分布在节点上的 set 方法可合成新的数据结构；
+
+- 对象属性命名安全、无冲突，模型中的所有类型声明均使用唯一的 symbol 类型标识，没有类似 type 的特殊保留关键字；
 
 - 拥有足够的容错能力，在验证期间通常不需要使用 try/catch 来捕获异常，返回的 path 路径信息可快速定位错误节点；
 
-- 支持按需扩展自定义数据类型，实现最小化集成。
-
-### Install
-
-```
-npm install typea
-```
+- 轻量级、支持按需扩展自定义数据类型，实现最小化集成。
 
 ### Examples
 
 ```js
-import types from "typea";
+import types, { string, number, boolean, object } from "typea";
+import { optional, union, partial } from "typea/utility";
 
 // 按需添加扩展类型
 import email from "typea/email.js";
@@ -69,13 +64,10 @@ types.add("int", {
     }
   },
 });
-```
-
-```js
-import types, { string, number, boolean, object } from "typea";
-import { optional, union, partial } from "typea/utility";
 
 const { email, mobilePhone, int } = types;
+
+// 创建镜像数据模型
 
 const category = {
   id: number,
@@ -85,9 +77,8 @@ const category = {
 
 const categorys = [...object(category)];
 
-category.childs = categorys; // 循环引用，递归验证，注意!：如果验证数据中也同样存在循环引用，会导致无限循环
+category.childs = categorys; // 建立循环引用，递归验证，注意!：如果验证数据中也同样存在循环引用，会导致无限循环
 
-// 创建数据模型
 const schema = types({
   id: number,
   name: string,
@@ -109,11 +100,12 @@ const schema = types({
   methods: {
     open() {}, // func 类型
   },
-  description: optional(string), // 可选属性
+  description: string({ optional: true }), // 可选属性
   ...string, // 索引签名，扩展赋值为 [$index]: string，作用等同于 TS 类型申明 [name: string]: string
 });
 
 // 使用数据模型校验数据
+
 const { error, data } = schema.verify({
   id: 123,
   name: "test",
@@ -175,7 +167,7 @@ const { error, data } = schema.verify({
   },
   string1: "s1",
   string2: "s2",
-  string3: "s3",,
+  string3: "s3",
 });
 
 if (error) {
@@ -183,6 +175,12 @@ if (error) {
 } else {
   console.log(data);
 }
+```
+
+### Install
+
+```
+npm install typea
 ```
 
 ### 类型

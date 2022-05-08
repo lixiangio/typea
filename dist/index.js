@@ -5,10 +5,11 @@ import * as types from './types.js';
 export * from './common.js';
 export * from './types.js';
 export { $index };
-export default function typea(schema) {
+export default function typea(node) {
     return {
+        node,
         verify(data) {
-            const result = entry(schema, data);
+            const result = entry(node, data);
             if (result.error) {
                 const [point] = result.error;
                 if (point === '.') {
