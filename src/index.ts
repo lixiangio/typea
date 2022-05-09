@@ -53,17 +53,8 @@ typea.add = function (name: string, methods: Methods): void {
     throw new Error(`name 参数必须为 string 类型`);
   }
 
-  const typeFn = typea[name];
-
-  // 扩展已添加的类型函数
-  if (typeFn) {
-
-    Object.assign(typeFn[methodKey], methods);
-
-  }
-
   // 创建新的类型函数
-  else {
+  if (typea[name] === undefined) {
 
     typea[name] = Type(name, methods);
 

@@ -6,12 +6,12 @@ test('mixing', t => {
   const { mongoId, email, mobilePhone } = types;
 
   const schema = types({
-    "name": string({
-      "name": "名称",
-      "default": "默认值"
+    username: string({
+      comment: "用户名",
+      default: "lili"
     }),
     "num": number({ set() { return 666; } }),
-    "ObjectId": mongoId,
+    "objectId": mongoId,
     "user": {
       "username": "莉莉",
       "age": Number,
@@ -49,9 +49,9 @@ test('mixing', t => {
   });
 
   const sample = {
-    "name": "测试",
+    "username": "lili",
     "num": 123456789987,
-    "ObjectId": "59c8aea808deec3fc8da56b6",
+    "objectId": "59c8aea808deec3fc8da56b6",
     "files": ["abc.js", "334", "null", "666", "12"],
     "user": {
       "username": "莉莉",
@@ -96,6 +96,8 @@ test('mixing', t => {
     "email": "xxx@xx.com",
     "arr": ['jjsd', 'ddd']
   }
+
+  // console.log(schema.node.num.name)
 
   const { error, data } = schema.verify(sample);
 

@@ -1,9 +1,9 @@
 import test from 'jtm';
-import types, { number, string, object } from 'typea';
+import types, { object, number, string } from 'typea';
 
 test('object', t => {
 
-  const type = {
+  const schema = types({
     a: {
       a1: number({ optional: true }),
       a2: Number
@@ -17,8 +17,8 @@ test('object', t => {
       set(fn(1, 1));
       // return { s: String, m: Number }
     },
-    // ...object({ a: 1, b: 2 })
-  };
+    ...object({ a: 1, b: 2 })
+  });
 
   const sample = {
     a: {
@@ -29,9 +29,17 @@ test('object', t => {
     f(a, b) {
       return a + b
     },
+    o1: {
+      a: 1,
+      b: 2
+    },
+    o2: {
+      a: 1,
+      b: 2
+    }
   }
-  
-  const { error, data } = types(type).verify(sample);
+
+  const { error, data } = schema.verify(sample);
 
   sample.b = 20;
   sample.f = 2;

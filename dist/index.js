@@ -1,6 +1,6 @@
 import { entry } from './router.js';
 import { Type } from './create.js';
-import { methodKey, $index } from './common.js';
+import { $index } from './common.js';
 import * as types from './types.js';
 export * from './common.js';
 export * from './types.js';
@@ -30,11 +30,7 @@ typea.add = function (name, methods) {
     if (typeof name !== 'string') {
         throw new Error(`name 参数必须为 string 类型`);
     }
-    const typeFn = typea[name];
-    if (typeFn) {
-        Object.assign(typeFn[methodKey], methods);
-    }
-    else {
+    if (typea[name] === undefined) {
         typea[name] = Type(name, methods);
     }
 };

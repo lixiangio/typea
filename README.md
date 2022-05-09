@@ -34,18 +34,18 @@ Typea 中的很多类型概念引用自 TypeScript，相关概念请参考 [Type
 
 - 轻量级、支持按需扩展自定义数据类型，实现最小化集成。
 
-### Examples
+### Example
 
 ```js
 import types, { string, number, boolean, object } from "typea";
 import { optional, union, partial } from "typea/utility";
 
 // 按需添加扩展类型
-import email from "typea/email.js";
-import mobilePhone from "typea/mobilePhone.js";
+import Email from "typea/email.js";
+import MobilePhone from "typea/mobilePhone.js";
 
-types.add("email", email);
-types.add("mobilePhone", mobilePhone);
+types.add("email", Email);
+types.add("mobilePhone", MobilePhone);
 
 // 创建一个简单的自定义 int 类型，限制其最大返回值
 types.add("int", {
@@ -71,8 +71,7 @@ const { email, mobilePhone, int } = types;
 
 const category = {
   id: number,
-  name: string,
-  link: string,
+  name: string
 };
 
 const categorys = [...object(category)];
@@ -86,11 +85,11 @@ const schema = types({
   mobilePhone,
   categorys,
   union: union(number, "hello", null, [...number], undefined), // Union 联合类型
-  link: [string], // 单次匹配
-  url: [...string], // 连续的零次或多次匹配，类似于 TS 中的 string[]
-  link: [string, ...string], // 一次或多次 string 子匹配
+  url: [string], // 单次匹配
+  link: [...string], // 连续的零次或多次匹配，类似于 TS 中的 string[]
+  list: [string, ...string], // 一次或多次 string 子匹配
   array: [...number, boolean], // 多类型扩展匹配
-  tuple: [string, Number, { name: string }, function () {}], // 多类型固定匹配
+  tuple: [string, Number, { name: string }, function () { }, () => { }], // 多类型固定匹配
   user: partial({
     username: "莉莉", // Literal 字面量
     age: int({ max: 200 }),
@@ -98,7 +97,7 @@ const schema = types({
   }),
   map: { ...number },
   methods: {
-    open() {}, // func 类型
+    open() { }, // func 类型
   },
   description: string({ optional: true }), // 可选属性
   ...string, // 索引签名，扩展赋值为 [$index]: string，作用等同于 TS 类型申明 [name: string]: string
@@ -112,10 +111,10 @@ const { error, data } = schema.verify({
   email: "gmail@gmail.com",
   mobilePhone: "18666666666",
   union: 100,
-  list: ["a", "b", "c"],
-  array: [1, 6, 8, 12, true],
   url: ["https://github.com/"],
+  list: ["a", "b", "c"],
   link: ["https://github.com/", "https://www.google.com/"],
+  array: [1, 6, 8, 12, true],
   categorys: [
     {
       id: 1,
@@ -144,10 +143,10 @@ const { error, data } = schema.verify({
     "hello word",
     123,
     { name: "lili" },
-    () => {},
     function (v) {
       return v++;
     },
+    () => { },
   ],
   title: "hello",
   user: {
@@ -330,7 +329,7 @@ const { string, number } = types;
 
 const numberAllowNull = number({ optional: true });
 
-const { error, data } = types({
+const schema = types({
   a: [string],
   b: [numberAllowNull],
   c: [{ a: Number, b: Number }],
@@ -349,7 +348,9 @@ const { error, data } = types({
     String,
   ],
   e: Array,
-}).verify({
+});
+
+const { error, data } = schema.verify({
   a: ["dog", "cat"],
   b: [123, 456, 789],
   c: [{ a: 1 }, { a: 2 }, { b: "3" }],
