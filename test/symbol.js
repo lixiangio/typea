@@ -1,11 +1,11 @@
 import test from 'jtm';
-import types from 'typea';
+import { Schema } from 'typea';
 
 test('symbol', t => {
 
    const sample = Symbol('x');
 
-   const schema = types(Symbol)
+   const schema = Schema(Symbol)
 
    const { error, data } = schema.verify(sample);
 
@@ -17,7 +17,7 @@ test('symbol[]', t => {
 
    const sample = [Symbol('x'), Symbol('y')];
 
-   const schema = types([...Symbol])
+   const schema = Schema([...Symbol])
 
    const { error, data } = schema.verify(sample);
 
@@ -32,7 +32,7 @@ test('{ [name: string]: symbol }', t => {
       y: Symbol('y'),
    }
 
-   const schema = types({
+   const schema = Schema({
       x: Symbol,
       y: Symbol
    })

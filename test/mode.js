@@ -1,5 +1,5 @@
 import test from 'jtm'
-import types from 'typea';
+import { Schema, types } from 'typea';
 
 const { string } = types;
 
@@ -14,7 +14,7 @@ test("strict", t => {
       }
    };
 
-   const { data, error } = types({
+   const { data, error } = Schema({
       a: string({ optional: true }),
       b: [String, String],
       c: String,

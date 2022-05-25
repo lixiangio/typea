@@ -1,9 +1,9 @@
 import test from 'jtm';
-import types, { object, number, string } from 'typea';
+import { Schema, object, number, string } from 'typea';
 
 test('object', t => {
 
-  const schema = types({
+  const schema = Schema({
     a: {
       a1: number({ optional: true }),
       a2: Number
@@ -60,7 +60,7 @@ test('object null', async t => {
 
   const stringAllowNull = string({ optional: true })
 
-  const { error } = types({
+  const { error } = Schema({
     a: string({
       default: 'xxx',
       optional: true,
@@ -79,7 +79,7 @@ test('object null', async t => {
 
 test('[...object]', t => {
 
-  const schema = types([...object({
+  const schema = Schema([...object({
     a: Number,
     b: number({ optional: true })
   })]);
@@ -94,7 +94,7 @@ test('[...object]', t => {
 
 test('{...object}', t => {
 
-  const schema = types({
+  const schema = Schema({
     ...object({
       a: Number,
       b: number({ optional: true })

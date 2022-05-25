@@ -1,26 +1,33 @@
 import { entry } from './router.js';
-import { Type } from './create.js';
-import type { Methods } from './create.js';
-import { methodKey, $index } from './common.js';
-import * as types from './types.js';
+import { $index } from './common.js';
+import type { Methods, Return } from './common.js';
+import * as baseTypes from './types.js';
+import { Base } from './createType.js';
+
 export * from './common.js';
 export * from './types.js';
 
 export { $index };
 
-/**
- * @param node 验证节点模型
- */
-export default function typea(node: any) {
+interface Schema {
+  node: any
+  /**
+   * @param data 需要验证的数据
+   */
+  verify(data: any): {
+    data?: any,
+    error?: string
+  }
+}
 
-  // chema 静态检查、优化
+export function Schema(node: any): Schema {
 
   return {
     node,
     /**
      * @param data 需要验证的数据
      */
-    verify(data: any) {
+    verify(data: any): Return {
 
       const result = entry(node, data);
 
@@ -36,28 +43,36 @@ export default function typea(node: any) {
       }
 
     }
-  };
+  }
 
 }
 
-Object.assign(typea, types);
+interface Types { [name: string]: Function }
+
+export const types: Types = { ...baseTypes }
 
 /**
  * 添加自定义数据类型
  * @param name 数据类型名称
  * @param methods 扩展方法
  */
-typea.add = function (name: string, methods: Methods): void {
+export function createType(name: string, methods: Methods) {
 
   if (typeof name !== 'string') {
     throw new Error(`name 参数必须为 string 类型`);
   }
 
-  // 创建新的类型函数
-  if (typea[name] === undefined) {
+  const type = Base(name, methods);
 
-    typea[name] = Type(name, methods);
-
-  }
+  return types[name] = type;
 
 }
+
+/**
+ * @param node 验证节点模型
+ */
+function typea(node: any) { return Schema(node); };
+
+typea.add = createType;
+
+export default typea;

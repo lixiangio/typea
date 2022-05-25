@@ -1,5 +1,6 @@
 import { entry } from './router.js';
 import { methodKey, optionalKey, $index, enumerableIterator } from './common.js';
+import type { ExtensionNode } from './common.js';
 
 const { hasOwnProperty } = Object.prototype;
 
@@ -21,9 +22,9 @@ export function optional(node: unknown) {
 /**
  * 将传入结构体对象内的所有属性全部定义为可选
  */
-export function partial(node: object | any[]) {
+export function partial(node: ExtensionNode) {
 
-  const newNode = {};
+  const newNode: ExtensionNode = {};
 
   for (const name in node) {
     const subNode = node[name];
@@ -41,9 +42,9 @@ export function partial(node: object | any[]) {
 /**
  * 对象必选属性，将所有可选属性转为必选类型
  */
-export function required(node: object) {
+export function required(node: ExtensionNode) {
 
-  const newNode = {};
+  const newNode: ExtensionNode = {};
 
   for (const name in node) {
     const subNode = node[name];
@@ -59,11 +60,11 @@ export function required(node: object) {
 }
 
 /**
- * 对象选择类型，从已有模型中选取属性，创建新的模型
+ * 从已有模型中选取属性，创建新的模型
  */
-export function pick(node: object, ...keys: string[]) {
+export function pick(node: ExtensionNode, ...keys: string[]) {
 
-  const newNode = {};
+  const newNode: ExtensionNode = {};
 
   for (const key of keys) {
     if (hasOwnProperty.call(node, key)) {
@@ -85,7 +86,7 @@ export function pick(node: object, ...keys: string[]) {
  */
 export function omit(node: object, ...keys: string[]) {
 
-  const newNode = { ...node };
+  const newNode: ExtensionNode = { ...node };
 
   for (const key of keys) {
     delete newNode[key];
@@ -106,7 +107,7 @@ export function union(...nodes: unknown[]) {
 
   Object.defineProperty(newNode, methodKey, {
     value(options: undefined, value: any) {
-      let errorInfo: string;
+      let errorInfo = '';
       for (const item of nodes) {
         const { error, data } = entry(item, value);
         if (error) {

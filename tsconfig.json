@@ -6,13 +6,14 @@
     "target": "esnext",
     "module": "esnext",
     "outDir": "dist",
+    "strict": true,
     "removeComments": true,
+    "declaration": true,
     "paths": {
       "typea": [
         "./src/index"
       ]
     },
-    // "strict": true,
     "moduleResolution": "node"
   }
 }

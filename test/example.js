@@ -1,16 +1,16 @@
 import test from 'jtm';
-import types, { string, number, boolean, object } from "typea";
+import { createType, Schema, string, number, boolean, object } from "typea";
 import { optional, union, partial } from "typea/utility";
 
 // 按需添加扩展类型
 import Email from "typea/email.js";
 import MobilePhone from "typea/mobilePhone.js";
 
-types.add("email", Email);
-types.add("mobilePhone", MobilePhone);
+const email = createType("email", Email);
+const mobilePhone = createType("mobilePhone", MobilePhone);
 
 // 创建一个简单的自定义 int 类型，限制其最大返回值
-types.add("int", {
+const int = createType("int", {
   type(data) {
     if (Number.isInteger(data)) {
       return { data };
@@ -29,8 +29,6 @@ types.add("int", {
 
 test('example', t => {
 
-  const { email, mobilePhone, int } = types;
-
   // 创建镜像数据模型
 
   const category = {
@@ -42,12 +40,12 @@ test('example', t => {
 
   category.childs = categorys; // 建立循环引用，递归验证，注意!：如果验证数据中也同样存在循环引用，会导致无限循环
 
-  const schema = types({
+  const schema = Schema({
     id: number,
     name: string,
     email,
-    mobilePhone,
     categorys,
+    mobilePhone,
     union: union(number, "hello", null, [...number], undefined), // Union 联合类型
     url: [string], // 单次匹配
     link: [...string], // 连续的零次或多次匹配，类似于 TS 中的 string[]

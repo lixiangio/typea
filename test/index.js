@@ -1,11 +1,11 @@
 import test from 'jtm'
-import types, { number, string, object, any } from 'typea';
+import {  Schema, number, string, object, any, types } from 'typea';
 
 test('mixing', t => {
 
   const { mongoId, email, mobilePhone } = types;
 
-  const schema = types({
+  const schema = Schema({
     username: string({
       comment: "用户名",
       default: "lili"

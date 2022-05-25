@@ -1,5 +1,5 @@
 import test from 'jtm';
-import types, { $index } from 'typea';
+import { Schema, $index } from 'typea';
 
 test("$index", t => {
 
@@ -22,7 +22,7 @@ test("$index", t => {
     }
   };
 
-  const schema = types({
+  const schema = Schema({
     x: Number,
     [$index]: {
       type: Number,

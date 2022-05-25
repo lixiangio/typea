@@ -11,7 +11,6 @@ export function entry(node, data) {
                 return object(node, data);
             }
             else {
-                console.log(node);
                 return { error: " 值必须为 object 类型" };
             }
         }
@@ -23,7 +22,7 @@ export function entry(node, data) {
                 return { error: ` 值必须为 array 类型` };
             }
         }
-        else if (typeof node === 'function') {
+        else {
             if (typeof data === 'function') {
                 node(data, (value) => data = value);
                 return { data };
@@ -89,7 +88,7 @@ export function object(node, data) {
 export function array(node, data) {
     const result = [];
     let index = 0;
-    let iteratorError;
+    let iteratorError = '';
     for (const item of node) {
         if (item instanceof Object) {
             if (hasOwnProperty.call(item, extensionNode)) {
@@ -122,7 +121,7 @@ export function array(node, data) {
                 else {
                     index++;
                     result.push(subData);
-                    iteratorError = null;
+                    iteratorError = '';
                 }
             }
         }
@@ -130,7 +129,7 @@ export function array(node, data) {
             if (item === data[index]) {
                 index++;
                 result.push(item);
-                iteratorError = null;
+                iteratorError = '';
             }
             else {
                 return { error: `[${index}] 值必须为 ${item}，实际得到 ${data[index]}` };

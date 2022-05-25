@@ -1,10 +1,10 @@
 import test from 'jtm';
-import types from 'typea';
+import { Schema } from 'typea';
 import { optional } from 'typea/utility';
 
 test("optional", t => {
 
-  const schema = types({
+  const schema = Schema({
     data: optional({
       name: String,
       value: {}

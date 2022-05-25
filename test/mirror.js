@@ -1,5 +1,5 @@
 import test from 'jtm';
-import types from 'typea';
+import {  Schema, types } from 'typea';
 
 const { mongoId, email, mobilePhone } = types;
 
@@ -52,10 +52,9 @@ const sample = {
    "arr": ['jjsd', 'ddd']
 }
 
-
 test('结构镜像', t => {
 
-   const { error, data } = types({
+   const { error, data } = Schema({
       "name": String,
       "num": String,
       "ObjectId": mongoId,
@@ -110,10 +109,9 @@ test('结构镜像', t => {
 
 });
 
-
 test('结构、值镜像', t => {
 
-   const { error, data } = types(sample).verify(sample);
+   const { error, data } = Schema(sample).verify(sample);
 
    // console.log(data);
 

@@ -1,8 +1,6 @@
 import test from 'jtm';
-import types from 'typea';
+import { Schema,  string, number } from 'typea';
 import { partial } from 'typea/utility';
-
-const { string, number } = types;
 
 test("partial", t => {
 
@@ -13,7 +11,7 @@ test("partial", t => {
     // data: { value: 1 }
   };
 
-  const schema = types(partial({
+  const schema = Schema(partial({
     nane: string,
     list: [number, Boolean, Boolean, number],
     age: number,

@@ -56,7 +56,7 @@ export function union(...nodes) {
     const newNode = {};
     Object.defineProperty(newNode, methodKey, {
         value(options, value) {
-            let errorInfo;
+            let errorInfo = '';
             for (const item of nodes) {
                 const { error, data } = entry(item, value);
                 if (error) {

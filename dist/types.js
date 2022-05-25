@@ -1,5 +1,5 @@
-import { Type, Struct, baseTypeBind } from './create.js';
-export const string = Type("string", {
+import { Base, Struct, typeBind } from './createType.js';
+export const string = Base("string", {
     type(data) {
         if (typeof data === 'string') {
             return { data };
@@ -42,7 +42,7 @@ export const string = Type("string", {
         }
     }
 });
-export const number = Type("number", {
+export const number = Base("number", {
     type(data) {
         if (typeof data === 'number') {
             return { data };
@@ -77,7 +77,7 @@ export const number = Type("number", {
         }
     }
 });
-export const boolean = Type("boolean", {
+export const boolean = Base("boolean", {
     type(data) {
         if (typeof data === 'boolean') {
             return { data };
@@ -87,7 +87,7 @@ export const boolean = Type("boolean", {
         }
     }
 });
-export const symbol = Type("symbol", {
+export const symbol = Base("symbol", {
     type(data) {
         if (typeof data === 'symbol') {
             return { data };
@@ -97,7 +97,7 @@ export const symbol = Type("symbol", {
         }
     }
 });
-export const func = Type("func", {
+export const func = Base("func", {
     type(data) {
         if (typeof data === 'function') {
             return { data };
@@ -107,11 +107,14 @@ export const func = Type("func", {
         }
     }
 });
-baseTypeBind(String, string);
-baseTypeBind(Number, number);
-baseTypeBind(Boolean, boolean);
-baseTypeBind(Symbol, symbol);
-baseTypeBind(Function, func);
+export const any = Base("any", {
+    type(data) { return { data }; }
+});
+typeBind(String, string);
+typeBind(Number, number);
+typeBind(Boolean, boolean);
+typeBind(Function, func);
+typeBind(Symbol, symbol);
 export const array = Struct("array", {
     type(data) {
         if (Array.isArray(data)) {
@@ -149,6 +152,5 @@ export const object = Struct("object", {
         }
     }
 });
-baseTypeBind(Array, array);
-baseTypeBind(Object, object);
-export const any = Type("any", { type(data) { return { data }; } });
+typeBind(Array, array);
+typeBind(Object, object);

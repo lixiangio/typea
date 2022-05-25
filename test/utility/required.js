@@ -1,5 +1,5 @@
 import test from 'jtm';
-import types, { string, number } from 'typea';
+import { Schema, string, number } from 'typea';
 import { required, optional } from 'typea/utility';
 
 test("required", t => {
@@ -11,7 +11,7 @@ test("required", t => {
     data: { value: 1 },
   })
 
-  const schema = types(struct);
+  const schema = Schema(struct);
 
   const sample = {
     nane: 'lili',

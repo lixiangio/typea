@@ -1,11 +1,9 @@
 import test from 'jtm'
-import types from 'typea';
+import { Schema, number } from 'typea';
 
 test("type", t => {
 
-  const { number } = types;
-
-  const schema = types({
+  const schema = Schema({
     users: {
       type: {
         type: {

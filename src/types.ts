@@ -1,11 +1,7 @@
-import { Type, Struct, baseTypeBind } from './create.js';
+import type { Return } from './common.js';
+import { Base, Struct, typeBind } from './createType.js';
 
-interface Return {
-  data?: any,
-  error?: string,
-}
-
-export const string = Type("string", {
+export const string = Base("string", {
   // 验证 string 类型
   type(data: string): Return {
     if (typeof data === 'string') {
@@ -49,7 +45,7 @@ export const string = Type("string", {
   }
 });
 
-export const number = Type("number", {
+export const number = Base("number", {
   type(data: number): Return {
     if (typeof data === 'number') {
       return { data };
@@ -82,7 +78,7 @@ export const number = Type("number", {
   }
 });
 
-export const boolean = Type("boolean", {
+export const boolean = Base("boolean", {
   type(data: boolean): Return {
     if (typeof data === 'boolean') {
       return { data }
@@ -92,7 +88,7 @@ export const boolean = Type("boolean", {
   }
 });
 
-export const symbol = Type("symbol", {
+export const symbol = Base("symbol", {
   type(data: symbol): Return {
     if (typeof data === 'symbol') {
       return { data }
@@ -102,7 +98,7 @@ export const symbol = Type("symbol", {
   }
 });
 
-export const func = Type("func", {
+export const func = Base("func", {
   type(data: () => object): Return {
     if (typeof data === 'function') {
       return { data }
@@ -112,14 +108,16 @@ export const func = Type("func", {
   }
 });
 
+export const any = Base("any", {
+  type(data: any): Return { return { data } }
+});
 
 /** 绑定基础类型 */
-baseTypeBind(String, string);
-baseTypeBind(Number, number);
-baseTypeBind(Boolean, boolean);
-baseTypeBind(Symbol, symbol);
-baseTypeBind(Function, func);
-
+typeBind(String, string);
+typeBind(Number, number);
+typeBind(Boolean, boolean);
+typeBind(Function, func);
+typeBind(Symbol, symbol);
 
 // 结构体数组
 export const array = Struct("array", {
@@ -159,9 +157,5 @@ export const object = Struct("object", {
   }
 });
 
-baseTypeBind(Array, array);
-baseTypeBind(Object, object);
-
-/////////////////////// 非基础类型 ///////////////////////
-
-export const any = Type("any", { type(data: any): Return { return { data } } });
+typeBind(Array, array);
+typeBind(Object, object);

@@ -1,11 +1,11 @@
 import test from 'jtm';
-import types, { number, string, object } from 'typea';
+import { Schema, types, number, string, object, any } from 'typea';
 
 test('扩展运算符 [...]', t => {
 
-  const { mongoId, email, mobilePhone, date, any } = types;
+  const { mongoId, email, mobilePhone, date } = types;
 
-  const schema = types({
+  const schema = Schema({
     id: mongoId,
     email,
     emais: [email, email({ optional: true })],
@@ -35,7 +35,7 @@ test('扩展运算符 [...]', t => {
 
 test('array [[...]]', t => {
 
-  const schema = types({
+  const schema = Schema({
     a: [number, ...number],
     b: [...string, number],
     c: [...number],

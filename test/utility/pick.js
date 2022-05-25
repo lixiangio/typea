@@ -1,8 +1,6 @@
 import test from 'jtm';
-import types from 'typea';
+import { Schema, string, number } from 'typea';
 import { pick } from 'typea/utility';
-
-const { string, number } = types;
 
 test("pick", t => {
 
@@ -20,7 +18,7 @@ test("pick", t => {
     data: { value: 1 },
   };
 
-  const schema = types(pick(struct, 'nane', 'list'));
+  const schema = Schema(pick(struct, 'nane', 'list'));
 
   const { error, data } = schema.verify(sample);
 

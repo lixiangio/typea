@@ -16,7 +16,7 @@ Typea 中的很多类型概念引用自 TypeScript，相关概念请参考 [Type
 
 - 支持 [Optional Properties](https://www.typescriptlang.org/docs/handbook/2/objects.html#optional-properties) 可选属性，使用 optional( type ) 函数代替 TS 的 name? 属性修饰符；
 
-- 支持 [Index Signatures](https://www.typescriptlang.org/docs/handbook/2/objects.html#index-signatures) 索引签名，使用 [ $key ] 为动态属性添加类型约束；
+- 支持 [Index Signatures](https://www.typescriptlang.org/docs/handbook/2/objects.html#index-signatures) 索引签名，使用 [ $index ] 为动态属性添加类型约束；
 
 - 支持 [Union Types](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#union-types) 联合类型，匹配多个类型声明中的一个；
 
@@ -37,35 +37,15 @@ Typea 中的很多类型概念引用自 TypeScript，相关概念请参考 [Type
 ### Example
 
 ```js
-import types, { string, number, boolean, object } from "typea";
+import { Schema, createType, string, number, boolean, object } from "typea";
 import { optional, union, partial } from "typea/utility";
 
 // 按需添加扩展类型
 import Email from "typea/email.js";
 import MobilePhone from "typea/mobilePhone.js";
 
-types.add("email", Email);
-types.add("mobilePhone", MobilePhone);
-
-// 创建一个简单的自定义 int 类型，限制其最大返回值
-types.add("int", {
-  type(data) {
-    if (Number.isInteger(data)) {
-      return { data };
-    } else {
-      return { error: "值必须为 int 类型" };
-    }
-  },
-  max(data, max) {
-    if (data > max) {
-      return { error: `值不能大于"${max}"` };
-    } else {
-      return { data };
-    }
-  },
-});
-
-const { email, mobilePhone, int } = types;
+const email = createType("email", Email);
+const mobilePhone = createType("mobilePhone", MobilePhone);
 
 // 创建镜像数据模型
 
@@ -74,11 +54,11 @@ const category = {
   name: string
 };
 
-const categorys = [...object(category)];
+const categorys = [...object(category)]; // 包含多个 category 的数组
 
-category.childs = categorys; // 建立循环引用，递归验证，注意!：如果验证数据中也同样存在循环引用，会导致无限循环
+category.childs = categorys; // 循环引用，递归验证 (注意！如果验证数据中也同样存在循环引用，会导致无限循环)
 
-const schema = types({
+const schema = Schema({
   id: number,
   name: string,
   email,
@@ -92,7 +72,7 @@ const schema = types({
   tuple: [string, Number, { name: string }, function () { }, () => { }], // 多类型固定匹配
   user: partial({
     username: "莉莉", // Literal 字面量
-    age: int({ max: 200 }),
+    age: number({ max: 200 }),
     address: optional([{ city: String }, { city: "母鸡" }]),
   }),
   map: { ...number },
@@ -257,16 +237,16 @@ npm install typea
 typea 库中包含了以下常见类型，默认不引用，推荐按需扩展。
 
 ```js
-import types from "typea";
+import { createType } from "typea";
 import date from "typea/date.js";
 import email from "typea/email.js";
 import mobilePhone from "typea/mobilePhone.js";
 import mongoId from "typea/mongoId.js";
 
-types.add(date.name, date);
-types.add(email.name, email);
-types.add(mobilePhone.name, mobilePhone);
-types.add(mongoId.name, mongoId);
+createType(date.name, date);
+createType(email.name, email);
+createType(mobilePhone.name, mobilePhone);
+createType(mongoId.name, mongoId);
 ```
 
 ##### email
@@ -283,11 +263,11 @@ types.add(mongoId.name, mongoId);
 
 ### 自定义数据类型
 
-typea 中仅内置了少量常见的数据类型，如果不能满足需求，可以通过 types.add() 方法搭配 validator 等第三方库自行扩展。
+typea 中仅内置了少量常见的数据类型，如果不能满足需求，可以通过 createType 方法搭配 validator 等第三方库自行扩展。
 
 > 当定义的数据类型已存在时则合并，新的验证函数会覆盖内置的同名验证函数。
 
-#### types.add(name, options)
+#### createType(name, options)
 
 - `name` _function, symbol, string_ - 类型名称（必选）
 
@@ -302,7 +282,7 @@ typea 中仅内置了少量常见的数据类型，如果不能满足需求，�
   - `[$name](data, options)` _function_ - 自定义验证函数（可选）
 
 ```js
-types.add("int", {
+createType("int", {
   type(data) {
     if (Number.isInteger(data)) {
       return { data };
@@ -325,11 +305,11 @@ types.add("int", {
 ```js
 // 数组验证
 
-const { string, number } = types;
+import { Schema, string, number  } from "typea";
 
 const numberAllowNull = number({ optional: true });
 
-const schema = types({
+const schema = Schema({
   a: [string],
   b: [numberAllowNull],
   c: [{ a: Number, b: Number }],
@@ -390,9 +370,9 @@ const sample = {
   },
 };
 
-const { number } = types;
+import { Schema, number } from "typea";
 
-const { error, data } = types({
+const { error, data } = Schema({
   a: {
     a1: number({ optional: true }),
     a2: 12,
@@ -407,7 +387,9 @@ const { error, data } = types({
 ```js
 // 扩展数据类型
 
-types.add("int", {
+import { Schema, createType } from "typea";
+
+const int = createType("int", {
   type(data) {
     if (Number.isInteger(data)) {
       return { data };
@@ -417,7 +399,5 @@ types.add("int", {
   },
 });
 
-const { int } = types;
-
-const { error, data } = types({ age: int }).verify({ age: 20 });
+const { error, data } = Schema({ age: int }).verify({ age: 20 });
 ```

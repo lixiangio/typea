@@ -1,7 +1,5 @@
 import test from 'jtm';
-import types from 'typea';
-
-const { string } = types;
+import { Schema, string } from 'typea';
 
 test('null、undefined', t => {
 
@@ -14,7 +12,7 @@ test('null、undefined', t => {
 
   const stringAllowNull = string({ optional: true })
 
-  const { error } = types({
+  const { error } = Schema({
     a: string({
       default: 'xxx',
       optional: true,
@@ -35,7 +33,7 @@ test('null error', t => {
 
   const sample = { b: ["kkk", null] };
 
-  const { error } = types({ b: [String, undefined] }).verify(sample);
+  const { error } = Schema({ b: [String, undefined] }).verify(sample);
 
   t.deepEqual(error, 'b[1] 值必须为 undefined，实际得到 null', error);
 
@@ -45,7 +43,7 @@ test('undefined error', t => {
 
   const sample = { b: ["kkk"] };
 
-  const { error } = types({ b: [String, undefined] }).verify(sample);
+  const { error } = Schema({ b: [String, undefined] }).verify(sample);
 
   t.deepEqual(error, 'b[1] 属性缺失，值必须为 undefined', error);
 

@@ -1,7 +1,7 @@
 import test from 'jtm';
-import types from 'typea';
+import { createType, Schema } from 'typea';
 
-types.add('int', {
+const int = createType('int', {
    type(data) {
       if (Number.isInteger(data)) {
          return { data }
@@ -33,9 +33,7 @@ test(`type('int')`, t => {
       "age": 15,
    };
 
-   const { int } = types;
-
-   const { error, data } = types({
+   const { error, data } = Schema({
       "id": int({ "in": [3, 5, 7, 6] }),
       "age": int({
          "max": 50,

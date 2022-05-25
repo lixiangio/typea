@@ -1,5 +1,5 @@
 import test from 'jtm';
-import types, { string, number, object } from 'typea';
+import { Schema, string, number, object } from 'typea';
 
 test('{ recursive }', t => {
 
@@ -12,7 +12,7 @@ test('{ recursive }', t => {
 
   category.childs.push(...object(category));
 
-  const schema = types(category);
+  const schema = Schema(category);
 
   const sample = {
     id: 1,
@@ -72,7 +72,7 @@ test('[...recursive]', t => {
 
   category.childs = categorys;
 
-  const schema = types(categorys);
+  const schema = Schema(categorys);
 
   const sample = [
     {

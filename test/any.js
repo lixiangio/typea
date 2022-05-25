@@ -1,7 +1,5 @@
 import test from 'jtm';
-import types from 'typea';
-
-const { any } = types;
+import { Schema, any } from 'typea';
 
 test('any', t => {
 
@@ -10,7 +8,7 @@ test('any', t => {
       y: '',
    }
 
-   const schema = types(any);
+   const schema = Schema(any);
 
    const { error, data } = schema.verify(sample);
 
@@ -25,7 +23,7 @@ test('any[]', t => {
       y: '',
    }]
 
-   const schema = types([...any]);
+   const schema = Schema([...any]);
 
    const { error, data } = schema.verify(sample);
 
@@ -40,7 +38,7 @@ test('{ [name: string]: any }', t => {
       y: {},
    }
 
-   const schema = types({
+   const schema = Schema({
       x: any,
       y: any
    })

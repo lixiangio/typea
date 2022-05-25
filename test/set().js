@@ -1,5 +1,5 @@
 import test from 'jtm';
-import types from 'typea';
+import { Schema, number, string } from 'typea';
 
 test('set', t => {
 
@@ -13,9 +13,7 @@ test('set', t => {
       }
    }
 
-   const { number, string, } = types;
-
-   const schema = types({
+   const schema = Schema({
       "name": string({ "default": "lili" }),
       "num": number({ set() { return 666; } }),
       "coupon": string({

@@ -1,11 +1,11 @@
 import { entry } from './router.js';
-import { Type } from './create.js';
 import { $index } from './common.js';
-import * as types from './types.js';
+import * as baseTypes from './types.js';
+import { Base } from './createType.js';
 export * from './common.js';
 export * from './types.js';
 export { $index };
-export default function typea(node) {
+export function Schema(node) {
     return {
         node,
         verify(data) {
@@ -25,12 +25,15 @@ export default function typea(node) {
         }
     };
 }
-Object.assign(typea, types);
-typea.add = function (name, methods) {
+export const types = { ...baseTypes };
+export function createType(name, methods) {
     if (typeof name !== 'string') {
         throw new Error(`name 参数必须为 string 类型`);
     }
-    if (typea[name] === undefined) {
-        typea[name] = Type(name, methods);
-    }
-};
+    const type = Base(name, methods);
+    return types[name] = type;
+}
+function typea(node) { return Schema(node); }
+;
+typea.add = createType;
+export default typea;

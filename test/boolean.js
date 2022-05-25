@@ -1,9 +1,9 @@
 import test from 'jtm';
-import types, { boolean } from 'typea';
+import { Schema, boolean } from 'typea';
 
 test('boolean', t => {
 
-   const { error, data } = types(Boolean).verify(true);
+   const { error, data } = Schema(Boolean).verify(true);
 
    // console.log(data);
 
@@ -14,7 +14,7 @@ test('boolean', t => {
 
 test('inline', t => {
 
-   const schema = types({
+   const schema = Schema({
       a: Boolean,
       b: {
          b1: boolean,
@@ -31,7 +31,7 @@ test('inline', t => {
       },
       c: [true, true, false, true]
    }
-   
+
    const { error, data } = schema.verify(sample);
 
    t.deepEqual(data, sample, error);

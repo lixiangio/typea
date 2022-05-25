@@ -1,3 +1,4 @@
+import type { Return, ExtensionObject } from './common.js';
 import { methodKey, optionsKey, optionalKey, extensionNode, $index } from './common.js';
 
 interface ObjectIndex { [name: string | symbol]: any }
@@ -9,7 +10,7 @@ const { toString, hasOwnProperty } = Object.prototype;
  * @param node 数据模型
  * @param data 数据实例
  */
-export function entry(node: any, data: any) {
+export function entry(node: any, data: any): Return {
 
   // node 为 object 或 array
   if (node instanceof Object) {
@@ -29,7 +30,6 @@ export function entry(node: any, data: any) {
       if (toString.call(data) === '[object Object]') {
         return object(node, data);
       } else {
-        console.log(node)
         return { error: " 值必须为 object 类型" };
       }
 
@@ -47,7 +47,7 @@ export function entry(node: any, data: any) {
     }
 
     // node 为函数表达式
-    else if (typeof node === 'function') {
+    else {
 
       if (typeof data === 'function') {
 
@@ -86,9 +86,9 @@ export function entry(node: any, data: any) {
  * @param node 数据模型
  * @param data 数据实例
  */
-export function object(node: ObjectIndex, data: any) {
+export function object(node: ObjectIndex, data: any): Return {
 
-  const checkNode = {}, result = {};
+  const checkNode: ExtensionObject = {}, result: ExtensionObject = {};
 
   // 提取模型中声明的属性，用于下一步的统一验证
   for (const name in node) {
@@ -185,12 +185,12 @@ export function object(node: ObjectIndex, data: any) {
 * @param node 数据模型
 * @param data 数据实例
 */
-export function array(node: any[], data: any[]) {
+export function array(node: any[], data: any[]): Return {
 
   const result = [];
 
   let index = 0;
-  let iteratorError: string;
+  let iteratorError = '';
 
   for (const item of node) {
 
@@ -229,7 +229,7 @@ export function array(node: any[], data: any[]) {
         } else {
           index++;
           result.push(subData);
-          iteratorError = null;
+          iteratorError = '';
         }
       }
 
@@ -241,7 +241,7 @@ export function array(node: any[], data: any[]) {
       if (item === data[index]) {
         index++;
         result.push(item);
-        iteratorError = null;
+        iteratorError = '';
       } else {
         return { error: `[${index}] 值必须为 ${item}，实际得到 ${data[index]}` };
       }

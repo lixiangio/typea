@@ -1,3 +1,18 @@
+/** 字符串索引签名 */
+export const $index = Symbol('index');
+
+/** 验证方法 */
+export const methodKey = Symbol('method');
+
+/** 可选属性 key */
+export const optionalKey = Symbol('optional?');
+
+/** 选项 key */
+export const optionsKey = Symbol('options');
+
+/** 数组扩展赋值标识 */
+export const extensionNode = Symbol('...array');
+
 export interface Options {
   /** 默认值 */
   default?: any
@@ -9,20 +24,48 @@ export interface Options {
   [name: string | symbol]: unknown
 }
 
-/** 字符串索引签名 */
-export const $index: symbol = Symbol('index');
+export interface Return {
+  error?: string, data?: any
+}
 
-/** 验证方法 */
-export const methodKey: symbol = Symbol('method');
+export interface Methods {
+  type(data: unknown): Return
+  [name: string]: (data: any, option?: any) => Return
+}
 
-/** 可选属性 key */
-export const optionalKey: symbol = Symbol('optional?');
+export interface ExtensionObject { [name: string]: any }
 
-/** 选项 key */
-export const optionsKey: symbol = Symbol('options');
+export interface ExtensionNode { [name: string | number]: any }
 
-/** 数组扩展赋值标识 */
-export const extensionNode: symbol = Symbol('...array');
+export interface TypeObject {
+  /** 类型名称 */
+  name?: string
+  /** 类型选项 */
+  optionsKey?: Options
+  /** 可选属性节点 */
+  optionalKey?: unknown
+  /** 执行方法函数 */
+  methodKey?: (node: any, data?: any) => Return
+}
+
+export interface TypeFn {
+  (options?: Options): TypeFn | TypeObject
+  /** 类型名称 */
+  name?: string
+  /** 执行方法函数 */
+  methodKey?: (node: any, data?: any) => Return
+  [$index]?: () => TypeFn
+  [Symbol.iterator]?: {
+    value: () => {
+      end: boolean,
+      next: () => {}
+    }
+  }
+  /** 数组扩展迭代器 */
+  // [iterator: symbol]: () => { [extensionNode: symbol]: TypeFn }
+  // /** 对象扩展枚举 */
+  // [name: string]: unknown
+}
 
 /**
  * 为类型添加扩展赋值功能

@@ -1,8 +1,6 @@
 import test from 'jtm';
-import types from 'typea';
+import { Schema, string, number } from 'typea';
 import { union } from 'typea/utility';
-
-const { string, number } = types;
 
 test("union", t => {
 
@@ -13,7 +11,7 @@ test("union", t => {
     data: { value: 1 }
   };
 
-  const schema = types({
+  const schema = Schema({
     nane: union(string({ max: 10 }), number({ max: 100 }), [String, number]),
     list: [union(String, number, Boolean), Boolean, Boolean, number],
     age: union(String, number),

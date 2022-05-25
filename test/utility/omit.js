@@ -1,8 +1,6 @@
 import test from 'jtm';
-import types from 'typea';
+import { Schema, string, number } from 'typea';
 import { omit } from 'typea/utility';
-
-const { string, number } = types;
 
 test("omit", t => {
 
@@ -13,7 +11,7 @@ test("omit", t => {
     data: { value: 1 }
   };
 
-  const schema = types(omit({
+  const schema = Schema(omit({
     nane: string,
     list: [number, Boolean, Boolean, number],
     age: number,

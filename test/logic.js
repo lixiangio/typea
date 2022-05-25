@@ -1,5 +1,5 @@
 import test from 'jtm'
-import types from 'typea';
+import {  Schema, number, string, types } from 'typea';
 
 const sample = {
   "name": "测试",
@@ -14,9 +14,9 @@ const sample = {
 
 test('and / or', t => {
 
-  const { email, string, number } = types;
+  const { email } = types;
 
-  const schema = types({
+  const schema = Schema({
     "name": string({
       "default": "测试",
       set(value) {
