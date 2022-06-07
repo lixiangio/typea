@@ -18,7 +18,7 @@ test("pick", t => {
     data: { value: 1 },
   };
 
-  const schema = Schema(pick(struct, 'nane', 'list'));
+  const schema = new Schema(pick(struct, 'nane', 'list'));
 
   const { error, data } = schema.verify(sample);
 

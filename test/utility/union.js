@@ -11,7 +11,7 @@ test("union", t => {
     data: { value: 1 }
   };
 
-  const schema = Schema({
+  const schema = new Schema({
     nane: union(string({ max: 10 }), number({ max: 100 }), [String, number]),
     list: [union(String, number, Boolean), Boolean, Boolean, number],
     age: union(String, number),

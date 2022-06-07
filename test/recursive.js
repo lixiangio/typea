@@ -12,7 +12,7 @@ test('{ recursive }', t => {
 
   category.childs.push(...object(category));
 
-  const schema = Schema(category);
+  const schema = new Schema(category);
 
   const sample = {
     id: 1,
@@ -72,7 +72,7 @@ test('[...recursive]', t => {
 
   category.childs = categorys;
 
-  const schema = Schema(categorys);
+  const schema = new Schema(categorys);
 
   const sample = [
     {

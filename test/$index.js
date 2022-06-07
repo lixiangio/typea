@@ -22,7 +22,7 @@ test("$index", t => {
     }
   };
 
-  const schema = Schema({
+  const schema = new Schema({
     x: Number,
     [$index]: {
       type: Number,

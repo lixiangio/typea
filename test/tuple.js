@@ -8,7 +8,7 @@ test('tuple', t => {
     array: [1, 2, '3']
   };
 
-  const schema = Schema({
+  const schema = new Schema({
     tuple: [String, Number, Function, function () { }, { name: String }],
     array: [...number({ set(v) { return Number(v) } })]
   });

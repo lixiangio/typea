@@ -5,7 +5,7 @@ test('mixing', t => {
 
   const { mongoId, email, mobilePhone } = types;
 
-  const schema = Schema({
+  const schema = new Schema({
     username: string({
       comment: "用户名",
       default: "lili"

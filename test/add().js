@@ -33,7 +33,7 @@ test(`type('int')`, t => {
       "age": 15,
    };
 
-   const { error, data } = Schema({
+   const { error, data } = new Schema({
       "id": int({ "in": [3, 5, 7, 6] }),
       "age": int({
          "max": 50,

@@ -4,7 +4,7 @@ import { optional } from 'typea/utility';
 
 test('[string] 匹配 1 个', t => {
 
-   const schema = Schema([{ 'state': boolean }]);
+   const schema = new Schema([{ 'state': boolean }]);
 
    const sample = [{ state: true }];
 
@@ -16,7 +16,7 @@ test('[string] 匹配 1 个', t => {
 
 test('[string, string] 匹配 2 个', t => {
 
-   const schema = Schema([string, string]);
+   const schema = new Schema([string, string]);
 
    const sample = ['a', 'b'];
 
@@ -30,7 +30,7 @@ test('[string, string] 匹配 2 个', t => {
 
 test('number[] 匹配 0 个或多个', t => {
 
-   const schema = Schema([...number]);
+   const schema = new Schema([...number]);
 
    const sample = [1, 3, 6, 9,];
 
@@ -42,7 +42,7 @@ test('number[] 匹配 0 个或多个', t => {
 
 test('[number, ...number] 至少匹配一个', t => {
 
-   const schema = Schema([number, ...number]);
+   const schema = new Schema([number, ...number]);
 
    const sample = [1];
 
@@ -54,7 +54,7 @@ test('[number, ...number] 至少匹配一个', t => {
 
 test('[[string]]', t => {
 
-   const schema = Schema([[string, string]]);
+   const schema = new Schema([[string, string]]);
 
    const sample = [['a', 'b']];
 
@@ -68,7 +68,7 @@ test('[[string]]', t => {
 
 test('[...object]', t => {
 
-   const schema = Schema([...object({
+   const schema = new Schema([...object({
       a: Number,
       b: number({ optional: true })
    })]);
@@ -83,7 +83,7 @@ test('[...object]', t => {
 
 test('[...array]', t => {
 
-   const schema = Schema([...array([Number, number({ optional: true })])]);
+   const schema = new Schema([...array([Number, number({ optional: true })])]);
 
    const sample = [[1, 10], [5, 20], [3, 4]];
 
@@ -95,7 +95,7 @@ test('[...array]', t => {
 
 test('{...array}', t => {
 
-   const schema = Schema({ ...array([Number, number({ optional: true })]) });
+   const schema = new Schema({ ...array([Number, number({ optional: true })]) });
 
    const sample = {
       a: [1, 2],
@@ -111,7 +111,7 @@ test('{...array}', t => {
 
 test('array 综合示例', t => {
 
-   const schema = Schema({
+   const schema = new Schema({
       a: [number, ...number],
       b: optional([...string, number]),
       c: [...number],

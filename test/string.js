@@ -5,7 +5,7 @@ test('string', t => {
 
    const sample = 'a';
 
-   const { error, data } = Schema(string).verify(sample);
+   const { error, data } = new Schema(string).verify(sample);
 
    t.deepEqual(data, sample, error);
 
@@ -15,7 +15,7 @@ test('string[] or [string]', t => {
 
    const sample = ['a', 'b', 'c'];
 
-   const { error, data } = Schema([...string]).verify(sample);
+   const { error, data } = new Schema([...string]).verify(sample);
 
    t.deepEqual(data, sample, error);
 
@@ -27,7 +27,7 @@ test('[string, string]', t => {
 
    // console.log(string)
 
-   const { error, data } = Schema([string, String]).verify(sample);
+   const { error, data } = new Schema([string, String]).verify(sample);
 
    t.deepEqual(data, sample, error);
 
@@ -35,7 +35,7 @@ test('[string, string]', t => {
 
 test('{string}', t => {
 
-   const schema = Schema({
+   const schema = new Schema({
       x: String,
       y: string({ default: 'word' })
    })
@@ -56,7 +56,7 @@ test('{string}', t => {
 
 test('{...string}', t => {
 
-   const schema = Schema({ ...String })
+   const schema = new Schema({ ...String })
 
    const sample = {
       x: "hello",
@@ -73,7 +73,7 @@ test('{...string}', t => {
 
 test('[...string]', t => {
 
-   const schema = Schema([...string])
+   const schema = new Schema([...string])
 
    const sample = ["hello", "word"];
 

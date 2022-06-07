@@ -13,7 +13,7 @@ test('set', t => {
       }
    }
 
-   const schema = Schema({
+   const schema = new Schema({
       "name": string({ "default": "lili" }),
       "num": number({ set() { return 666; } }),
       "coupon": string({

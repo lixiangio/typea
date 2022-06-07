@@ -11,7 +11,7 @@ test("omit", t => {
     data: { value: 1 }
   };
 
-  const schema = Schema(omit({
+  const schema = new Schema(omit({
     nane: string,
     list: [number, Boolean, Boolean, number],
     age: number,

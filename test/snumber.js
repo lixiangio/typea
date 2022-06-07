@@ -7,7 +7,7 @@ test('snumber', t => {
 
    const sample = '12';
 
-   const { error, data } = Schema(snumber).verify(sample);
+   const { error, data } = new Schema(snumber).verify(sample);
 
    t.deepEqual(data, Number(sample), error);
 
@@ -17,7 +17,7 @@ test('[snumber]', t => {
 
    const sample = ['20'];
 
-   const { error, data } = Schema([snumber]).verify(sample);
+   const { error, data } = new Schema([snumber]).verify(sample);
 
    sample[0] = Number(sample[0]);
 
@@ -30,7 +30,7 @@ test('{snumber}', t => {
 
    const sample = { a: '12' };
 
-   const { error, data } = Schema({ a: snumber }).verify(sample);
+   const { error, data } = new Schema({ a: snumber }).verify(sample);
 
    sample.a = Number(sample.a);
 

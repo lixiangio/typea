@@ -3,7 +3,7 @@ import { Schema, boolean } from 'typea';
 
 test('boolean', t => {
 
-   const { error, data } = Schema(Boolean).verify(true);
+   const { error, data } = new Schema(Boolean).verify(true);
 
    // console.log(data);
 
@@ -14,7 +14,7 @@ test('boolean', t => {
 
 test('inline', t => {
 
-   const schema = Schema({
+   const schema = new Schema({
       a: Boolean,
       b: {
          b1: boolean,

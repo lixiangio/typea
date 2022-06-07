@@ -7,7 +7,7 @@ const numberAllowNull = number({ optional: true });
 
 test('常规', t => {
 
-   const schema = Schema({
+   const schema = new Schema({
       a: {
          a1: numberAllowNull,
          a2: numberAllowNull
@@ -34,7 +34,7 @@ test('常规', t => {
 
 test('strict', t => {
 
-   const schema = Schema({
+   const schema = new Schema({
       a: {
          a1: number,
          a2: number({ optional: true })
@@ -61,7 +61,7 @@ test('strict', t => {
 
 test('loose', t => {
 
-   const schema = Schema({
+   const schema = new Schema({
       a: {
          a1: number,
          a2: numberAllowNull

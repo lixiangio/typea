@@ -11,7 +11,7 @@ test("required", t => {
     data: { value: 1 },
   })
 
-  const schema = Schema(struct);
+  const schema = new Schema(struct);
 
   const sample = {
     nane: 'lili',

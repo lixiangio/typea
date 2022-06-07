@@ -3,7 +3,7 @@ import { Schema, number } from 'typea';
 
 test("type", t => {
 
-  const schema = Schema({
+  const schema = new Schema({
     users: {
       type: {
         type: {

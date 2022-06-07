@@ -68,11 +68,4 @@ export function createType(name: string, methods: Methods) {
 
 }
 
-/**
- * @param node 验证节点模型
- */
-function typea(node: any) { return Schema(node); };
-
-typea.add = createType;
-
-export default typea;
+export default Schema;

@@ -40,7 +40,7 @@ test('example', t => {
 
   category.childs = categorys; // 建立循环引用，递归验证，注意!：如果验证数据中也同样存在循环引用，会导致无限循环
 
-  const schema = Schema({
+  const schema = new Schema({
     id: number,
     name: string,
     email,

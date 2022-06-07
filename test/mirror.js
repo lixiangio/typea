@@ -54,7 +54,7 @@ const sample = {
 
 test('结构镜像', t => {
 
-   const { error, data } = Schema({
+   const { error, data } = new Schema({
       "name": String,
       "num": String,
       "ObjectId": mongoId,
@@ -111,7 +111,7 @@ test('结构镜像', t => {
 
 test('结构、值镜像', t => {
 
-   const { error, data } = Schema(sample).verify(sample);
+   const { error, data } = new Schema(sample).verify(sample);
 
    // console.log(data);
 

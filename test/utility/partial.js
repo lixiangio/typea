@@ -11,7 +11,7 @@ test("partial", t => {
     // data: { value: 1 }
   };
 
-  const schema = Schema(partial({
+  const schema = new Schema(partial({
     nane: string,
     list: [number, Boolean, Boolean, number],
     age: number,

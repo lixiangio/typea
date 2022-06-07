@@ -5,7 +5,7 @@ test('symbol', t => {
 
    const sample = Symbol('x');
 
-   const schema = Schema(Symbol)
+   const schema = new Schema(Symbol)
 
    const { error, data } = schema.verify(sample);
 
@@ -17,7 +17,7 @@ test('symbol[]', t => {
 
    const sample = [Symbol('x'), Symbol('y')];
 
-   const schema = Schema([...Symbol])
+   const schema = new Schema([...Symbol])
 
    const { error, data } = schema.verify(sample);
 
@@ -32,7 +32,7 @@ test('{ [name: string]: symbol }', t => {
       y: Symbol('y'),
    }
 
-   const schema = Schema({
+   const schema = new Schema({
       x: Symbol,
       y: Symbol
    })

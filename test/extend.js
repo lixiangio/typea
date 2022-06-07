@@ -5,7 +5,7 @@ test('扩展运算符 [...]', t => {
 
   const { mongoId, email, mobilePhone, date } = types;
 
-  const schema = Schema({
+  const schema = new Schema({
     id: mongoId,
     email,
     emais: [email, email({ optional: true })],
@@ -35,7 +35,7 @@ test('扩展运算符 [...]', t => {
 
 test('array [[...]]', t => {
 
-  const schema = Schema({
+  const schema = new Schema({
     a: [number, ...number],
     b: [...string, number],
     c: [...number],

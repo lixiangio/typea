@@ -3,7 +3,7 @@ import { Schema, object, number, string } from 'typea';
 
 test('object', t => {
 
-  const schema = Schema({
+  const schema = new Schema({
     a: {
       a1: number({ optional: true }),
       a2: Number
@@ -60,7 +60,7 @@ test('object null', async t => {
 
   const stringAllowNull = string({ optional: true })
 
-  const { error } = Schema({
+  const { error } = new Schema({
     a: string({
       default: 'xxx',
       optional: true,
@@ -79,7 +79,7 @@ test('object null', async t => {
 
 test('[...object]', t => {
 
-  const schema = Schema([...object({
+  const schema = new Schema([...object({
     a: Number,
     b: number({ optional: true })
   })]);
@@ -94,7 +94,7 @@ test('[...object]', t => {
 
 test('{...object}', t => {
 
-  const schema = Schema({
+  const schema = new Schema({
     ...object({
       a: Number,
       b: number({ optional: true })

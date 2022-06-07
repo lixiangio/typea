@@ -14,7 +14,7 @@ test("strict", t => {
       }
    };
 
-   const { data, error } = Schema({
+   const { data, error } = new Schema({
       a: string({ optional: true }),
       b: [String, String],
       c: String,

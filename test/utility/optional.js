@@ -4,7 +4,7 @@ import { optional } from 'typea/utility';
 
 test("optional", t => {
 
-  const schema = Schema({
+  const schema = new Schema({
     data: optional({
       name: String,
       value: {}

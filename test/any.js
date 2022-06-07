@@ -8,7 +8,7 @@ test('any', t => {
       y: '',
    }
 
-   const schema = Schema(any);
+   const schema = new Schema(any);
 
    const { error, data } = schema.verify(sample);
 
@@ -23,7 +23,7 @@ test('any[]', t => {
       y: '',
    }]
 
-   const schema = Schema([...any]);
+   const schema = new Schema([...any]);
 
    const { error, data } = schema.verify(sample);
 
@@ -38,7 +38,7 @@ test('{ [name: string]: any }', t => {
       y: {},
    }
 
-   const schema = Schema({
+   const schema = new Schema({
       x: any,
       y: any
    })

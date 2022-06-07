@@ -16,7 +16,7 @@ test('and / or', t => {
 
   const { email } = types;
 
-  const schema = Schema({
+  const schema = new Schema({
     "name": string({
       "default": "测试",
       set(value) {

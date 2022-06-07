@@ -33,7 +33,4 @@ export function createType(name, methods) {
     const type = Base(name, methods);
     return types[name] = type;
 }
-function typea(node) { return Schema(node); }
-;
-typea.add = createType;
-export default typea;
+export default Schema;
