@@ -2,7 +2,7 @@ import { entry } from './router.js';
 import { $index } from './common.js';
 import type { Methods, Return } from './common.js';
 import * as baseTypes from './types.js';
-import { Base } from './createType.js';
+import { Type } from './createType.js';
 
 export * from './common.js';
 export * from './types.js';
@@ -62,7 +62,7 @@ export function createType(name: string, methods: Methods) {
     throw new Error(`name 参数必须为 string 类型`);
   }
 
-  const type = Base(name, methods);
+  const type = Type(name, methods);
 
   return types[name] = type;
 

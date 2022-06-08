@@ -1,5 +1,5 @@
-import { Base, Struct, typeBind } from './createType.js';
-export const string = Base("string", {
+import { Type, Struct, typeBind } from './createType.js';
+export const string = Type("string", {
     type(data) {
         if (typeof data === 'string') {
             return { data };
@@ -42,7 +42,8 @@ export const string = Base("string", {
         }
     }
 });
-export const number = Base("number", {
+typeBind(String, string);
+export const number = Type("number", {
     type(data) {
         if (typeof data === 'number') {
             return { data };
@@ -77,7 +78,8 @@ export const number = Base("number", {
         }
     }
 });
-export const boolean = Base("boolean", {
+typeBind(Number, number);
+export const boolean = Type("boolean", {
     type(data) {
         if (typeof data === 'boolean') {
             return { data };
@@ -87,7 +89,8 @@ export const boolean = Base("boolean", {
         }
     }
 });
-export const symbol = Base("symbol", {
+typeBind(Boolean, boolean);
+export const symbol = Type("symbol", {
     type(data) {
         if (typeof data === 'symbol') {
             return { data };
@@ -97,7 +100,8 @@ export const symbol = Base("symbol", {
         }
     }
 });
-export const func = Base("func", {
+typeBind(Symbol, symbol);
+export const func = Type("func", {
     type(data) {
         if (typeof data === 'function') {
             return { data };
@@ -107,14 +111,10 @@ export const func = Base("func", {
         }
     }
 });
-export const any = Base("any", {
+typeBind(Function, func);
+export const any = Type("any", {
     type(data) { return { data }; }
 });
-typeBind(String, string);
-typeBind(Number, number);
-typeBind(Boolean, boolean);
-typeBind(Function, func);
-typeBind(Symbol, symbol);
 export const array = Struct("array", {
     type(data) {
         if (Array.isArray(data)) {
@@ -141,6 +141,7 @@ export const array = Struct("array", {
         }
     }
 });
+typeBind(Array, array);
 const { toString } = Object.prototype;
 export const object = Struct("object", {
     type(data) {
@@ -152,5 +153,4 @@ export const object = Struct("object", {
         }
     }
 });
-typeBind(Array, array);
 typeBind(Object, object);

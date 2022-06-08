@@ -1,7 +1,7 @@
 import type { Return } from './common.js';
-import { Base, Struct, typeBind } from './createType.js';
+import { Type, Struct, typeBind } from './createType.js';
 
-export const string = Base("string", {
+export const string = Type("string", {
   // 验证 string 类型
   type(data: string): Return {
     if (typeof data === 'string') {
@@ -45,7 +45,9 @@ export const string = Base("string", {
   }
 });
 
-export const number = Base("number", {
+typeBind(String, string);
+
+export const number = Type("number", {
   type(data: number): Return {
     if (typeof data === 'number') {
       return { data };
@@ -78,7 +80,9 @@ export const number = Base("number", {
   }
 });
 
-export const boolean = Base("boolean", {
+typeBind(Number, number);
+
+export const boolean = Type("boolean", {
   type(data: boolean): Return {
     if (typeof data === 'boolean') {
       return { data }
@@ -88,7 +92,9 @@ export const boolean = Base("boolean", {
   }
 });
 
-export const symbol = Base("symbol", {
+typeBind(Boolean, boolean);
+
+export const symbol = Type("symbol", {
   type(data: symbol): Return {
     if (typeof data === 'symbol') {
       return { data }
@@ -98,7 +104,9 @@ export const symbol = Base("symbol", {
   }
 });
 
-export const func = Base("func", {
+typeBind(Symbol, symbol);
+
+export const func = Type("func", {
   type(data: () => object): Return {
     if (typeof data === 'function') {
       return { data }
@@ -108,16 +116,12 @@ export const func = Base("func", {
   }
 });
 
-export const any = Base("any", {
+typeBind(Function, func);
+
+export const any = Type("any", {
   type(data: any): Return { return { data } }
 });
 
-/** 绑定基础类型 */
-typeBind(String, string);
-typeBind(Number, number);
-typeBind(Boolean, boolean);
-typeBind(Function, func);
-typeBind(Symbol, symbol);
 
 // 结构体数组
 export const array = Struct("array", {
@@ -144,6 +148,8 @@ export const array = Struct("array", {
   }
 });
 
+typeBind(Array, array);
+
 const { toString } = Object.prototype;
 
 // 结构体对象
@@ -157,5 +163,4 @@ export const object = Struct("object", {
   }
 });
 
-typeBind(Array, array);
 typeBind(Object, object);

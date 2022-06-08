@@ -8,7 +8,7 @@ const { toString, hasOwnProperty } = Object.prototype;
  * 创建数据类型函数
  * @param methods 验证方法
  */
-export function Base(name: string, methods: Methods) {
+export function Type(name: string, methods: Methods) {
 
   const typeMethod = methods.type;
 
