@@ -1,12 +1,13 @@
 import test from 'jtm';
 import { Schema, object, number, string } from 'typea';
+import { union } from 'typea/utility';
 
 test('object', t => {
 
   const schema = new Schema({
     a: {
       a1: number({ optional: true }),
-      a2: Number
+      a2: union(number, null)
     },
     b: number({
       set(data) {
@@ -23,12 +24,10 @@ test('object', t => {
   const sample = {
     a: {
       a1: 1,
-      a2: 12,
+      a2: null,
     },
     b: 10,
-    f(a, b) {
-      return a + b
-    },
+    f(a, b) { return a + b },
     o1: {
       a: 1,
       b: 2

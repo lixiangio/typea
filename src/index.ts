@@ -20,32 +20,37 @@ interface Schema {
   }
 }
 
-export function Schema(node: any): Schema {
+class Schema {
+  node: any
+  constructor(node: any) {
 
-  return {
-    node,
-    /**
-     * @param data 需要验证的数据
-     */
-    verify(data: any): Return {
+    this.node = node;
 
-      const result = entry(node, data);
-
-      if (result.error) {
-        const [point] = result.error;
-        if (point === '.') {
-          return { error: result.error.slice(1) };
-        } else {
-          return { error: result.error };
-        }
-      } else {
-        return { data: result.data };
-      }
-
-    }
   }
+  /**
+   * @param data 需要验证的数据
+   */
+  verify(entity: any): Return {
 
+    const result = entry(this.node, entity);
+
+    if (result.error) {
+      const [point] = result.error;
+      if (point === '.') {
+        return { error: result.error.slice(1) };
+      } else {
+        return { error: result.error };
+      }
+    } else {
+      return { data: result.data };
+    }
+
+  }
 }
+
+export { Schema };
+
+export default Schema;
 
 interface Types { [name: string]: Function }
 
@@ -67,5 +72,3 @@ export function createType(name: string, methods: Methods) {
   return types[name] = type;
 
 }
-
-export default Schema;

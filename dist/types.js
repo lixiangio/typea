@@ -1,4 +1,4 @@
-import { Type, Struct, typeBind } from './createType.js';
+import { Type, Struct, TypeBind } from './createType.js';
 export const string = Type("string", {
     type(data) {
         if (typeof data === 'string') {
@@ -42,7 +42,7 @@ export const string = Type("string", {
         }
     }
 });
-typeBind(String, string);
+TypeBind(String, string);
 export const number = Type("number", {
     type(data) {
         if (typeof data === 'number') {
@@ -78,7 +78,7 @@ export const number = Type("number", {
         }
     }
 });
-typeBind(Number, number);
+TypeBind(Number, number);
 export const boolean = Type("boolean", {
     type(data) {
         if (typeof data === 'boolean') {
@@ -89,7 +89,7 @@ export const boolean = Type("boolean", {
         }
     }
 });
-typeBind(Boolean, boolean);
+TypeBind(Boolean, boolean);
 export const symbol = Type("symbol", {
     type(data) {
         if (typeof data === 'symbol') {
@@ -100,7 +100,7 @@ export const symbol = Type("symbol", {
         }
     }
 });
-typeBind(Symbol, symbol);
+TypeBind(Symbol, symbol);
 export const func = Type("func", {
     type(data) {
         if (typeof data === 'function') {
@@ -111,7 +111,7 @@ export const func = Type("func", {
         }
     }
 });
-typeBind(Function, func);
+TypeBind(Function, func);
 export const any = Type("any", {
     type(data) { return { data }; }
 });
@@ -141,7 +141,7 @@ export const array = Struct("array", {
         }
     }
 });
-typeBind(Array, array);
+TypeBind(Array, array);
 const { toString } = Object.prototype;
 export const object = Struct("object", {
     type(data) {
@@ -153,4 +153,4 @@ export const object = Struct("object", {
         }
     }
 });
-typeBind(Object, object);
+TypeBind(Object, object);

@@ -5,26 +5,29 @@ import { Type } from './createType.js';
 export * from './common.js';
 export * from './types.js';
 export { $index };
-export function Schema(node) {
-    return {
-        node,
-        verify(data) {
-            const result = entry(node, data);
-            if (result.error) {
-                const [point] = result.error;
-                if (point === '.') {
-                    return { error: result.error.slice(1) };
-                }
-                else {
-                    return { error: result.error };
-                }
+class Schema {
+    node;
+    constructor(node) {
+        this.node = node;
+    }
+    verify(data) {
+        const result = entry(this.node, data);
+        if (result.error) {
+            const [point] = result.error;
+            if (point === '.') {
+                return { error: result.error.slice(1) };
             }
             else {
-                return { data: result.data };
+                return { error: result.error };
             }
         }
-    };
+        else {
+            return { data: result.data };
+        }
+    }
 }
+export { Schema };
+export default Schema;
 export const types = { ...baseTypes };
 export function createType(name, methods) {
     if (typeof name !== 'string') {
@@ -33,4 +36,3 @@ export function createType(name, methods) {
     const type = Type(name, methods);
     return types[name] = type;
 }
-export default Schema;

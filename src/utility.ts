@@ -125,4 +125,3 @@ export function union(...nodes: unknown[]) {
   return newNode;
 
 }
-

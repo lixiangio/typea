@@ -1,6 +1,6 @@
 import { entry } from './router.js';
-import type { TypeFn, TypeObject, Methods, Return, Options } from './common.js';
 import { methodKey, optionalKey, optionsKey, $index, enumerableIterator } from './common.js';
+import type { TypeFn, TypeObject, Methods, Return, Options } from './common.js';
 
 const { toString, hasOwnProperty } = Object.prototype;
 
@@ -261,7 +261,7 @@ interface TypeBind {
  * @param base 基础类型构造函数
  * @param type 验证类型函数
  */
-export function typeBind(base: Function, type: TypeBind) {
+export function TypeBind(base: Function, type: TypeBind) {
 
   Object.defineProperty(base, methodKey, { value: type[methodKey] });
   Object.defineProperty(base, Symbol.iterator, { value: type[Symbol.iterator] });

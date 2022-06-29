@@ -14,15 +14,15 @@ Typea 中的很多类型概念引用自 TypeScript，相关概念请参考 [Type
 
 - 支持在 Object 结构体中使用 { ...type } 扩展运算符语法定义类型，匹配零个或多个同类型的可选属性；
 
-- 支持 [Optional Properties](https://www.typescriptlang.org/docs/handbook/2/objects.html#optional-properties) 可选属性，使用 optional( type ) 函数代替 TS 的 name? 属性修饰符；
-
-- 支持 [Index Signatures](https://www.typescriptlang.org/docs/handbook/2/objects.html#index-signatures) 索引签名，使用 [ $index ] 为动态属性添加类型约束；
-
 - 支持 [Union Types](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#union-types) 联合类型，匹配多个类型声明中的一个；
 
 - 支持 [partial(type)](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype)、[required(type)](https://www.typescriptlang.org/docs/handbook/utility-types.html#requiredtype)、[pick(type, key)](https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys)、[omit(type, key)](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys) 类型转换函数；
 
-- 支持 [Literal Types](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) 字面量类型赋值匹配，可满足模糊匹配与精准匹配的双重需求；
+- 支持 [Literal Types](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) 字面量赋值匹配，可满足模糊匹配与精准匹配的双重需求；
+
+- 支持 [Optional Properties](https://www.typescriptlang.org/docs/handbook/2/objects.html#optional-properties) 可选属性，使用 optional( type ) 函数代替 TS 的 name? 属性修饰符；
+
+- 支持 [Index Signatures](https://www.typescriptlang.org/docs/handbook/2/objects.html#index-signatures) 索引签名，使用 [ $index ] 为动态属性添加类型约束；
 
 - 支持对象、数组递归验证，只需要按数据结构建模即可，不必担心数据层级深度问题；
 
@@ -37,8 +37,8 @@ Typea 中的很多类型概念引用自 TypeScript，相关概念请参考 [Type
 ### Example
 
 ```js
-import { Schema, createType, string, number, boolean, object } from "typea";
-import { optional, union, partial } from "typea/utility";
+import { Schema, createType, object, number, string, boolean } from "typea";
+import { union, partial } from "typea/utility";
 
 // 按需添加扩展类型
 import Email from "typea/email.js";
@@ -49,12 +49,12 @@ const mobilePhone = createType("mobilePhone", MobilePhone);
 
 // 创建镜像数据模型
 
-const category = {
+const category = object({
   id: number,
   name: string
-};
+});
 
-const categorys = [...object(category)]; // 包含多个 category 的数组
+const categorys = [...category]; // 包含多个 category 的数组
 
 category.childs = categorys; // 循环引用，递归验证 (注意！如果验证数据中也同样存在循环引用，会导致无限循环)
 
@@ -70,11 +70,11 @@ const schema = new Schema({
   list: [string, ...string], // 一次或多次 string 子匹配
   array: [...number, boolean], // 多类型扩展匹配
   tuple: [string, Number, { name: string }, function () { }, () => { }], // 多类型固定匹配
-  user: partial({
+  user: {
     username: "莉莉", // Literal 字面量
     age: number({ max: 200 }),
     address: optional([{ city: String }, { city: "母鸡" }]),
-  }),
+  },
   map: { ...number },
   methods: {
     open() { }, // func 类型

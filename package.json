@@ -1,6 +1,6 @@
 {
    "name": "typea",
-   "version": "8.1.0",
+   "version": "8.2.0",
    "type": "module",
    "description": "JS 数据结构验证、转换器",
    "main": "./dist/index.js",

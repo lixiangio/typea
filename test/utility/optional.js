@@ -2,14 +2,14 @@ import test from 'jtm';
 import { Schema } from 'typea';
 import { optional } from 'typea/utility';
 
-test("optional", t => {
+const schema = new Schema({
+  data: optional({
+    name: String,
+    value: {}
+  })
+});
 
-  const schema = new Schema({
-    data: optional({
-      name: String,
-      value: {}
-    })
-  });
+test("optional", t => {
 
   const sample = {
     data: {
@@ -17,6 +17,16 @@ test("optional", t => {
       value: {}
     }
   };
+
+  const { error, data } = schema.verify(sample);
+
+  t.deepEqual(data, sample, error);
+
+});
+
+test("optional null", t => {
+
+  const sample = {};
 
   const { error, data } = schema.verify(sample);
 

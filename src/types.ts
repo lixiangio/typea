@@ -1,5 +1,5 @@
 import type { Return } from './common.js';
-import { Type, Struct, typeBind } from './createType.js';
+import { Type, Struct, TypeBind } from './createType.js';
 
 export const string = Type("string", {
   // 验证 string 类型
@@ -45,7 +45,7 @@ export const string = Type("string", {
   }
 });
 
-typeBind(String, string);
+TypeBind(String, string);
 
 export const number = Type("number", {
   type(data: number): Return {
@@ -80,7 +80,7 @@ export const number = Type("number", {
   }
 });
 
-typeBind(Number, number);
+TypeBind(Number, number);
 
 export const boolean = Type("boolean", {
   type(data: boolean): Return {
@@ -92,7 +92,7 @@ export const boolean = Type("boolean", {
   }
 });
 
-typeBind(Boolean, boolean);
+TypeBind(Boolean, boolean);
 
 export const symbol = Type("symbol", {
   type(data: symbol): Return {
@@ -104,7 +104,7 @@ export const symbol = Type("symbol", {
   }
 });
 
-typeBind(Symbol, symbol);
+TypeBind(Symbol, symbol);
 
 export const func = Type("func", {
   type(data: () => object): Return {
@@ -116,7 +116,7 @@ export const func = Type("func", {
   }
 });
 
-typeBind(Function, func);
+TypeBind(Function, func);
 
 export const any = Type("any", {
   type(data: any): Return { return { data } }
@@ -148,7 +148,7 @@ export const array = Struct("array", {
   }
 });
 
-typeBind(Array, array);
+TypeBind(Array, array);
 
 const { toString } = Object.prototype;
 
@@ -163,4 +163,4 @@ export const object = Struct("object", {
   }
 });
 
-typeBind(Object, object);
+TypeBind(Object, object);
