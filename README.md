@@ -80,7 +80,7 @@ const schema = new Schema({
     open() { }, // func 类型
   },
   description: string({ optional: true }), // 可选属性
-  ...string, // 索引签名，扩展赋值为 [$index]: string，作用等同于 TS 类型申明 [name: string]: string
+  ...string, // 索引签名，扩展后赋值为 { [indexKey]: string }，作用等同于 TS 类型声明 [name: string]: string
 });
 
 // 使用数据模型校验数据

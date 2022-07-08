@@ -1,12 +1,13 @@
+// @ts-ignore
 import isEmail from './validator/isEmail.js';
-
 export default {
-  name: 'email',
-  type(data) {
-    if (isEmail(String(data))) {
-      return { data }
-    } else {
-      return { error: '值必须为 email 格式' }
-    }
-  },
-}
+    type(data) {
+        // @ts-ignore
+        if (isEmail(String(data))) {
+            return { data };
+        }
+        else {
+            return { error: '值必须为 email 格式' };
+        }
+    },
+};

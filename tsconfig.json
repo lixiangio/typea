@@ -1,17 +1,16 @@
 {
-  "include": [
-    "./src/**/*"
-  ],
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "outDir": "dist",
     "strict": true,
-    "removeComments": true,
+    // "removeComments": true,
     "declaration": true,
     "paths": {
       "typea": [
-        "./src/index"
+        "./main/index"
+      ],
+      "typea/*": [
+        "./type/*"
       ]
     },
     "moduleResolution": "node"
