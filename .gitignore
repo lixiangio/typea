@@ -6,4 +6,8 @@ node_modules/
 
 main/**/*.js
 test/**/*.js
+type/**/*.js
+
 jtm.config.js
+
+!type/validator/**/*.js
