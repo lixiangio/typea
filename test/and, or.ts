@@ -49,8 +49,8 @@ test('and / or', t => {
 
   delete sample.integral;
 
-  const { data, error } = schema.verify(sample);
+  const { value, error } = schema.verify(sample);
 
-  t.deepEqual(data, sample, error)
+  t.deepEqual(value, sample, error)
 
 });

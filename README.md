@@ -85,7 +85,7 @@ const schema = new Schema({
 
 // 使用数据模型校验数据
 
-const { error, data } = schema.verify({
+const { error, value } = schema.verify({
   id: 123,
   name: "test",
   email: "gmail@gmail.com",
@@ -152,7 +152,7 @@ const { error, data } = schema.verify({
 if (error) {
   console.error(error);
 } else {
-  console.log(data);
+  console.log(value);
 }
 ```
 
@@ -330,7 +330,7 @@ const schema = new Schema({
   e: Array,
 });
 
-const { error, data } = schema.verify({
+const { error, value } = schema.verify({
   a: ["dog", "cat"],
   b: [123, 456, 789],
   c: [{ a: 1 }, { a: 2 }, { b: "3" }],
@@ -372,7 +372,7 @@ const sample = {
 
 import { Schema, number } from "typea";
 
-const { error, data } = new Schema({
+const { error, value } = new Schema({
   a: {
     a1: number({ optional: true }),
     a2: 12,
@@ -399,5 +399,5 @@ const int = createType("int", {
   },
 });
 
-const { error, data } = new Schema({ age: int }).verify({ age: 20 });
+const { error, value } = new Schema({ age: int }).verify({ age: 20 });
 ```

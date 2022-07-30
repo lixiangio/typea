@@ -43,12 +43,12 @@ test('object', t => {
     }
   }
 
-  const { error, data } = schema.verify(sample);
+  const { error, value } = schema.verify(sample);
 
   sample.b = 20;
   sample.f = 2;
 
-  t.deepEqual(data, sample, error);
+  t.deepEqual(value, sample, error);
 
 });
 
@@ -90,9 +90,9 @@ test('[...object]', t => {
 
   const sample = [{ a: 1, b: 2 }, { a: 2, b: 2 }, { a: 1 }];
 
-  const { error, data } = schema.verify(sample);
+  const { error, value } = schema.verify(sample);
 
-  t.deepEqual(data, sample, error);
+  t.deepEqual(value, sample, error);
 
 });
 
@@ -111,8 +111,8 @@ test('{...object}', t => {
     c: { a: 1 }
   };
 
-  const { error, data } = schema.verify(sample);
+  const { error, value } = schema.verify(sample);
 
-  t.deepEqual(data, sample, error);
+  t.deepEqual(value, sample, error);
 
 });

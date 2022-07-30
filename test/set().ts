@@ -27,11 +27,11 @@ test('set', t => {
       }
    });
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
    sample.coupon = "uuuu";
    sample.num = '666';
 
-   t.deepEqual(data, sample, error)
+   t.deepEqual(value, sample, error)
 
 });

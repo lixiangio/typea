@@ -53,9 +53,9 @@ test('{ recursive }', t => {
     ]
   };
 
-  const { error, data } = schema.verify(sample);
+  const { error, value } = schema.verify(sample);
 
-  t.deepEqual(data, sample, error);
+  t.deepEqual(value, sample, error);
 
 });
 
@@ -142,9 +142,9 @@ test('[...recursive]', t => {
     }
   ];
 
-  const { error, data } = schema.verify(sample);
+  const { error, value } = schema.verify(sample);
 
-  t.deepEqual(data, sample, error);
+  t.deepEqual(value, sample, error);
 
 });
 

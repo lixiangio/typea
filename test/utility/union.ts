@@ -19,8 +19,8 @@ test("union", t => {
     data: union([Number], { value: 1 }, [1, 2, Number]),
   });
 
-  const { error, data } = schema.verify(sample);
+  const { error, value } = schema.verify(sample);
 
-  t.deepEqual(data, sample, error);
+  t.deepEqual(value, sample, error);
 
 });

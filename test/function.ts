@@ -5,9 +5,9 @@ test('sync function', t => {
 
    function func() { }
 
-   const { error, data } = new Schema(Function).verify(func);
+   const { error, value } = new Schema(Function).verify(func);
 
-   t.deepEqual(func, data, error);
+   t.deepEqual(func, value, error);
 
 });
 
@@ -17,7 +17,7 @@ test('async function', t => {
 
    const result = new Schema(Function).verify(func);
 
-   t.deepEqual(func, result.data, result.error);
+   t.deepEqual(func, result.value, result.error);
 
 });
 
@@ -26,9 +26,9 @@ test('function', t => {
 
    const func = (v: number) => { return v + 1; }
 
-   const { error, data } = new Schema((fn: Function) => fn(1)).verify(func);
+   const { error, value } = new Schema((fn: Function) => fn(1)).verify(func);
 
-   t.deepEqual(func, data, error);
+   t.deepEqual(func, value, error);
 
 });
 

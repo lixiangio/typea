@@ -13,11 +13,11 @@ test('tuple', t => {
     array: [...number({ set(v) { return Number(v) } })]
   });
 
-  const { error, data } = schema.verify(sample);
+  const { error, value } = schema.verify(sample);
 
   // 将 string 转换为 number
   sample.array[2] = Number(sample.array[2]);
 
-  t.deepEqual(data, sample, error);
+  t.deepEqual(value, sample, error);
 
 });

@@ -9,9 +9,9 @@ test('number', t => {
 
    const sample = 1;
 
-   const { error, data } = new Schema(Number).verify(sample);
+   const { error, value } = new Schema(Number).verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 })
 
@@ -20,9 +20,9 @@ test('number[] or [number]', t => {
 
    const sample = [1, 2, 3]
 
-   const { error, data } = new Schema([...number]).verify(sample);
+   const { error, value } = new Schema([...number]).verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 })
 
@@ -35,9 +35,9 @@ test('[number, number]', t => {
    // const xx = [...number({ optional: true })]
    // console.log(xx[0][extensionNode].name)
 
-   const { error, data } = new Schema([Number, number, number({ optional: true })]).verify(sample);
+   const { error, value } = new Schema([Number, number, number({ optional: true })]).verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 })
 
@@ -54,13 +54,13 @@ test('{ number }', t => {
       y: number({ default: 12 })
    })
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
    sample.y = 12;
 
-   // console.log(data)
+   // console.log(value)
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 })
 
@@ -74,8 +74,8 @@ test('{ ...number }', t => {
       y: 2
    }
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 })

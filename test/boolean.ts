@@ -3,11 +3,11 @@ import { Schema, boolean } from 'typea';
 
 test('boolean', t => {
 
-   const { error, data } = new Schema(Boolean).verify(true);
+   const { error, value } = new Schema(Boolean).verify(true);
 
-   // console.log(data);
+   // console.log(value);
 
-   t.deepEqual(true, data, error);
+   t.deepEqual(true, value, error);
 
 });
 
@@ -31,8 +31,8 @@ test('inline', t => {
       c: [true, true, false, true]
    }
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 });

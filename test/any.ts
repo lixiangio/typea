@@ -10,9 +10,9 @@ test('any', t => {
 
    const schema = new Schema(any);
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 })
 
@@ -27,9 +27,9 @@ test('any[]', t => {
 
    const schema = new Schema([...any]);
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 })
 
@@ -45,8 +45,8 @@ test('{ [name: string]: any }', t => {
       y: any
    })
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 })

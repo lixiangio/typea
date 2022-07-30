@@ -68,7 +68,7 @@ test('example', t => {
 
   // 使用数据模型校验数据
 
-  const { error, data } = schema.verify({
+  const { error, value } = schema.verify({
     id: 123,
     name: "test",
     email: "gmail@gmail.com",
@@ -132,10 +132,6 @@ test('example', t => {
     string3: "s3",
   });
 
-  if (error) {
-    console.error(error);
-  } else {
-    t.ok(data);
-  }
+  t.ok(value, error);
 
 })

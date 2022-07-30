@@ -33,7 +33,7 @@ test(`type('int')`, t => {
       "age": 15,
    };
 
-   const { error, data } = new Schema({
+   const { error, value } = new Schema({
       "id": int({ "in": [3, 5, 7, 6] }),
       "age": int({
          "max": 50,
@@ -44,6 +44,6 @@ test(`type('int')`, t => {
       }),
    }).verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 });

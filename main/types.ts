@@ -165,7 +165,9 @@ export const object = Struct("object", {
 
 TypeBind(Object, object);
 
-
+/**
+ * 类型或结构验证函数集合
+ */
 export interface Types { [name: string]: TypeFn | StructFn }
 
 const types: Types = {

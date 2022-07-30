@@ -54,7 +54,7 @@ const sample = {
 
 test('结构镜像', t => {
 
-   const { error, data } = new Schema({
+   const { error, value } = new Schema({
       "name": String,
       "num": String,
       "ObjectId": string,
@@ -103,18 +103,18 @@ test('结构镜像', t => {
       "arr": [...string]
    }).verify(sample);
 
-   // console.log(data)
+   // console.log(value)
 
-   t.ok(data, error);
+   t.ok(value, error);
 
 });
 
 test('结构、值镜像', t => {
 
-   const { error, data } = new Schema(sample).verify(sample);
+   const { error, value } = new Schema(sample).verify(sample);
 
-   // console.log(data);
+   // console.log(value);
 
-   t.ok(data, error);
+   t.ok(value, error);
 
 });

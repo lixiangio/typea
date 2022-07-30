@@ -21,8 +21,8 @@ test("pick", t => {
 
   const schema = new Schema(pick(struct, 'nane', 'list'));
 
-  const { error, data } = schema.verify(sample);
+  const { error, value } = schema.verify(sample);
 
-  t.deepEqual(data, sample, error);
+  t.deepEqual(value, sample, error);
 
 });

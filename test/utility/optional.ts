@@ -19,9 +19,9 @@ test("optional", t => {
     }
   };
 
-  const { error, data } = schema.verify(sample);
+  const { error, value } = schema.verify(sample);
 
-  t.deepEqual(data, sample, error);
+  t.deepEqual(value, sample, error);
 
 });
 
@@ -29,8 +29,8 @@ test("optional null", t => {
 
   const sample = {};
 
-  const { error, data } = schema.verify(sample);
+  const { error, value } = schema.verify(sample);
 
-  t.deepEqual(data, sample, error);
+  t.deepEqual(value, sample, error);
 
 });

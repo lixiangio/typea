@@ -97,14 +97,8 @@ test('mixing', t => {
     "arr": ['jjsd', 'ddd']
   }
 
-  // console.log(schema.node.num.name)
+  const { error, value } = schema.verify(sample);
 
-  const { error, data } = schema.verify(sample);
-
-  // console.log(data)
-
-  // t.deepEqual(data, sample, error);
-
-  t.ok(data, error);
+  t.ok(value, error);
 
 });

@@ -5,9 +5,9 @@ test('string', t => {
 
    const sample = 'a';
 
-   const { error, data } = new Schema(string).verify(sample);
+   const { error, value } = new Schema(string).verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 })
 
@@ -15,9 +15,9 @@ test('string[] or [string]', t => {
 
    const sample = ['a', 'b', 'c'];
 
-   const { error, data } = new Schema([...string]).verify(sample);
+   const { error, value } = new Schema([...string]).verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 })
 
@@ -27,9 +27,9 @@ test('[string, string]', t => {
 
    // console.log(string)
 
-   const { error, data } = new Schema([string, String]).verify(sample);
+   const { error, value } = new Schema([string, String]).verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 })
 
@@ -44,12 +44,12 @@ test('{string}', t => {
       x: "hello"
    }
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   // console.log(data)
+   // console.log(value)
    sample.y = "word";
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 })
 
@@ -63,11 +63,11 @@ test('{...string}', t => {
       y: "word"
    }
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   // console.log(data)
+   // console.log(value)
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 })
 
@@ -77,10 +77,10 @@ test('[...string]', t => {
 
    const sample = ["hello", "word"];
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   // console.log(data)
+   // console.log(value)
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 })

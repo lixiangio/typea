@@ -27,49 +27,49 @@ test('扩展运算符 [...]', t => {
     date: '2022-04-09'
   };
 
-  const { error, data } = schema.verify(sample);
+  const { error, value } = schema.verify(sample);
 
-  t.deepEqual(data, sample, error);
+  t.deepEqual(value, sample, error);
 
 });
 
-// test('array [[...]]', t => {
+test('array [[...]]', t => {
 
-//   const schema = new Schema({
-//     a: [number, ...number],
-//     b: [...string, number],
-//     c: [...number],
-//     d: [...object({ a: Number, b: number({ optional: true }) })],
-//     e: [[...object({ xa: Number, xb: [...number] })]]
-//   });
+  const schema = new Schema({
+    a: [number, ...number],
+    b: [...string, number],
+    c: [...number],
+    d: [...object({ a: Number, b: number({ optional: true }) })],
+    e: [[...object({ xa: Number, xb: [...number] })]]
+  });
 
-//   const xx = new Schema([
-//     ...object({
-//        id: Number,
-//        uid: Number,
-//        state: Boolean
-//     })
-//  ]);
+  const xx = new Schema([
+    ...object({
+       id: Number,
+       uid: Number,
+       state: Boolean
+    })
+ ]);
 
-//   const sample = {
-//     a: [1, 2, 3],
-//     b: ['a', 'b', 123],
-//     c: [666, 999, 88,],
-//     d: [{ a: 1, b: 2 }, { a: 2, b: 2 }, { a: 1 }],
-//     e: [[
-//       {
-//         xa: 1,
-//         xb: [1, 2, 3],
-//       },
-//       {
-//         xa: 9,
-//         xb: [2, 4, 3],
-//       }
-//     ]]
-//   };
+  const sample = {
+    a: [1, 2, 3],
+    b: ['a', 'b', 123],
+    c: [666, 999, 88,],
+    d: [{ a: 1, b: 2 }, { a: 2, b: 2 }, { a: 1 }],
+    e: [[
+      {
+        xa: 1,
+        xb: [1, 2, 3],
+      },
+      {
+        xa: 9,
+        xb: [2, 4, 3],
+      }
+    ]]
+  };
 
-//   const { error, data } = schema.verify(sample);
+  const { error, value } = schema.verify(sample);
 
-//   t.deepEqual(data, sample, error);
+  t.deepEqual(value, sample, error);
 
-// });
+});

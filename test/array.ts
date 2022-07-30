@@ -9,9 +9,9 @@ test('[string] 匹配 1 个', t => {
 
    const sample = [{ state: true }];
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 });
 
@@ -21,11 +21,11 @@ test('[string, string] 匹配 2 个', t => {
 
    const sample = ['a', 'b'];
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   // console.log(data);
+   // console.log(value);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 });
 
@@ -35,9 +35,9 @@ test('number[] 匹配 0 个或多个', t => {
 
    const sample = [1, 3, 6, 9,];
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 });
 
@@ -47,9 +47,9 @@ test('[number, ...number] 至少匹配一个', t => {
 
    const sample = [1];
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 });
 
@@ -59,11 +59,11 @@ test('[[string]]', t => {
 
    const sample = [['a', 'b']];
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   // console.log(data)
+   // console.log(value)
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 });
 
@@ -76,9 +76,9 @@ test('[...object]', t => {
 
    const sample = [{ a: 1, b: 2 }, { a: 2, b: 2 }, { a: 1 }];
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 });
 
@@ -88,9 +88,9 @@ test('[...array]', t => {
 
    const sample = [[1, 10], [5, 20], [3, 4]];
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 });
 
@@ -104,9 +104,9 @@ test('{...array}', t => {
       c: [100],
    };
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 });
 
@@ -158,8 +158,8 @@ test('array 综合示例', t => {
       h: 66
    };
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 });

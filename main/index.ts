@@ -1,11 +1,20 @@
-import { entry } from './router.js';
-import type { Methods, Return } from './common.js';
-import types from './types.js';
+import type { Methods } from './common.js';
 import { Type } from './createType.js';
+import types from './types.js';
+import { entry } from './router.js';
 
 export * from './common.js';
 export * from './types.js';
 export * as Utility from './utility.js';
+
+interface Return {
+  /** 验证失败时返回的错误信息 */
+  error?: string,
+  /** 验证成功时返回经过验证转换后的合规数据 */
+  value?: any,
+  /** 验证成功时返回经过验证转换后的合规数据，作为 value 的别名，将来可能被删除 */
+  data?: any
+}
 
 class Schema {
   static types = types
@@ -20,17 +29,17 @@ class Schema {
    */
   verify(entity: any): Return {
 
-    const result = entry(this.node, entity);
+    const { error, data } = entry(this.node, entity);
 
-    if (result.error) {
-      const [point] = result.error;
+    if (error) {
+      const [point] = error;
       if (point === '.') {
-        return { error: result.error.slice(1) };
+        return { error: error.slice(1) };
       } else {
-        return { error: result.error };
+        return { error };
       }
     } else {
-      return { data: result.data };
+      return { value: data, data };
     }
 
   }

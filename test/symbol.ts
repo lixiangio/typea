@@ -7,9 +7,9 @@ test('symbol', t => {
 
    const schema = new Schema(Symbol)
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 })
 
@@ -19,9 +19,9 @@ test('symbol[]', t => {
 
    const schema = new Schema([...symbol])
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 })
 
@@ -37,8 +37,8 @@ test('{ [name: string]: symbol }', t => {
       y: Symbol
    });
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 })

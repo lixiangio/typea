@@ -77,10 +77,10 @@ test('loose', t => {
       b: true
    }
 
-   const { error, data } = schema.verify(sample);
+   const { error, value } = schema.verify(sample);
 
-   // console.log(data)
+   // console.log(value)
 
-   t.deepEqual(data, sample, error);
+   t.deepEqual(value, sample, error);
 
 });
