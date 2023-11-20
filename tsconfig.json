@@ -1,9 +1,11 @@
 {
+  "include": [
+    "./**/*.ts"
+  ],
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
     "strict": true,
-    // "removeComments": true,
     "declaration": true,
     "paths": {
       "typea": [

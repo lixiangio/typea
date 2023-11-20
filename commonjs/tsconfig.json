@@ -1,0 +1,11 @@
+{
+  "include": ["../main/**/*.ts"],
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "outDir": "./",
+    "strict": true,
+    "declaration": true,
+    "moduleResolution": "node"
+  }
+}

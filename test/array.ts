@@ -5,7 +5,7 @@ const { optional } = Utility;
 
 test('[string] 匹配 1 个', t => {
 
-   const schema = new Schema([{ 'state': boolean }]);
+   const schema = new Schema([{ state: boolean }]);
 
    const sample = [{ state: true }];
 

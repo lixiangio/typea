@@ -1,23 +1,24 @@
 {
    "name": "typea",
-   "version": "8.3.4",
+   "description": "JS 运行时数据类型、结构验证与转换器",
    "type": "module",
-   "description": "JS 数据结构验证、转换器",
+   "version": "8.4.0",
    "main": "./main/index.js",
+   "module": "./main/index.js",
+   "types": "./main/index.d.ts",
    "exports": {
       ".": "./main/index.js",
       "./utility": "./main/utility.js",
       "./*": "./type/*"
    },
-   "types": "./main/index.d.ts",
    "author": "lixiang",
    "license": "MIT",
    "scripts": {
-      "start": "node ./main/index.js",
       "dev": "tsc --watch",
       "build": "tsc",
       "clean": "tsc --build --clean",
-      "test": "jtm"
+      "test": "jtm",
+      "start": "node ./main/index.js"
    },
    "keywords": [
       "typea",
@@ -40,5 +41,9 @@
    ],
    "directories": {
       "test": "test"
+   },
+   "devDependencies": {
+      "jtm": "^1.2.1",
+      "typescript": "^5.2.2"
    }
 }
