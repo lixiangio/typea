@@ -1,13 +1,13 @@
 {
    "name": "@typea/commonjs",
    "description": "JS 运行时数据类型、结构验证与转换器，commonjs 版",
-   "version": "8.4.0",
+   "version": "8.4.1",
    "main": "./index.js",
+   "types": "./index.d.ts",
    "scripts": {
       "build": "tsc",
       "start": "node ./index.js"
    },
-   "types": "./main/index.d.ts",
    "author": "lixiang",
    "license": "MIT",
    "repository": {
@@ -19,7 +19,7 @@
    },
    "homepage": "https://github.com/xiangle/typea#readme",
    "files": [
-      "main/**/*.js",
-      "main/**/*.d.ts"
+      "**/*.js",
+      "**/*.d.ts"
    ]
 }

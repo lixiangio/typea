@@ -4,6 +4,8 @@ node_modules/
 *.d.ts
 *.js.map
 
+commonjs/**/*.js
+
 main/**/*.js
 test/**/*.js
 type/**/*.js
